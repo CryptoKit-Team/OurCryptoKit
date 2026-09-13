@@ -2,7 +2,7 @@
 
   <img src="images/Logo.png" alt="OurCryptoKit Logo" width="180"/>
 
-  # 🔐 OurCryptoKit
+  # 🔐 CryptoKit
 
   ### Secure. Encrypt. Build.
 
@@ -26,9 +26,9 @@
 
 ---
 
-## 📌 About OurCryptoKit
+## 📌 About CryptoKit
 
-**OurCryptoKit** is a cybersecurity and cryptography-focused platform
+**CryptoKit** is a cybersecurity and cryptography-focused platform
 developed to make security tools more accessible, practical, and easy to
 understand.
 
@@ -105,7 +105,7 @@ Visit our live website:
 ## 📂 Project Structure
 
 ```text
-OurCryptoKit-offical/
+CryptoKit-offical/
 │
 ├── frontend/
 │   ├── components/
@@ -136,13 +136,13 @@ OurCryptoKit-offical/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR-ORGANIZATION/OurCryptoKit-offical.git
+git clone https://github.com/CryptoKit-Team/OurCryptoKit-offical.git
 ```
 
 ### 2. Navigate to the Project
 
 ```bash
-cd OurCryptoKit-offical
+cd CryptoKit-offical
 ```
 
 ### 3. Install Dependencies
@@ -167,7 +167,7 @@ npm run dev
 
 ## 👥 Our Team
 
-OurCryptoKit is developed by a team of four passionate students and
+CryptoKit is developed by a team of four passionate students and
 technology enthusiasts working together on cybersecurity and cryptography.
 
 | Team Member | Role |
@@ -183,7 +183,7 @@ technology enthusiasts working together on cybersecurity and cryptography.
 
 ## 🔐 Security
 
-Security is one of the core priorities of OurCryptoKit.
+Security is one of the core priorities of CryptoKit.
 
 We aim to:
 
@@ -215,7 +215,7 @@ Planned documentation includes:
 
 ## 🗺️ Future Plans
 
-We are continuously working to improve OurCryptoKit.
+We are continuously working to improve CryptoKit.
 
 ### Planned Updates
 
@@ -233,7 +233,7 @@ We are continuously working to improve OurCryptoKit.
 ## 🤝 Contributing
 
 We welcome suggestions, improvements, and contributions that help make
-OurCryptoKit better.
+CryptoKit better.
 
 If you want to contribute:
 
