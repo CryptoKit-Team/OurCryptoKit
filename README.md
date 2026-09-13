@@ -17,7 +17,7 @@
 
   <p>
     <img src="https://img.shields.io/badge/Status-In%20Development-orange" alt="Status"/>
-    <img src="https://img.shields.io/badge/Frontend-React-blue" alt="Frontend"/>
+    <img src="https://img.shields.io/badge/Frontend-CSS3-blue" alt="Frontend"/>
     <img src="https://img.shields.io/badge/Backend-Node.js-green" alt="Backend"/>
     <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License"/>
   </p>
