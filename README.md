@@ -95,7 +95,6 @@ Visit our live website:
 | HTML5 | Webpage structure |
 | CSS3 | Styling and responsive design |
 | JavaScript | Interactive functionality |
-| React.js | Frontend development |
 | Node.js | Backend development |
 | Git & GitHub | Version control |
 | Vercel | Website deployment |
@@ -257,20 +256,20 @@ project develops.
 
 For questions, suggestions, or collaboration:
 
-📧 **Email:** YOUR-ORGANIZATION-EMAIL@gmail.com
+📧 **Email:** cryptokit.team@gmail.com
 
 🌐 **Website:** https://cryptokit-vert.vercel.app/
 
-💻 **GitHub:** https://github.com/YOUR-ORGANIZATION
+💻 **GitHub:** https://github.com/CryptoKit-Team
 
 ---
 
 <div align="center">
 
-  ### 🔐 OurCryptoKit
+  ### 🔐 CryptoKit
 
   **Secure. Encrypt. Build.**
 
-  Made with ❤️ by the OurCryptoKit Team.
+  Made with ❤️ by the CryptoKit Team.
 
 </div>
