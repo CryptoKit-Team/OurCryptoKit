@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started - CryptoKit Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="docs-style.css">
+</head>
+<body>
+
+    <nav class="docs-navbar">
+        <div class="docs-nav-left">
+            <a href="index.html" class="docs-logo">
+                <div class="docs-logo-icon">
+                    <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                        <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M20 8L20 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                        <rect x="12" y="14" width="16" height="18" rx="3" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="20" cy="23" r="3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <span>CryptoKit Docs</span>
+            </a>
+        </div>
+        <div class="docs-nav-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="docsSearch" placeholder="Search documentation..." autocomplete="off">
+            <kbd>Ctrl K</kbd>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        <div class="docs-nav-right">
+            <a href="index.html" class="nav-home-btn"><i class="fas fa-home"></i> Home</a>
+            <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+            <a href="https://github.com" class="github-btn" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+    </nav>
+
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+
+    <div class="docs-layout">
+
+        <aside class="docs-sidebar">
+            <div class="sidebar-section">
+                <h3>Introduction</h3>
+                <ul>
+                    <li><a href="documentation.html"><i class="fas fa-book-open"></i> Overview</a></li>
+                    <li><a href="getting-started.html"><i class="fas fa-rocket"></i> Getting Started</a></li>
+                    <li><a href="core-concepts.html"><i class="fas fa-brain"></i> Core Concepts</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Tools</h3>
+                <ul>
+                    <li><a href="tool-docs.html"><i class="fas fa-tools"></i> Tool Documentation</a></li>
+                    <li><a href="algorithm-reference.html"><i class="fas fa-table"></i> Algorithm Reference</a></li>
+                    <li><a href="terminal-docs.html"><i class="fas fa-terminal"></i> Terminal Mode</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Guides</h3>
+                <ul>
+                    <li><a href="security-practices.html"><i class="fas fa-shield-alt"></i> Security Practices</a></li>
+                    <li><a href="code-examples.html"><i class="fas fa-code"></i> Code Examples</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Reference</h3>
+                <ul>
+                    <li><a href="faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="glossary.html"><i class="fas fa-list"></i> Glossary</a></li>
+                    <li><a href="limitations.html"><i class="fas fa-exclamation-triangle"></i> Limitations</a></li>
+                    <li><a href="changelog.html"><i class="fas fa-history"></i> Changelog</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="docs-main">
+
+            <div class="breadcrumb">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                <span>/</span>
+                <a href="documentation.html">Docs</a>
+                <span>/</span>
+                <span>Getting Started</span>
+            </div>
+
+            <div class="docs-hero">
+                <div class="docs-badge">🚀 Getting Started</div>
+                <h1>Getting Started with <span class="gradient-text">CryptoKit</span></h1>
+                <p>Learn how to use CryptoKit in less than 5 minutes. No installation needed — everything works in your browser.</p>
+            </div>
+
+            <div class="toc">
+                <div class="toc-title">📑 On This Page</div>
+                <ul id="tocList"></ul>
+            </div>
+
+            <div class="docs-section">
+                <h2 id="welcome">Welcome to CryptoKit</h2>
+                <p>CryptoKit is a <strong>free, open-source cryptography toolkit</strong> that runs entirely in your browser. Whether you're a developer, security researcher, or just curious about encryption, CryptoKit provides professional-grade tools with a clean, easy-to-use interface.</p>
+
+                <div class="callout success">
+                    <div class="callout-icon">✅</div>
+                    <div class="callout-body">
+                        <div class="callout-title">100% Private</div>
+                        All operations happen on your device. We never see or store your data.
+                    </div>
+                </div>
+
+                <h2 id="quick-start">Quick Start Guide</h2>
+                <p>Get up and running in three simple steps:</p>
+
+                <h3 id="step-1">Step 1: Choose Your Tool</h3>
+                <p>Visit our <a href="index.html#tools">Tools section</a> and pick the one you need — hash generator, RSA keys, encryption, etc.</p>
+
+                <h3 id="step-2">Step 2: Enter Your Data</h3>
+                <p>Type text, upload a file, or paste your keys into the tool interface.</p>
+
+                <h3 id="step-3">Step 3: Get Results</h3>
+                <p>Click the action button and get your results instantly. Copy, download, or share as needed.</p>
+
+                <h2 id="requirements">System Requirements</h2>
+                <p>CryptoKit works in any modern browser with Web Crypto API support:</p>
+                <table class="docs-table">
+                    <thead>
+                        <tr><th>Browser</th><th>Minimum Version</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Google Chrome</td><td>60+</td><td class="status-ok">✅ Supported</td></tr>
+                        <tr><td>Mozilla Firefox</td><td>55+</td><td class="status-ok">✅ Supported</td></tr>
+                        <tr><td>Safari</td><td>11+</td><td class="status-ok">✅ Supported</td></tr>
+                        <tr><td>Microsoft Edge</td><td>79+</td><td class="status-ok">✅ Supported</td></tr>
+                        <tr><td>Internet Explorer</td><td>Any</td><td class="status-danger">❌ Not Supported</td></tr>
+                    </tbody>
+                </table>
+
+                <h2 id="no-install">No Installation Needed</h2>
+                <p>CryptoKit is <strong>100% browser-based</strong>. You don't need to install any software, download apps, or create accounts. Just visit the website and start using the tools.</p>
+
+                <div class="callout tip">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Pro Tip</div>
+                        Bookmark <code>cryptokit.dev</code> for quick access to all your cryptography needs.
+                    </div>
+                </div>
+
+                <h2 id="privacy">Privacy Guarantee</h2>
+                <p>Your privacy is our top priority:</p>
+                <ul>
+                    <li><strong>Zero data collection</strong> — We don't track or log anything</li>
+                    <li><strong>Client-side processing</strong> — All crypto happens in your browser</li>
+                    <li><strong>No accounts required</strong> — Use anonymously, always</li>
+                    <li><strong>Open source</strong> — Audit our code on GitHub</li>
+                </ul>
+
+                <h2 id="try-it">Try It Now</h2>
+                <p>Test our hash generator right here:</p>
+
+                <div class="live-demo-embed">
+                    <h4><i class="fas fa-play-circle"></i> Live Demo: SHA-256 Hash</h4>
+                    <div class="demo-input-group">
+                        <input type="text" id="demoHashInput" placeholder="Type any text...">
+                        <select id="demoHashAlgo">
+                            <option value="sha256">SHA-256</option>
+                            <option value="sha512">SHA-512</option>
+                        </select>
+                        <button class="demo-run-btn" onclick="runHashDemo()">Generate Hash</button>
+                        <div class="demo-output" id="demoHashOutput">Result will appear here...</div>
+                    </div>
+                </div>
+
+                <h2 id="next-steps">Next Steps</h2>
+                <p>Now that you're set up, explore more advanced topics:</p>
+                <ul>
+                    <li>📖 <a href="core-concepts.html">Learn Core Cryptography Concepts</a></li>
+                    <li>🔧 <a href="tool-docs.html">Explore all Tools in Detail</a></li>
+                    <li>🛡️ <a href="security-practices.html">Read Security Best Practices</a></li>
+                </ul>
+            </div>
+
+            <div class="feedback-box">
+                <h3>Was this page helpful?</h3>
+                <div class="feedback-buttons">
+                    <button class="feedback-btn" onclick="submitFeedback('yes')"><i class="fas fa-thumbs-up"></i> Yes</button>
+                    <button class="feedback-btn" onclick="submitFeedback('no')"><i class="fas fa-thumbs-down"></i> No</button>
+                </div>
+            </div>
+
+            <div class="docs-footer-nav">
+                <a href="documentation.html" class="nav-prev">
+                    <span class="nav-label">← Back to</span>
+                    <span class="nav-title">Overview</span>
+                </a>
+                <a href="core-concepts.html" class="nav-next">
+                    <span class="nav-label">Next →</span>
+                    <span class="nav-title">Core Concepts</span>
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+    <button class="scroll-top" id="scrollTop"><i class="fas fa-chevron-up"></i></button>
+    <script src="docs-script.js"></script>
+</body>
+</html>

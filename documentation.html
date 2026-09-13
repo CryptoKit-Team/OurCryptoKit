@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - CryptoKit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="docs-style.css">
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <nav class="docs-navbar">
+        <div class="docs-nav-left">
+            <a href="index.html" class="docs-logo">
+                <div class="docs-logo-icon">
+                    <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                        <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M20 8L20 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                        <rect x="12" y="14" width="16" height="18" rx="3" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="20" cy="23" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M20 26L20 28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span>CryptoKit Docs</span>
+            </a>
+        </div>
+
+        <div class="docs-nav-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="docsSearch" placeholder="Search documentation..." autocomplete="off">
+            <kbd>Ctrl K</kbd>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+
+        <div class="docs-nav-right">
+            <a href="index.html" class="nav-home-btn">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <a href="https://github.com" class="github-btn" target="_blank">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+    </nav>
+
+    <div class="docs-layout">
+
+        <!-- Sidebar -->
+        <aside class="docs-sidebar" id="docsSidebar">
+            <div class="sidebar-section">
+                <h3>Introduction</h3>
+                <ul>
+                    <li><a href="documentation.html" class="active"><i class="fas fa-book-open"></i> Overview</a></li>
+                    <li><a href="getting-started.html"><i class="fas fa-rocket"></i> Getting Started</a></li>
+                    <li><a href="core-concepts.html"><i class="fas fa-brain"></i> Core Concepts</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Tools</h3>
+                <ul>
+                    <li><a href="tool-docs.html"><i class="fas fa-tools"></i> Tool Documentation</a></li>
+                    <li><a href="algorithm-reference.html"><i class="fas fa-table"></i> Algorithm Reference</a></li>
+                    <li><a href="terminal-docs.html"><i class="fas fa-terminal"></i> Terminal Mode</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Guides</h3>
+                <ul>
+                    <li><a href="security-practices.html"><i class="fas fa-shield-alt"></i> Security Practices</a></li>
+                    <li><a href="code-examples.html"><i class="fas fa-code"></i> Code Examples</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Reference</h3>
+                <ul>
+                    <li><a href="faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="glossary.html"><i class="fas fa-list"></i> Glossary</a></li>
+                    <li><a href="limitations.html"><i class="fas fa-exclamation-triangle"></i> Limitations</a></li>
+                    <li><a href="changelog.html"><i class="fas fa-history"></i> Changelog</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-main">
+
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                <span>/</span>
+                <span>Documentation</span>
+            </div>
+
+            <!-- Hero -->
+            <div class="docs-hero">
+                <div class="docs-badge">📚 Documentation</div>
+                <h1>Welcome to <span class="gradient-text">CryptoKit Docs</span></h1>
+                <p>Everything you need to know about using CryptoKit — from basic concepts to advanced cryptographic operations.</p>
+            </div>
+
+            <!-- Quick Cards -->
+            <div class="docs-cards">
+                <a href="getting-started.html" class="doc-card">
+                    <div class="doc-card-icon purple">🚀</div>
+                    <h3>Getting Started</h3>
+                    <p>New here? Start with our quick-start guide and learn the basics.</p>
+                    <span class="doc-card-link">Start learning →</span>
+                </a>
+
+                <a href="core-concepts.html" class="doc-card">
+                    <div class="doc-card-icon blue">🧠</div>
+                    <h3>Core Concepts</h3>
+                    <p>Understand cryptography fundamentals like hashing, encryption, and keys.</p>
+                    <span class="doc-card-link">Learn concepts →</span>
+                </a>
+
+                <a href="tool-docs.html" class="doc-card">
+                    <div class="doc-card-icon green">🔧</div>
+                    <h3>Tool Documentation</h3>
+                    <p>Detailed guides for every tool available in CryptoKit.</p>
+                    <span class="doc-card-link">Explore tools →</span>
+                </a>
+
+                <a href="algorithm-reference.html" class="doc-card">
+                    <div class="doc-card-icon red">📊</div>
+                    <h3>Algorithm Reference</h3>
+                    <p>Complete reference of all supported algorithms and their strengths.</p>
+                    <span class="doc-card-link">View reference →</span>
+                </a>
+
+                <a href="security-practices.html" class="doc-card">
+                    <div class="doc-card-icon yellow">🛡️</div>
+                    <h3>Security Best Practices</h3>
+                    <p>Learn how to use cryptography safely and avoid common mistakes.</p>
+                    <span class="doc-card-link">Read guide →</span>
+                </a>
+
+                <a href="code-examples.html" class="doc-card">
+                    <div class="doc-card-icon pink">💻</div>
+                    <h3>Code Examples</h3>
+                    <p>Copy-paste examples in JavaScript, Python, and Node.js.</p>
+                    <span class="doc-card-link">See examples →</span>
+                </a>
+            </div>
+
+            <!-- Popular Topics -->
+            <section class="docs-section">
+                <h2>Popular Topics</h2>
+                <div class="popular-topics">
+                    <a href="tool-docs.html#rsa">🔑 How to generate RSA keys</a>
+                    <a href="tool-docs.html#hash">🔒 Hash a file securely</a>
+                    <a href="security-practices.html">🛡️ Best encryption practices</a>
+                    <a href="faq.html">❓ Is my data safe?</a>
+                    <a href="algorithm-reference.html">📚 Which algorithm to choose?</a>
+                    <a href="terminal-docs.html">💻 Terminal commands</a>
+                </div>
+            </section>
+
+            <!-- Feedback -->
+            <div class="feedback-box">
+                <h3>Was this page helpful?</h3>
+                <div class="feedback-buttons">
+                    <button class="feedback-btn" onclick="submitFeedback('yes')"><i class="fas fa-thumbs-up"></i> Yes</button>
+                    <button class="feedback-btn" onclick="submitFeedback('no')"><i class="fas fa-thumbs-down"></i> No</button>
+                </div>
+            </div>
+
+            <!-- Footer nav -->
+            <div class="docs-footer-nav">
+                <a href="index.html" class="nav-prev">
+                    <span class="nav-label">← Back to</span>
+                    <span class="nav-title">Home</span>
+                </a>
+                <a href="getting-started.html" class="nav-next">
+                    <span class="nav-label">Next →</span>
+                    <span class="nav-title">Getting Started</span>
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+    <button class="scroll-top" id="scrollTop"><i class="fas fa-chevron-up"></i></button>
+
+    <script src="docs-script.js"></script>
+</body>
+</html>

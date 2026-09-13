@@ -1,0 +1,399 @@
+/* ═══════════════════════════════════════════════════════
+   AUTH SCREEN — Login / Sign Up (Task 1)
+   Reuses CryptoKit's existing CSS custom properties
+   (--bg-primary, --primary, --accent, --border, etc.)
+   so it automatically follows Normal / Hacker mode.
+═══════════════════════════════════════════════════════ */
+
+.auth-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 40px 20px;
+    background: var(--bg-primary);
+    transition: background 0.4s;
+}
+
+.auth-screen-hidden {
+    display: none !important;
+}
+
+.main-app-hidden {
+    display: none !important;
+}
+
+[data-theme="hacker"] .auth-screen {
+    background: radial-gradient(circle at 50% 0%, rgba(0, 255, 65, 0.06), transparent 60%), var(--bg-primary);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: authFadeIn 0.5s ease;
+}
+
+@keyframes authFadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    text-decoration: none;
+    cursor: default;
+}
+
+.auth-card {
+    position: relative;
+    width: 100%;
+    border-radius: 20px;
+    padding: 40px 36px;
+    overflow: hidden;
+}
+
+[data-theme="normal"] .auth-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-hover);
+}
+
+[data-theme="hacker"] .auth-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    box-shadow: 0 0 40px rgba(0, 255, 65, 0.08);
+}
+
+/* ── Panel switching (login <-> signup) ── */
+.auth-panel {
+    display: none;
+    animation: authPanelIn 0.35s ease;
+}
+.auth-panel.active {
+    display: block;
+}
+
+@keyframes authPanelIn {
+    from { opacity: 0; transform: translateX(8px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.auth-panel-head {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.auth-panel-head .section-badge {
+    margin-bottom: 14px;
+}
+
+.auth-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.auth-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* ── Inline banner (shown on submit-level errors) ── */
+.auth-banner {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+.auth-banner.show { display: flex; }
+
+.auth-banner.error {
+    background: rgba(255, 68, 68, 0.1);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    color: #FF4444;
+}
+
+.auth-banner.info {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+}
+
+.auth-banner.success {
+    background: rgba(6, 214, 160, 0.1);
+    border: 1px solid rgba(6, 214, 160, 0.3);
+    color: var(--success);
+}
+
+/* ── Form ── */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.auth-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.auth-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.auth-input-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 14px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.auth-input {
+    width: 100%;
+    border-radius: 10px;
+    padding: 12px 16px 12px 40px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.3s;
+}
+
+[data-theme="normal"] .auth-input {
+    background: var(--input-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+}
+
+[data-theme="hacker"] .auth-input {
+    background: #000;
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    color: var(--primary);
+    caret-color: var(--primary);
+}
+
+[data-theme="normal"] .auth-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+[data-theme="hacker"] .auth-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 12px rgba(0, 255, 65, 0.15);
+}
+
+.auth-input.auth-input-error {
+    border-color: #FF4444 !important;
+    box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.12) !important;
+}
+
+/* Password fields need room for the eye icon on the right */
+input.auth-input[type="password"],
+input.auth-input[type="text"].auth-pw-as-text {
+    padding-right: 44px;
+}
+
+.auth-toggle-eye {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    font-size: 14px;
+    color: var(--text-muted);
+    transition: color 0.2s;
+}
+.auth-toggle-eye:hover {
+    color: var(--primary);
+}
+
+.auth-error {
+    display: none;
+    font-size: 12px;
+    color: #FF4444;
+    font-weight: 500;
+}
+.auth-error.show {
+    display: block;
+}
+
+/* ── Remember me + forgot password row ── */
+.auth-row-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: -2px;
+}
+
+.auth-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.auth-checkbox input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.auth-checkbox-box {
+    width: 17px;
+    height: 17px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.auth-checkbox-box::after {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.15s;
+    margin-top: -2px;
+}
+
+.auth-checkbox input:checked + .auth-checkbox-box {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+.auth-checkbox input:checked + .auth-checkbox-box::after {
+    transform: rotate(45deg) scale(1);
+}
+
+.auth-checkbox input:focus-visible + .auth-checkbox-box {
+    box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.auth-checkbox-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.auth-link-muted {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary);
+    transition: opacity 0.2s;
+}
+.auth-link-muted:hover {
+    opacity: 0.75;
+}
+
+/* ── Submit button ── */
+.auth-submit-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: 4px;
+}
+
+/* ── Switch link ── */
+.auth-switch-text {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+.auth-switch-text a {
+    color: var(--primary);
+    font-weight: 600;
+}
+.auth-switch-text a:hover {
+    text-decoration: underline;
+}
+
+.auth-footnote {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ── Hacker mode flourishes, consistent with the rest of the site ── */
+[data-theme="hacker"] .auth-title,
+[data-theme="hacker"] .auth-subtitle,
+[data-theme="hacker"] .auth-label,
+[data-theme="hacker"] .auth-checkbox-label {
+    font-family: 'Share Tech Mono', monospace;
+}
+
+[data-theme="hacker"] .auth-submit-btn {
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .auth-card {
+        padding: 32px 24px;
+        border-radius: 18px;
+    }
+    .auth-title {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-screen {
+        padding: 24px 14px;
+        align-items: flex-start;
+    }
+    .auth-container {
+        max-width: 100%;
+        margin-top: 10px;
+    }
+    .auth-card {
+        padding: 26px 18px;
+        border-radius: 16px;
+    }
+    .auth-brand {
+        margin-bottom: 20px;
+    }
+    .auth-row-between {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}

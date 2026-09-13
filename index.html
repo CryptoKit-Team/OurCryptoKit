@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoKit - Your Complete Cryptography Toolkit</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Auth Screen CSS (Login/Signup) -->
+    <link rel="stylesheet" href="auth.css">
+
+    <style>
+        /* ═══════════════════════════════════
+           FIX: Ensure fade-up elements are visible
+           even if JavaScript fails to load
+        ═══════════════════════════════════ */
+        .fade-up {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-up.hidden {
+            opacity: 0 !important;
+            transform: translateY(30px) !important;
+        }
+
+        .js-loaded .fade-up:not(.visible) {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .js-loaded .fade-up.visible {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        /* ── Mobile Theme Submenu ── */
+        .mobile-theme-submenu {
+            display: none;
+            flex-direction: column;
+            background: rgba(0,0,0,0.08);
+            border-left: 3px solid var(--accent, #7c3aed);
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-theme-submenu.open {
+            display: flex;
+        }
+
+        .mobile-theme-submenu a {
+            padding: 12px 24px 12px 32px !important;
+            font-size: 14px !important;
+            border-bottom: none !important;
+            opacity: 0.9;
+            display: flex !important;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobile-theme-submenu a:last-child {
+            border-bottom: none !important;
+        }
+
+        .mobile-theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .mobile-theme-toggle-btn .theme-arrow {
+            transition: transform 0.3s ease;
+            font-size: 12px;
+        }
+
+        .mobile-theme-toggle-btn.active .theme-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Mobile Developer Mode Popup */
+        .mobile-dev-popup {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(6px);
+            padding: 20px;
+        }
+
+        .mobile-dev-popup.show {
+            display: flex;
+        }
+
+        .mobile-dev-popup-box {
+            background: var(--card-bg, #1a1a2e);
+            border: 2px solid var(--accent, #7c3aed);
+            border-radius: 20px;
+            padding: 36px 28px;
+            max-width: 340px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(124,58,237,0.4);
+            animation: popupIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+
+        @keyframes popupIn {
+            from { opacity: 0; transform: scale(0.7) translateY(30px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .mobile-dev-popup-icon {
+            font-size: 52px;
+            margin-bottom: 16px;
+            display: block;
+            filter: drop-shadow(0 0 16px rgba(124,58,237,0.6));
+        }
+
+        .mobile-dev-popup-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary, #fff);
+            margin-bottom: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .mobile-dev-popup-msg {
+            font-size: 14px;
+            color: var(--text-secondary, #a0aec0);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .mobile-dev-popup-msg strong {
+            color: var(--accent, #7c3aed);
+        }
+
+        .mobile-dev-popup-close {
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 32px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .mobile-dev-popup-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(124,58,237,0.5);
+        }
+
+        .mobile-theme-submenu a.active-theme {
+            color: var(--accent, #7c3aed) !important;
+            font-weight: 600;
+        }
+
+        .mobile-theme-submenu a .theme-active-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent, #7c3aed);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--accent, #7c3aed);
+        }
+
+        /* ═══════════════════════════════════
+           FIX: Tool cards always clickable
+        ═══════════════════════════════════ */
+        .tool-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .tools-section {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .tools-grid {
+            display: grid;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        /* ═══════════════════════════════════
+           FIX: Live Demo centering
+        ═══════════════════════════════════ */
+        .live-demo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .demo-container {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .demo-header {
+            text-align: center;
+        }
+
+        /* ═══════════════════════════════════
+           AUTH SCREEN: Show/Hide logic
+        ═══════════════════════════════════ */
+        .auth-screen-hidden {
+            display: none !important;
+        }
+
+        .main-app-hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════
+         OVERLAYS & BACKGROUNDS
+    ═══════════════════════════════════ -->
+    <div class="theme-transition-overlay" id="themeOverlay">
+        <div class="transition-text" id="transitionText"></div>
+    </div>
+
+    <div class="scanlines"></div>
+
+    <div class="bg-shapes">
+        <div class="bg-shape bg-shape-1"></div>
+        <div class="bg-shape bg-shape-2"></div>
+        <div class="bg-shape bg-shape-3"></div>
+    </div>
+
+    <canvas id="matrix-canvas"></canvas>
+    <canvas id="particle-canvas"></canvas>
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         AUTH SCREEN (Login / Sign Up)
+         First screen shown on load. Frontend-only for now.
+         Styled by auth.css · Logic in auth.js
+    ═══════════════════════════════════════════════════════ -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-container">
+
+            <!-- Brand -->
+            <a href="#" class="auth-brand" onclick="event.preventDefault();">
+                <div class="nav-logo-icon">
+                    <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                        <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M20 8L20 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                        <rect x="12" y="14" width="16" height="18" rx="3" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="20" cy="23" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M20 26L20 28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span class="nav-logo-text">CryptoKit</span>
+            </a>
+
+            <div class="auth-card">
+
+                <!-- ══════════════════════════
+                     LOGIN PANEL
+                ══════════════════════════ -->
+                <div class="auth-panel active" id="loginPanel">
+
+                    <div class="auth-panel-head">
+                        <div class="section-badge">🔐 Welcome Back</div>
+                        <h1 class="auth-title">Log in to <span class="gradient-text">CryptoKit</span></h1>
+                        <p class="auth-subtitle">Access your cryptography toolkit and saved tools.</p>
+                    </div>
+
+                    <div class="auth-banner" id="loginBanner"></div>
+
+                    <form class="auth-form" id="loginForm" novalidate onsubmit="return handleLogin(event);">
+
+                        <div class="auth-field">
+                            <label class="auth-label" for="loginEmail">Email</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-envelope auth-input-icon"></i>
+                                <input type="text" class="auth-input" id="loginEmail"
+                                       placeholder="you@example.com" autocomplete="username">
+                            </div>
+                            <span class="auth-error" id="loginEmailError"></span>
+                        </div>
+
+                        <div class="auth-field">
+                            <label class="auth-label" for="loginPassword">Password</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-lock auth-input-icon"></i>
+                                <input type="password" class="auth-input" id="loginPassword"
+                                       placeholder="Enter your password" autocomplete="current-password">
+                                <button type="button" class="auth-toggle-eye" id="loginPasswordToggle"
+                                        onclick="togglePasswordVisibility('loginPassword', this);"
+                                        aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <span class="auth-error" id="loginPasswordError"></span>
+                        </div>
+
+                        <div class="auth-row-between">
+                            <label class="auth-checkbox">
+                                <input type="checkbox" id="rememberMe">
+                                <span class="auth-checkbox-box"></span>
+                                <span class="auth-checkbox-label">Remember me</span>
+                            </label>
+                            <a href="#" class="auth-link-muted"
+                               onclick="event.preventDefault();handleForgotPassword();">
+                                Forgot password?
+                            </a>
+                        </div>
+
+                        <button type="submit" class="btn-primary auth-submit-btn">
+                            <i class="fas fa-arrow-right-to-bracket"></i> Login
+                        </button>
+
+                    </form>
+
+                    <p class="auth-switch-text">
+                        Don't have an account?
+                        <a href="#" onclick="event.preventDefault();switchAuthPanel('signup');">Sign Up</a>
+                    </p>
+
+                </div>
+
+                <!-- ══════════════════════════
+                     SIGN UP PANEL
+                ══════════════════════════ -->
+                <div class="auth-panel" id="signupPanel">
+
+                    <div class="auth-panel-head">
+                        <div class="section-badge">✨ Get Started</div>
+                        <h1 class="auth-title">Create your <span class="gradient-text">account</span></h1>
+                        <p class="auth-subtitle">Join CryptoKit — free, open source and privacy-first.</p>
+                    </div>
+
+                    <div class="auth-banner" id="signupBanner"></div>
+
+                    <form class="auth-form" id="signupForm" novalidate onsubmit="return handleSignup(event);">
+
+                        <div class="auth-field">
+                            <label class="auth-label" for="signupName">Name</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-user auth-input-icon"></i>
+                                <input type="text" class="auth-input" id="signupName"
+                                       placeholder="Your full name" autocomplete="name">
+                            </div>
+                            <span class="auth-error" id="signupNameError"></span>
+                        </div>
+
+                        <div class="auth-field">
+                            <label class="auth-label" for="signupEmail">Email</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-envelope auth-input-icon"></i>
+                                <input type="text" class="auth-input" id="signupEmail"
+                                       placeholder="you@example.com" autocomplete="email">
+                            </div>
+                            <span class="auth-error" id="signupEmailError"></span>
+                        </div>
+
+                        <div class="auth-field">
+                            <label class="auth-label" for="signupPassword">Password</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-lock auth-input-icon"></i>
+                                <input type="password" class="auth-input" id="signupPassword"
+                                       placeholder="Create a password" autocomplete="new-password">
+                                <button type="button" class="auth-toggle-eye" id="signupPasswordToggle"
+                                        onclick="togglePasswordVisibility('signupPassword', this);"
+                                        aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <span class="auth-error" id="signupPasswordError"></span>
+                        </div>
+
+                        <div class="auth-field">
+                            <label class="auth-label" for="signupConfirmPassword">Confirm Password</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-lock auth-input-icon"></i>
+                                <input type="password" class="auth-input" id="signupConfirmPassword"
+                                       placeholder="Re-enter your password" autocomplete="new-password">
+                                <button type="button" class="auth-toggle-eye" id="signupConfirmPasswordToggle"
+                                        onclick="togglePasswordVisibility('signupConfirmPassword', this);"
+                                        aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <span class="auth-error" id="signupConfirmPasswordError"></span>
+                        </div>
+
+                        <button type="submit" class="btn-primary auth-submit-btn">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </button>
+
+                    </form>
+
+                    <p class="auth-switch-text">
+                        Already have an account?
+                        <a href="#" onclick="event.preventDefault();switchAuthPanel('login');">Login</a>
+                    </p>
+
+                </div>
+
+            </div>
+
+            <p class="auth-footnote">
+                <i class="fas fa-circle-info"></i>
+                Frontend preview only — no data is stored or sent anywhere yet.
+            </p>
+
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         MAIN WEBSITE UI
+         Hidden until login/signup is completed.
+         auth.js toggles visibility between authScreen & mainApp.
+    ═══════════════════════════════════════════════════════ -->
+    <div id="mainApp" class="main-app-hidden">
+
+
+    <!-- ═══════════════════════════════════
+         NAVBAR
+    ═══════════════════════════════════ -->
+    <nav class="navbar" id="navbar">
+
+        <a href="#home" class="nav-logo">
+            <div class="nav-logo-icon">
+                <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                    <rect x="2" y="2" width="36" height="36" rx="8"
+                          stroke="currentColor" stroke-width="2.5"/>
+                    <path d="M20 8L20 14"
+                          stroke="currentColor" stroke-width="2.5"
+                          stroke-linecap="round"/>
+                    <rect x="12" y="14" width="16" height="18" rx="3"
+                          stroke="currentColor" stroke-width="2.5"/>
+                    <circle cx="20" cy="23" r="3"
+                            stroke="currentColor" stroke-width="2"/>
+                    <path d="M20 26L20 28"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
+            <span class="nav-logo-text">CryptoKit</span>
+        </a>
+
+
+        <!-- NAVIGATION LINKS -->
+        <ul class="nav-links">
+            <li><a href="#tools">Tools</a></li>
+            <li><a href="#how">How it Works</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li>
+                <a href="developer.html">
+                    <i class="fas fa-terminal"></i>
+                    Terminal
+                </a>
+            </li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#feedback">Feedback</a></li>
+            <li>
+                <a href="#"
+                   onclick="event.preventDefault();if(typeof toggleChat==='function')toggleChat();">
+                    Assistant
+                </a>
+            </li>
+        </ul>
+
+
+        <!-- RIGHT NAV ACTIONS -->
+        <div class="nav-actions">
+
+            <!-- MODE DROPDOWN -->
+            <div class="mode-selector" id="modeSelector">
+
+                <button class="mode-btn" onclick="if(typeof toggleModeDropdown==='function')toggleModeDropdown();">
+                    <span id="modeIcon">☀️</span>
+                    <span class="mode-label" id="modeLabel">Normal</span>
+                    <i class="fas fa-chevron-down mode-arrow" id="modeArrow"></i>
+                </button>
+
+                <div class="mode-dropdown" id="modeDropdown">
+
+                    <!-- NORMAL MODE -->
+                    <div class="mode-option" onclick="if(typeof selectMode==='function')selectMode('normal');">
+                        <span class="mode-option-icon">☀️</span>
+                        <div>
+                            <div class="mode-option-title">Normal Mode</div>
+                            <div class="mode-option-desc">Clean &amp; professional look</div>
+                        </div>
+                        <i class="fas fa-check mode-check" id="checkNormal"></i>
+                    </div>
+
+                    <!-- HACKER MODE -->
+                    <div class="mode-option" onclick="if(typeof selectMode==='function')selectMode('hacker');">
+                        <span class="mode-option-icon">💀</span>
+                        <div>
+                            <div class="mode-option-title">Hacker Mode</div>
+                            <div class="mode-option-desc">Matrix &amp; hacker vibes</div>
+                        </div>
+                        <i class="fas fa-check mode-check" id="checkHacker" style="display:none;"></i>
+                    </div>
+
+                    <!-- DEVELOPER MODE -->
+                    <div class="mode-option" onclick="window.location.href='developer.html';">
+                        <span class="mode-option-icon">💻</span>
+                        <div>
+                            <div class="mode-option-title">Terminal Mode</div>
+                            <div class="mode-option-desc">Interactive crypto terminal</div>
+                        </div>
+                        <i class="fas fa-terminal mode-check" style="display:none;"></i>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- LOGIN (hidden once authenticated) -->
+            <button class="btn-nav-login" id="navLoginBtn"
+                    onclick="handleLogout();">
+                Login
+            </button>
+
+            <!-- LOGOUT (shown once authenticated) -->
+            <button class="btn-nav-login" id="navLogoutBtn" style="display:none;"
+                    onclick="handleLogout();">
+                <i class="fas fa-arrow-right-from-bracket"></i> Logout
+            </button>
+
+            <!-- GET STARTED -->
+            <button class="btn-nav-cta">🚀 Get Started</button>
+
+        </div>
+
+        <!-- HAMBURGER -->
+        <div class="hamburger" onclick="if(typeof toggleMenu==='function')toggleMenu();">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+    </nav>
+
+
+    <!-- ═══════════════════════════════════
+         MOBILE MENU
+    ═══════════════════════════════════ -->
+    <div class="mobile-menu" id="mobileMenu">
+
+        <a href="#tools" onclick="if(typeof toggleMenu==='function')toggleMenu();">🔧 Tools</a>
+        <a href="#how" onclick="if(typeof toggleMenu==='function')toggleMenu();">📖 How it Works</a>
+        <a href="team.html" onclick="if(typeof toggleMenu==='function')toggleMenu();">👥 Team</a>
+        <a href="#about" onclick="if(typeof toggleMenu==='function')toggleMenu();">ℹ️ About</a>
+        <a href="#feedback" onclick="if(typeof toggleMenu==='function')toggleMenu();">💬 Feedback</a>
+        <a href="#"
+           onclick="event.preventDefault();if(typeof toggleMenu==='function')toggleMenu();if(typeof toggleChat==='function')toggleChat();">
+            🤖 Assistant
+        </a>
+        <a href="#" onclick="event.preventDefault();handleLogout();">🚪 Logout</a>
+
+        <!-- ── THEME SWITCHER with Submenu ── -->
+        <a href="#"
+           onclick="event.preventDefault();toggleMobileThemeMenu(this);"
+           class="mobile-theme-toggle-btn"
+           id="mobileThemeToggleLink">
+            🎨 Switch Theme
+            <i class="fas fa-chevron-down theme-arrow" id="mobileThemeArrow"></i>
+        </a>
+
+        <div class="mobile-theme-submenu" id="mobileThemeSubmenu">
+
+            <a href="#"
+               id="mobileNormalOption"
+               onclick="event.preventDefault();mobileSwitchTheme('normal');">
+                ☀️ Normal Mode
+                <span class="theme-active-dot" id="normalDot" style="display:none;"></span>
+            </a>
+
+            <a href="#"
+               id="mobileHackerOption"
+               onclick="event.preventDefault();mobileSwitchTheme('hacker');">
+                💀 Hacker Mode
+                <span class="theme-active-dot" id="hackerDot" style="display:none;"></span>
+            </a>
+
+            <a href="#"
+               id="mobileDevOption"
+               onclick="event.preventDefault();showMobileDevPopup();">
+                💻 Terminal Mode
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════
+         MOBILE TERMINAL MODE POPUP
+    ═══════════════════════════════════ -->
+    <div class="mobile-dev-popup" id="mobileDevPopup">
+        <div class="mobile-dev-popup-box">
+            <span class="mobile-dev-popup-icon">🖥️</span>
+            <div class="mobile-dev-popup-title">Desktop Only Feature</div>
+            <p class="mobile-dev-popup-msg">
+                <strong>Terminal Mode</strong> is optimized for larger screens
+                and requires a desktop or laptop for the best experience.<br><br>
+                Please visit CryptoKit on a <strong>desktop or laptop</strong>
+                to access the interactive crypto terminal.
+            </p>
+            <button class="mobile-dev-popup-close" id="mobileDevPopupCloseBtn">
+                Got it! 👍
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         HERO SECTION
+    ═══════════════════════════════════ -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+
+            <!-- Hero Left -->
+            <div class="hero-left">
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    <span>v1.0 Now Live — Open Source &amp; Free</span>
+                </div>
+
+                <h1 class="hero-title glitch" data-text="Your Complete Cryptography Toolkit">
+                    Your Complete
+                    <span class="gradient-text">Cryptography</span>
+                    Toolkit
+                </h1>
+
+                <p class="hero-subtitle">
+                    Encrypt, hash, verify and secure your data with professional-grade
+                    cryptographic tools — all in one place. Fast, private, and open source.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="team.html" class="btn-primary">
+                        <i class="fas fa-users"></i> Our Team
+                    </a>
+                    <a href="#demo" class="btn-secondary">
+                        <i class="fas fa-play"></i> Live Demo
+                    </a>
+                </div>
+
+                <div class="hero-trust">
+                    <div class="trust-item"><i class="fas fa-check-circle"></i> No data stored</div>
+                    <div class="trust-item"><i class="fas fa-check-circle"></i> Client-side</div>
+                    <div class="trust-item"><i class="fas fa-check-circle"></i> Open Source</div>
+                    <div class="trust-item"><i class="fas fa-check-circle"></i> Free forever</div>
+                </div>
+            </div>
+
+            <!-- Hero Terminal with OS Switcher -->
+            <div class="hero-terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                    </div>
+                    <span class="terminal-title" id="terminalTitle">cryptokit ~ zsh</span>
+
+                    <div class="terminal-os-switch">
+                        <button class="os-btn active" id="osMac" onclick="if(typeof switchTermOS==='function')switchTermOS('mac');" title="macOS Terminal">
+                            <i class="fab fa-apple"></i>
+                        </button>
+                        <button class="os-btn" id="osWin" onclick="if(typeof switchTermOS==='function')switchTermOS('win');" title="Windows CMD">
+                            <i class="fab fa-windows"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="terminal-body" id="terminalBody"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         LIVE DEMO SECTION
+    ═══════════════════════════════════ -->
+    <section class="live-demo" id="demo">
+        <div class="demo-container">
+
+            <div class="demo-header">
+                <h2>⚡ Try It <span class="gradient-text">Right Now</span></h2>
+                <p>No sign up needed — experience the tools instantly</p>
+            </div>
+
+            <div class="demo-tabs">
+                <button class="demo-tab active" onclick="if(typeof setDemoTab==='function')setDemoTab(this,'hash');"># Hash Generator</button>
+                <button class="demo-tab" onclick="if(typeof setDemoTab==='function')setDemoTab(this,'base64');">⇄ Base64 Encode</button>
+                <button class="demo-tab" onclick="if(typeof setDemoTab==='function')setDemoTab(this,'password');">🔑 Password Check</button>
+            </div>
+
+            <div class="demo-input-area">
+                <textarea
+                    class="demo-input"
+                    id="demoInput"
+                    placeholder="Type anything here to see it in action..."
+                    oninput="if(typeof runDemo==='function')runDemo();"
+                ></textarea>
+                <div class="demo-controls">
+                    <select class="demo-select" id="demoAlgo" onchange="if(typeof runDemo==='function')runDemo();">
+                        <option value="sha256">SHA-256</option>
+                        <option value="sha512">SHA-512</option>
+                        <option value="md5">MD5 (weak)</option>
+                    </select>
+                    <button class="btn-primary" onclick="if(typeof runDemo==='function')runDemo();" style="padding:10px 18px;font-size:13px;">
+                        Generate
+                    </button>
+                </div>
+            </div>
+
+            <div class="demo-result" id="demoResult">
+                <span class="demo-result-placeholder">Your result will appear here...</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         TOOLS SECTION
+    ═══════════════════════════════════ -->
+    <section class="tools-section" id="tools">
+        <div class="tools-header">
+            <div class="section-badge">🔧 Our Tools</div>
+            <h2 class="section-title">
+                Powerful <span class="gradient-text">Cryptography Tools</span>
+            </h2>
+            <p class="section-subtitle">
+                Everything you need for data security in one place.
+                Professional grade, completely free.
+            </p>
+        </div>
+
+        <div class="tools-grid">
+
+            <!-- Tool 1: RSA -->
+            <a href="rsa-keytool.html" class="tool-card" id="tool-rsa">
+                <div class="tool-icon purple"><i class="fas fa-key"></i></div>
+                <div class="tool-name">RSA Key Generator</div>
+                <div class="tool-desc">
+                    Generate secure RSA key pairs with configurable sizes.
+                    Analyze key strength and export in PEM format.
+                </div>
+                <div class="tool-tags">
+                    <span class="tag">RSA-2048</span>
+                    <span class="tag">RSA-4096</span>
+                    <span class="tag">PEM</span>
+                </div>
+                <div class="tool-cta">Try Now <i class="fas fa-arrow-right"></i></div>
+            </a>
+
+            <!-- Tool 2: File Integrity -->
+            <a href="file-integrity.html" class="tool-card" id="tool-integrity">
+                <div class="tool-icon blue"><i class="fas fa-fingerprint"></i></div>
+                <div class="tool-name">File Integrity Checker</div>
+                <div class="tool-desc">
+                    Verify file authenticity by generating and comparing
+                    cryptographic hashes. Detect any tampering instantly.
+                </div>
+                <div class="tool-tags">
+                    <span class="tag">SHA-256</span>
+                    <span class="tag">SHA-512</span>
+                    <span class="tag">MD5</span>
+                </div>
+                <div class="tool-cta">Try Now <i class="fas fa-arrow-right"></i></div>
+            </a>
+
+            <!-- Tool 3: Hash Generator -->
+            <a href="hash-generator.html" class="tool-card" id="tool-hash">
+                <div class="tool-icon green"><i class="fas fa-barcode"></i></div>
+                <div class="tool-name">Hash Generator</div>
+                <div class="tool-desc">
+                    Generate cryptographic hashes for text and files
+                    using multiple algorithms simultaneously.
+                </div>
+                <div class="tool-tags">
+                    <span class="tag">MD5</span>
+                    <span class="tag">SHA-1</span>
+                    <span class="tag">BLAKE2</span>
+                </div>
+                <div class="tool-cta">Try Now <i class="fas fa-arrow-right"></i></div>
+            </a>
+
+            <!-- Tool 4: Encrypt/Decrypt -->
+            <a href="text-encrypt.html" class="tool-card" id="tool-encrypt">
+                <div class="tool-icon red"><i class="fas fa-user-lock"></i></div>
+                <div class="tool-name">Text Encrypt / Decrypt</div>
+                <div class="tool-desc">
+                    Encrypt and decrypt messages using AES-256 or RSA.
+                    Secure your sensitive information with one click.
+                </div>
+                <div class="tool-tags">
+                    <span class="tag">AES-256</span>
+                    <span class="tag">RSA</span>
+                    <span class="tag">CBC</span>
+                </div>
+                <div class="tool-cta">Try Now <i class="fas fa-arrow-right"></i></div>
+            </a>
+
+            <!-- Tool 5: Digital Signature -->
+            <a href="digital-signature.html" class="tool-card" id="tool-signature">
+                <div class="tool-icon yellow"><i class="fas fa-file-contract"></i></div>
+                <div class="tool-name">Digital Signature</div>
+                <div class="tool-desc">
+                    Sign and verify documents digitally. Ensure
+                    authenticity and non-repudiation of your data.
+                </div>
+                <div class="tool-tags">
+                    <span class="tag">RSA-PSS</span>
+                    <span class="tag">ECDSA</span>
+                    <span class="tag">Verify</span>
+                </div>
+                <div class="tool-cta">Try Now <i class="fas fa-arrow-right"></i></div>
+            </a>
+
+            <!-- Tool 6: Password -->
+            <a href="password-generator.html" class="tool-card" id="tool-password">
+                <div class="tool-icon pink"><i class="fas fa-unlock-keyhole"></i></div>
+                <div class="tool-name">Password Tools</div>
+                <div class="tool-desc">
+                    Generate cryptographically secure passwords and
+                    analyze strength with entropy calculations.
+                </div>
+                <div class="tool-tags">
+                    <span class="tag">Entropy</span>
+                    <span class="tag">CSPRNG</span>
+                    <span class="tag">Strength</span>
+                </div>
+                <div class="tool-cta">Try Now <i class="fas fa-arrow-right"></i></div>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         WHY US SECTION
+    ═══════════════════════════════════ -->
+    <section class="why-section" id="about">
+        <div class="why-container">
+
+            <div class="why-content">
+                <div class="section-badge">✨ Why CryptoKit</div>
+                <h2 class="section-title">
+                    Built for <span class="gradient-text">Security First</span>
+                </h2>
+                <p class="section-subtitle" style="margin-bottom:28px;">
+                    Designed with privacy and security as the top priority — not an afterthought.
+                </p>
+                <ul class="why-list">
+                    <li>
+                        <div class="check"><i class="fas fa-check"></i></div>
+                        <span>Your files and keys are <strong>never stored</strong> on our servers</span>
+                    </li>
+                    <li>
+                        <div class="check"><i class="fas fa-check"></i></div>
+                        <span>Many operations run <strong>client-side</strong> for maximum privacy</span>
+                    </li>
+                    <li>
+                        <div class="check"><i class="fas fa-check"></i></div>
+                        <span>All algorithms follow <strong>NIST &amp; OWASP</strong> recommendations</span>
+                    </li>
+                    <li>
+                        <div class="check"><i class="fas fa-check"></i></div>
+                        <span>Full source code on <strong>GitHub</strong> — audit it yourself</span>
+                    </li>
+                    <li>
+                        <div class="check"><i class="fas fa-check"></i></div>
+                        <span>Weak algorithm <strong>warnings built-in</strong> to guide best practices</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="why-features">
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-title">Secure by Design</div>
+                    <div class="feature-desc">Industry-standard crypto implementations only</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-title">Lightning Fast</div>
+                    <div class="feature-desc">Results in milliseconds, no waiting</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-title">Privacy First</div>
+                    <div class="feature-desc">Zero data retention policy, always</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📖</div>
+                    <div class="feature-title">Open Source</div>
+                    <div class="feature-desc">MIT licensed. Fork, audit, contribute</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <div class="feature-title">No Install</div>
+                    <div class="feature-desc">100% browser-based, any device</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🆓</div>
+                    <div class="feature-title">Free Forever</div>
+                    <div class="feature-desc">No premium tiers. No hidden charges.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════
+         HOW IT WORKS
+    ═══════════════════════════════════ -->
+    <section class="how-section" id="how">
+        <div class="how-header">
+            <div class="section-badge">📖 Process</div>
+            <h2 class="section-title">How It <span class="gradient-text">Works</span></h2>
+            <p class="section-subtitle" style="margin:0 auto;">Three simple steps to secure your data</p>
+        </div>
+        <div class="how-steps">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-icon">🎯</div>
+                <div class="step-title">Choose Your Tool</div>
+                <div class="step-desc">Browse our cryptographic tools and pick the right one</div>
+            </div>
+            <div class="step-connector">
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-icon">📥</div>
+                <div class="step-title">Input Your Data</div>
+                <div class="step-desc">Enter text, upload a file, or paste your keys</div>
+            </div>
+            <div class="step-connector">
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-icon">📤</div>
+                <div class="step-title">Get Results Instantly</div>
+                <div class="step-desc">Download, copy, or share your secure results</div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════
+         STATS SECTION
+    ═══════════════════════════════════ -->
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon">🔧</div>
+                <span class="stat-number" data-target="12">0</span>
+                <div class="stat-label">Tools Available</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <span class="stat-number" data-target="50" data-suffix="K+">0</span>
+                <div class="stat-label">Operations Done</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔒</div>
+                <span class="stat-number" data-target="256" data-suffix="-bit">0</span>
+                <div class="stat-label">Max Encryption</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🗄️</div>
+                <span class="stat-number" data-target="0" data-suffix=" Files">0</span>
+                <div class="stat-label">Data Stored</div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════
+         FEEDBACK & REVIEWS
+    ═══════════════════════════════════ -->
+    <section class="feedback-section" id="feedback">
+
+        <div class="feedback-header">
+            <div class="section-badge">💬 Feedback</div>
+            <h2 class="section-title">What People <span class="gradient-text">Say</span></h2>
+            <p class="section-subtitle" style="margin:0 auto;">Reviews from our community</p>
+        </div>
+
+        <div class="reviews-grid">
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">
+                    "CryptoKit is exactly what I needed. Fast, free, and privacy-focused.
+                    The hash generator is incredibly useful for my workflow."
+                </p>
+                <div class="review-author">
+                    <div class="review-avatar">D</div>
+                    <div>
+                        <div class="review-name">David Kim</div>
+                        <div class="review-role">Security Engineer</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">
+                    "The hacker mode is incredible! Love the Matrix aesthetic.
+                    Finally a crypto toolkit that doesn't look boring."
+                </p>
+                <div class="review-author">
+                    <div class="review-avatar">E</div>
+                    <div>
+                        <div class="review-name">Emma Wilson</div>
+                        <div class="review-role">CS Student</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">
+                    "Open source and zero data storage is a game changer.
+                    I recommend CryptoKit to all my developer colleagues."
+                </p>
+                <div class="review-author">
+                    <div class="review-avatar">R</div>
+                    <div>
+                        <div class="review-name">Raj Sharma</div>
+                        <div class="review-role">Full Stack Dev</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feedback-form-wrapper" id="feedbackFormWrapper">
+            <h3 class="feedback-form-title">
+                Share Your <span class="gradient-text">Feedback</span>
+            </h3>
+            <form class="feedback-form" id="feedbackForm" onsubmit="if(typeof submitFeedback==='function')return submitFeedback(event);event.preventDefault();">
+                <div class="feedback-row">
+                    <input type="text"  class="feedback-input" id="fbName" placeholder="Your Name"  required>
+                    <input type="email" class="feedback-input" placeholder="Your Email" required>
+                </div>
+                <div class="feedback-rating" id="feedbackRating">
+                    <span class="rating-label">Rating:</span>
+                    <span class="rating-star" onclick="if(typeof setRating==='function')setRating(1);">☆</span>
+                    <span class="rating-star" onclick="if(typeof setRating==='function')setRating(2);">☆</span>
+                    <span class="rating-star" onclick="if(typeof setRating==='function')setRating(3);">☆</span>
+                    <span class="rating-star" onclick="if(typeof setRating==='function')setRating(4);">☆</span>
+                    <span class="rating-star" onclick="if(typeof setRating==='function')setRating(5);">☆</span>
+                </div>
+                <textarea
+                    class="feedback-textarea"
+                    placeholder="Tell us what you think..."
+                    rows="4"
+                    required
+                ></textarea>
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center;">
+                    <i class="fas fa-paper-plane"></i> Submit Feedback
+                </button>
+            </form>
+        </div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════
+         CTA SECTION
+    ═══════════════════════════════════ -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <div class="cta-glow"></div>
+            <h2>Ready to <span class="gradient-text">Secure Your Data?</span></h2>
+            <p>Join thousands of developers and security professionals who trust CryptoKit.</p>
+            <div class="cta-buttons">
+                <a href="#tools" class="btn-primary">
+                    <i class="fas fa-rocket"></i> Start Using Tools
+                </a>
+                <a href="#" class="btn-secondary">
+                    <i class="fab fa-github"></i> View on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════ -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+
+                <div class="footer-brand">
+                    <a href="#home" class="nav-logo">
+                        <div class="nav-logo-icon">
+                            <svg viewBox="0 0 40 40" width="24" height="24" fill="none">
+                                <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2.5"/>
+                                <path d="M20 8L20 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                <rect x="12" y="14" width="16" height="18" rx="3" stroke="currentColor" stroke-width="2.5"/>
+                                <circle cx="20" cy="23" r="3" stroke="currentColor" stroke-width="2"/>
+                                <path d="M20 26L20 28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <span class="nav-logo-text">CryptoKit</span>
+                    </a>
+                    <p>A free, open-source cryptography toolkit. Privacy-first, always.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/CryptoKit-official/CryptoKit" class="social-btn"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-discord"></i></a>
+                        <a href="https://www.linkedin.com/company/145021979/admin/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3BMcdUk4s8SCiUW1mw1PZqjA%3D%3D" class="social-btn"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Tools</h4>
+                    <ul>
+                        <li><a href="hash-generator.html">Hash Generator</a></li>
+                        <li><a href="rsa-keytool.html">RSA Key Generator</a></li>
+                        <li><a href="file-integrity.html">File Integrity</a></li>
+                        <li><a href="text-encrypt.html">Text Encrypt</a></li>
+                        <li><a href="password-generator.html">Password Tools</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="security.html">Security</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="limitations.html">Limitations</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="team.html">Meet the Team</a></li>
+                        <li><a href="#feedback">Feedback</a></li>
+                        <li><a href="Privacy Policy.html">Privacy Policy</a></li>
+                        <li><a href="Terms.html">Terms</a></li>
+                        <li><a href="Support.html">Support &amp; Contact</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 CryptoKit. MIT License. Made with ❤️ by the CryptoKit Team</p>
+                <div class="footer-bottom-links">
+                    <a href="Privacy Policy.html">Privacy</a>
+                    <a href="Terms.html">Terms</a>
+                    <a href="Security.html">Security</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ═══════════════════════════════════
+         SCROLL TO TOP
+    ═══════════════════════════════════ -->
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'});">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+
+    <!-- ═══════════════════════════════════
+         AI ASSISTANT — FLOATING BUTTON
+    ═══════════════════════════════════ -->
+    <button class="ai-fab" id="aiFab" onclick="if(typeof toggleChat==='function')toggleChat();" title="Ask CryptoBot">
+        <span id="fabIcon">🤖</span>
+    </button>
+
+
+    <!-- ═══════════════════════════════════
+         AI ASSISTANT — CHAT WINDOW
+    ═══════════════════════════════════ -->
+    <div class="ai-chat-window" id="aiChatWindow">
+
+        <div class="ai-chat-header">
+            <div class="ai-header-info">
+                <div class="ai-avatar" id="aiAvatar">🤖</div>
+                <div>
+                    <span class="ai-name" id="aiName">CryptoBot</span>
+                    <span class="ai-status">
+                        <span class="ai-status-dot"></span>
+                        <span id="aiStatusText">Online · Ready</span>
+                    </span>
+                </div>
+            </div>
+            <div class="ai-header-actions">
+                <button class="ai-header-btn" onclick="if(typeof clearChat==='function')clearChat();" title="Clear">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button class="ai-header-btn" onclick="if(typeof toggleChat==='function')toggleChat();" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="ai-categories">
+            <span class="ai-categories-label">Browse by topic</span>
+            <div class="ai-category-chips">
+                <button class="ai-chip" onclick="if(typeof askCategory==='function')askCategory('tools');">🔧 Tools</button>
+                <button class="ai-chip" onclick="if(typeof askCategory==='function')askCategory('learn');">📚 Learn</button>
+                <button class="ai-chip" onclick="if(typeof askCategory==='function')askCategory('security');">🛡️ Security</button>
+                <button class="ai-chip" onclick="if(typeof askCategory==='function')askCategory('help');">❓ Help</button>
+            </div>
+        </div>
+
+        <div class="ai-messages" id="aiMessages"></div>
+
+        <div class="ai-input-area">
+            <textarea
+                class="ai-input"
+                id="aiInput"
+                placeholder="Ask me anything about cryptography..."
+                rows="1"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();if(typeof sendMessage==='function')sendMessage();}"
+                oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px';"
+            ></textarea>
+            <button class="ai-send-btn" onclick="if(typeof sendMessage==='function')sendMessage();">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+
+    </div>
+
+
+    </div><!-- /#mainApp -->
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         SCRIPTS
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Anti-flash: check auth state BEFORE any other script runs -->
+    <script>
+        (function () {
+            var isAuthed = (function () {
+                try {
+                    return sessionStorage.getItem('cryptokit_auth') === 'true' ||
+                           localStorage.getItem('cryptokit_auth') === 'true';
+                } catch (e) { return false; }
+            })();
+            if (isAuthed) {
+                document.getElementById('authScreen').classList.add('auth-screen-hidden');
+                document.getElementById('mainApp').classList.remove('main-app-hidden');
+            }
+        })();
+    </script>
+
+    <script src="kb.js"></script>
+    <script src="script.js"></script>
+
+    <!-- Auth Logic (Login/Signup) -->
+    <script src="auth.js"></script>
+
+
+    <!-- ═══════════════════════════════════
+         MOBILE THEME & DEV POPUP SCRIPTS
+    ═══════════════════════════════════ -->
+    <script>
+        /* ══════════════════════════════════════════════
+           ERROR HANDLER
+        ══════════════════════════════════════════════ */
+        window.addEventListener('error', function(e) {
+            console.warn('Resource loading error:', e.message || e);
+        }, true);
+
+        /* ══════════════════════════════════════════════
+           FALLBACK: critical functions if script.js fails
+        ══════════════════════════════════════════════ */
+        if (typeof toggleChat !== 'function') {
+            window.toggleChat = function() {
+                var chatWindow = document.getElementById('aiChatWindow');
+                if (chatWindow) {
+                    chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+                }
+            };
+        }
+
+        if (typeof toggleMenu !== 'function') {
+            window.toggleMenu = function() {
+                var menu = document.getElementById('mobileMenu');
+                var hamburger = document.querySelector('.hamburger');
+                if (menu) menu.classList.toggle('active');
+                if (hamburger) hamburger.classList.toggle('active');
+            };
+        }
+
+        if (typeof selectMode !== 'function') {
+            window.selectMode = function(mode) {
+                document.documentElement.setAttribute('data-theme', mode);
+                localStorage.setItem('cryptokit-theme', mode);
+            };
+        }
+
+        if (typeof toggleModeDropdown !== 'function') {
+            window.toggleModeDropdown = function() {
+                var dropdown = document.getElementById('modeDropdown');
+                if (dropdown) dropdown.classList.toggle('active');
+            };
+        }
+
+        /* ──────────────────────────────────────
+           Toggle the mobile theme submenu
+        ────────────────────────────────────── */
+        function toggleMobileThemeMenu(btn) {
+            var submenu = document.getElementById('mobileThemeSubmenu');
+            var arrow   = document.getElementById('mobileThemeArrow');
+            if (!submenu || !arrow) return;
+
+            var isOpen = submenu.classList.contains('open');
+
+            if (isOpen) {
+                submenu.classList.remove('open');
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                submenu.classList.add('open');
+                arrow.style.transform = 'rotate(180deg)';
+                updateMobileThemeDots();
+            }
+        }
+
+        /* ──────────────────────────────────────
+           Switch theme from mobile submenu
+        ────────────────────────────────────── */
+        function mobileSwitchTheme(mode) {
+            if (typeof selectMode === 'function') {
+                selectMode(mode);
+            } else {
+                document.documentElement.setAttribute('data-theme', mode);
+            }
+
+            updateMobileThemeDots();
+
+            setTimeout(function() {
+                var submenu = document.getElementById('mobileThemeSubmenu');
+                var arrow = document.getElementById('mobileThemeArrow');
+                if (submenu) submenu.classList.remove('open');
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+                if (typeof toggleMenu === 'function') toggleMenu();
+            }, 400);
+        }
+
+        /* ──────────────────────────────────────
+           Show active theme dot indicators
+        ────────────────────────────────────── */
+        function updateMobileThemeDots() {
+            var currentTheme = document.documentElement.getAttribute('data-theme') || 'normal';
+
+            var normalDot  = document.getElementById('normalDot');
+            var hackerDot  = document.getElementById('hackerDot');
+            var normalLink = document.getElementById('mobileNormalOption');
+            var hackerLink = document.getElementById('mobileHackerOption');
+
+            if (normalDot) normalDot.style.display = 'none';
+            if (hackerDot) hackerDot.style.display = 'none';
+            if (normalLink) normalLink.classList.remove('active-theme');
+            if (hackerLink) hackerLink.classList.remove('active-theme');
+
+            if (currentTheme === 'hacker') {
+                if (hackerDot)  hackerDot.style.display  = 'inline-block';
+                if (hackerLink) hackerLink.classList.add('active-theme');
+            } else {
+                if (normalDot)  normalDot.style.display  = 'inline-block';
+                if (normalLink) normalLink.classList.add('active-theme');
+            }
+        }
+
+        /* ──────────────────────────────────────
+           Show Developer Mode desktop-only popup
+        ────────────────────────────────────── */
+        function showMobileDevPopup() {
+            var submenu = document.getElementById('mobileThemeSubmenu');
+            var arrow = document.getElementById('mobileThemeArrow');
+            if (submenu) submenu.classList.remove('open');
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
+            if (typeof toggleMenu === 'function') toggleMenu();
+
+            var popup = document.getElementById('mobileDevPopup');
+            if (popup) {
+                popup.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        /* ──────────────────────────────────────
+           Hide Developer Mode popup
+        ────────────────────────────────────── */
+        function hideMobileDevPopup(event) {
+            var popup = document.getElementById('mobileDevPopup');
+            if (!popup) return;
+
+            if (event && event.target && event.target !== popup) return;
+
+            popup.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        /* ──────────────────────────────────────
+           DOM Ready — setup event listeners
+        ────────────────────────────────────── */
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Close button for dev popup
+            var closeBtn = document.getElementById('mobileDevPopupCloseBtn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var popup = document.getElementById('mobileDevPopup');
+                    if (popup) {
+                        popup.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+
+            // Overlay click to close
+            var popupOverlay = document.getElementById('mobileDevPopup');
+            if (popupOverlay) {
+                popupOverlay.addEventListener('click', function(e) {
+                    if (e.target === popupOverlay) {
+                        popupOverlay.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+
+            updateMobileThemeDots();
+
+            // ═══════════════════════════════════
+            // Intersection Observer for fade-up
+            // ═══════════════════════════════════
+            try {
+                var fadeElements = document.querySelectorAll('.fade-up');
+                if (fadeElements.length > 0 && 'IntersectionObserver' in window) {
+                    document.body.classList.add('js-loaded');
+
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('visible');
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.1 });
+
+                    fadeElements.forEach(function(el) {
+                        observer.observe(el);
+                    });
+                }
+            } catch(e) {
+                document.querySelectorAll('.fade-up').forEach(function(el) {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                });
+            }
+
+            // ═══════════════════════════════════
+            // Show/hide Login vs Logout button
+            // based on auth state
+            // ═══════════════════════════════════
+            var isAuthed = false;
+            try {
+                isAuthed = sessionStorage.getItem('cryptokit_auth') === 'true' ||
+                           localStorage.getItem('cryptokit_auth') === 'true';
+            } catch(e) {}
+
+            var navLoginBtn  = document.getElementById('navLoginBtn');
+            var navLogoutBtn = document.getElementById('navLogoutBtn');
+
+            if (isAuthed) {
+                if (navLoginBtn)  navLoginBtn.style.display  = 'none';
+                if (navLogoutBtn) navLogoutBtn.style.display  = 'inline-flex';
+            } else {
+                if (navLoginBtn)  navLoginBtn.style.display  = 'inline-flex';
+                if (navLogoutBtn) navLogoutBtn.style.display  = 'none';
+            }
+        });
+
+        /* ──────────────────────────────────────
+           Close popup on Escape key
+        ────────────────────────────────────── */
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                var popup = document.getElementById('mobileDevPopup');
+                if (popup && popup.classList.contains('show')) {
+                    popup.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+
+        /* ──────────────────────────────────────
+           Legacy alias
+        ────────────────────────────────────── */
+        function mobileThemeSwitch() {
+            toggleMobileThemeMenu();
+        }
+    </script>
+
+</body>
+</html>

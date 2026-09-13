@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Signature — CryptoKit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+
+/* ═══════════════════════════════════════════
+   THEME VARIABLES — NORMAL MODE
+═══════════════════════════════════════════ */
+[data-theme="normal"] {
+    --bg-0:             #F0F4FF;
+    --surface:          #FFFFFF;
+    --surface-soft:     #F7F8FF;
+    --surface-hover:    #F0F2FF;
+    --border:           rgba(108, 99, 255, 0.15);
+    --border-strong:    rgba(108, 99, 255, 0.25);
+    --ink:              #1A1A2E;
+    --ink-soft:         #4A5568;
+    --ink-faint:        #718096;
+    --accent-1:         #6C63FF;
+    --accent-2:         #00B4D8;
+    --accent-soft:      rgba(108, 99, 255, 0.08);
+    --primary-rgb:      108, 99, 255;
+    --secondary-rgb:    0, 180, 216;
+    --glass:            rgba(108, 99, 255, 0.05);
+    --glass-border:     rgba(108, 99, 255, 0.12);
+    --good:             #06D6A0;
+    --good-bg:          rgba(6, 214, 160, 0.1);
+    --warn:             #F6A623;
+    --warn-bg:          rgba(246, 166, 35, 0.1);
+    --bad:              #FF4D6A;
+    --bad-bg:           rgba(255, 77, 106, 0.1);
+    --radius-lg:        18px;
+    --radius-md:        12px;
+    --radius-sm:        9px;
+    --radius-xs:        7px;
+    --font-display:     'Space Grotesk', sans-serif;
+    --font-body:        'Inter', sans-serif;
+    --font-mono:        'JetBrains Mono', monospace;
+    --shadow-main:      0 4px 24px rgba(108, 99, 255, 0.1);
+    --shadow-hover:     0 12px 40px rgba(108, 99, 255, 0.18);
+    --shadow-btn:       0 4px 15px rgba(108, 99, 255, 0.3);
+    --shadow-icon:      0 8px 24px rgba(108, 99, 255, 0.35);
+    --gradient-primary: linear-gradient(135deg, #6C63FF, #00B4D8);
+    --gradient-text:    linear-gradient(135deg, #6C63FF, #00B4D8);
+    --tab-active-bg:    linear-gradient(135deg, rgba(108,99,255,0.12), rgba(0,180,216,0.08));
+    --tab-active-shadow:0 4px 15px rgba(108, 99, 255, 0.15);
+    --scrollbar:        #6C63FF;
+    --tag-bg:           rgba(108, 99, 255, 0.08);
+    --tag-border:       rgba(108, 99, 255, 0.2);
+    --dz-border:        rgba(108, 99, 255, 0.25);
+    --dz-hover-border:  #6C63FF;
+    --dz-hover-bg:      rgba(108, 99, 255, 0.06);
+}
+
+/* ═══════════════════════════════════════════
+   THEME VARIABLES — HACKER MODE
+═══════════════════════════════════════════ */
+[data-theme="hacker"] {
+    --bg-0:             #000000;
+    --surface:          #050505;
+    --surface-soft:     #0A0A0A;
+    --surface-hover:    #0D1A0D;
+    --border:           rgba(0, 255, 65, 0.15);
+    --border-strong:    rgba(0, 255, 65, 0.3);
+    --ink:              #00FF41;
+    --ink-soft:         #00CC33;
+    --ink-faint:        #006611;
+    --accent-1:         #00FF41;
+    --accent-2:         #39FF14;
+    --accent-soft:      rgba(0, 255, 65, 0.08);
+    --primary-rgb:      0, 255, 65;
+    --secondary-rgb:    57, 255, 20;
+    --glass:            rgba(0, 255, 65, 0.03);
+    --glass-border:     rgba(0, 255, 65, 0.15);
+    --good:             #00FF41;
+    --good-bg:          rgba(0, 255, 65, 0.08);
+    --warn:             #FFD700;
+    --warn-bg:          rgba(255, 215, 0, 0.1);
+    --bad:              #FF0040;
+    --bad-bg:           rgba(255, 0, 64, 0.12);
+    --radius-lg:        18px;
+    --radius-md:        12px;
+    --radius-sm:        9px;
+    --radius-xs:        7px;
+    --font-display:     'Share Tech Mono', monospace;
+    --font-body:        'Share Tech Mono', monospace;
+    --font-mono:        'Share Tech Mono', monospace;
+    --shadow-main:      0 0 20px rgba(0, 255, 65, 0.05);
+    --shadow-hover:     0 0 30px rgba(0, 255, 65, 0.1);
+    --shadow-btn:       0 0 15px rgba(0, 255, 65, 0.2);
+    --shadow-icon:      0 0 20px rgba(0, 255, 65, 0.4);
+    --gradient-primary: linear-gradient(135deg, #00FF41, #39FF14);
+    --gradient-text:    linear-gradient(135deg, #00FF41, #00FFFF);
+    --tab-active-bg:    rgba(0, 255, 65, 0.07);
+    --tab-active-shadow:0 0 20px rgba(0, 255, 65, 0.2);
+    --scrollbar:        #00FF41;
+    --tag-bg:           rgba(0, 255, 65, 0.05);
+    --tag-border:       rgba(0, 255, 65, 0.15);
+    --dz-border:        rgba(0, 255, 65, 0.25);
+    --dz-hover-border:  #00FF41;
+    --dz-hover-bg:      rgba(0, 255, 65, 0.05);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-0);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+[data-theme="normal"] body {
+    background-image:
+        radial-gradient(ellipse 1100px 500px at 12% -8%, rgba(108,99,255,0.06), transparent 60%),
+        radial-gradient(ellipse 900px 500px at 100% 0%, rgba(0,180,216,0.04), transparent 55%);
+}
+
+[data-theme="hacker"] body {
+    background-image:
+        radial-gradient(ellipse 900px 500px at 15% -5%, rgba(0,255,65,0.04), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 100% 10%, rgba(57,255,20,0.03), transparent 60%);
+}
+
+/* Hacker — Animated Grid */
+[data-theme="hacker"] body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+    pointer-events: none;
+    animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove {
+    0%   { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+}
+
+/* Hacker — CRT Scanlines */
+[data-theme="hacker"] body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,65,0.008) 2px, rgba(0,255,65,0.008) 4px);
+    pointer-events: none;
+    z-index: 9999;
+}
+
+::selection {
+    background: rgba(var(--primary-rgb), 0.2);
+    color: var(--accent-1);
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-0); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    position: relative;
+    z-index: 2;
+}
+
+/* ═══════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════ */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 34px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.topbar-right {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* ═══════════════════════════════════════════
+   PILL (shared base)
+═══════════════════════════════════════════ */
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    transition: all 0.3s ease;
+    font-family: var(--font-body);
+}
+
+[data-theme="hacker"] .pill {
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    background: rgba(0,255,65,0.03);
+    box-shadow: 0 0 10px rgba(0,255,65,0.03);
+}
+
+/* Back Pill */
+a.back-pill {
+    color: var(--ink-soft);
+    cursor: pointer;
+    outline: none;
+}
+a.back-pill:hover {
+    color: var(--accent-1);
+    border-color: var(--accent-1);
+    box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.15);
+    transform: translateX(-2px);
+}
+a.back-pill:active { transform: scale(0.97) translateX(-2px); }
+a.back-pill:focus-visible {
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+    border-color: var(--accent-1);
+}
+a.back-pill i { transition: transform 0.2s ease; }
+a.back-pill:hover i { transform: translateX(-3px); }
+
+[data-theme="hacker"] a.back-pill:hover {
+    box-shadow: 0 0 16px rgba(0,255,65,0.2);
+    text-shadow: 0 0 8px rgba(0,255,65,0.4);
+}
+
+/* Lock Pill */
+.lock-pill { color: var(--accent-1); font-weight: 600; font-size: 12px; }
+.lock-pill i { color: var(--accent-1); }
+[data-theme="hacker"] .lock-pill {
+    text-shadow: 0 0 6px rgba(0,255,65,0.3);
+    letter-spacing: 1px;
+    font-size: 11px;
+}
+
+/* ═══════════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════════ */
+.toggle-pill { gap: 10px; cursor: pointer; user-select: none; }
+
+.toggle-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    transition: all 0.3s;
+}
+[data-theme="hacker"] .toggle-label {
+    color: var(--accent-1);
+    letter-spacing: 1px;
+    text-shadow: 0 0 6px rgba(0,255,65,0.3);
+}
+
+.switch {
+    width: 34px; height: 19px;
+    border-radius: 999px;
+    background: var(--glass-border);
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+.switch::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+[data-theme="hacker"] .switch { background: rgba(0,255,65,0.2); }
+[data-theme="hacker"] .switch::after {
+    left: 18px;
+    background: var(--accent-1);
+    box-shadow: 0 0 8px var(--accent-1);
+}
+
+/* ═══════════════════════════════════════════
+   KICKER BADGE
+═══════════════════════════════════════════ */
+.kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--accent-1);
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    font-family: var(--font-body);
+    transition: all 0.3s;
+}
+[data-theme="hacker"] .kicker {
+    box-shadow: 0 0 12px rgba(0,255,65,0.08);
+    text-shadow: 0 0 8px rgba(0,255,65,0.4);
+    border-color: rgba(0,255,65,0.3);
+}
+
+/* ═══════════════════════════════════════════
+   HERO HEADER
+═══════════════════════════════════════════ */
+.hero {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+.hero-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: all 0.3s ease;
+}
+[data-theme="normal"] .hero-icon {
+    background: var(--gradient-primary);
+    color: #fff;
+    box-shadow: var(--shadow-icon);
+}
+[data-theme="hacker"] .hero-icon {
+    background: transparent;
+    border: 2px solid var(--accent-1);
+    color: var(--accent-1);
+    box-shadow: 0 0 20px rgba(0,255,65,0.25);
+    animation: iconPulse 2s ease-in-out infinite;
+}
+@keyframes iconPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(0,255,65,0.25); }
+    50%      { box-shadow: 0 0 35px rgba(0,255,65,0.5); }
+}
+
+.hero h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(24px, 4vw, 32px);
+    line-height: 1.15;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.01em;
+    transition: all 0.3s ease;
+}
+[data-theme="normal"] .hero h1 {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+[data-theme="hacker"] .hero h1 {
+    color: var(--accent-1);
+    -webkit-text-fill-color: var(--accent-1);
+    text-shadow: 0 0 15px rgba(0,255,65,0.4);
+    letter-spacing: 2px;
+    animation: titleGlitch 4s infinite;
+}
+@keyframes titleGlitch {
+    0%, 85%, 100% { transform: translate(0); }
+    86% { transform: translate(-2px, 1px); }
+    87% { transform: translate(2px, -1px); }
+    88% { transform: translate(-1px, 0); }
+    89% { transform: translate(0); }
+}
+
+.hero p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 620px;
+}
+[data-theme="hacker"] .hero p { color: #B8FFB8; }
+
+/* ═══════════════════════════════════════════
+   TAG ROW
+═══════════════════════════════════════════ */
+.tag-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 18px 0 30px 76px;
+}
+.tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    padding: 4px 12px;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
+    transition: all 0.3s;
+}
+[data-theme="hacker"] .tag { color: rgba(0,255,65,0.4); }
+
+/* ═══════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════ */
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 22px;
+    background: var(--surface);
+    padding: 7px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-main);
+    transition: all 0.3s;
+}
+[data-theme="hacker"] .tabs {
+    background: rgba(5,5,5,0.9);
+    border-color: rgba(0,255,65,0.15);
+    box-shadow: 0 0 20px rgba(0,255,65,0.03);
+}
+
+.tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: var(--font-body);
+    transition: all 0.25s ease;
+    user-select: none;
+}
+.tab i { font-size: 13px; opacity: 0.7; }
+
+[data-theme="normal"] .tab.active {
+    background: var(--tab-active-bg);
+    color: var(--accent-1);
+    border-color: rgba(108,99,255,0.25);
+    box-shadow: var(--tab-active-shadow);
+}
+[data-theme="normal"] .tab.active i { opacity: 1; }
+
+[data-theme="hacker"] .tab.active {
+    background: var(--tab-active-bg);
+    color: var(--accent-1);
+    border-color: rgba(0,255,65,0.3);
+    box-shadow: var(--tab-active-shadow);
+    text-shadow: 0 0 8px rgba(0,255,65,0.4);
+    letter-spacing: 1px;
+}
+[data-theme="hacker"] .tab.active i { opacity: 1; }
+
+.tab:not(.active):hover { color: var(--ink-soft); background: var(--glass); }
+[data-theme="hacker"] .tab:not(.active):hover {
+    background: rgba(0,255,65,0.03);
+    color: rgba(0,255,65,0.6);
+}
+
+.tab-panel { animation: fadeSlideIn 0.3s ease; }
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   PANELS / CARDS
+═══════════════════════════════════════════ */
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: var(--shadow-main);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+.panel + .panel { margin-top: 20px; }
+
+.panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+[data-theme="normal"] .panel::before { background: linear-gradient(90deg, #6C63FF, #00B4D8); }
+[data-theme="hacker"] .panel::before { background: linear-gradient(90deg, #00FF41, #00FFFF); box-shadow: 0 0 10px #00FF41; }
+.panel:hover::before { opacity: 1; }
+
+[data-theme="hacker"] .panel {
+    background: #050505;
+    border-color: rgba(0,255,65,0.12);
+    box-shadow: 0 0 20px rgba(0,255,65,0.02);
+}
+[data-theme="hacker"] .panel:hover {
+    border-color: rgba(0,255,65,0.25);
+    box-shadow: 0 0 30px rgba(0,255,65,0.06);
+}
+
+.panel-head { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+.panel-head i { color: var(--accent-1); font-size: 15px; flex-shrink: 0; }
+.panel-head h2 {
+    font-family: var(--font-display);
+    font-size: 17px;
+    margin: 0;
+    font-weight: 700;
+    color: var(--ink);
+    transition: all 0.3s;
+}
+[data-theme="hacker"] .panel-head h2 {
+    text-shadow: 0 0 10px rgba(0,255,65,0.2);
+    letter-spacing: 1px;
+}
+
+.panel-sub {
+    color: var(--ink-soft);
+    font-size: 13px;
+    margin: 0 0 20px 0;
+    line-height: 1.6;
+}
+[data-theme="hacker"] .panel-sub { color: rgba(0,255,65,0.5); }
+
+/* ═══════════════════════════════════════════
+   FORM FIELDS & INPUTS
+═══════════════════════════════════════════ */
+.field { margin-bottom: 18px; }
+.field label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+    font-family: var(--font-body);
+}
+[data-theme="hacker"] .field label { color: rgba(0,255,65,0.6); letter-spacing: 2px; }
+
+.hint { font-size: 12px; color: var(--ink-faint); margin-top: 6px; line-height: 1.5; }
+
+input[type="text"], input[type="password"], textarea, select {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-soft);
+    font-size: 13px;
+    font-family: var(--font-mono);
+    color: var(--ink);
+    outline: none;
+    transition: all 0.25s ease;
+}
+select option { background: var(--surface); color: var(--ink); }
+
+[data-theme="hacker"] input[type="text"],
+[data-theme="hacker"] input[type="password"],
+[data-theme="hacker"] textarea,
+[data-theme="hacker"] select {
+    background: #000;
+    border-color: rgba(0,255,65,0.2);
+    caret-color: var(--accent-1);
+}
+[data-theme="hacker"] input::placeholder,
+[data-theme="hacker"] textarea::placeholder { color: rgba(0,255,65,0.25); }
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--accent-1);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
+}
+[data-theme="hacker"] input:focus,
+[data-theme="hacker"] textarea:focus,
+[data-theme="hacker"] select:focus {
+    box-shadow: 0 0 0 3px rgba(0,255,65,0.08), 0 0 15px rgba(0,255,65,0.06);
+}
+
+textarea { font-family: var(--font-mono); font-size: 12.5px; min-height: 120px; resize: vertical; line-height: 1.55; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+/* ═══════════════════════════════════════════
+   MODE TOGGLE (text / file)
+═══════════════════════════════════════════ */
+.mode-toggle { display: flex; gap: 8px; margin-bottom: 20px; }
+.mode-btn {
+    flex: 1;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all 0.25s ease;
+    text-align: center;
+}
+.mode-btn:hover { color: var(--ink-soft); background: var(--glass); border-color: var(--border-strong); }
+
+[data-theme="normal"] .mode-btn.active {
+    background: var(--tab-active-bg);
+    border-color: rgba(108,99,255,0.25);
+    color: var(--accent-1);
+    box-shadow: var(--tab-active-shadow);
+}
+[data-theme="hacker"] .mode-btn { letter-spacing: 1px; text-transform: uppercase; font-size: 11px; }
+[data-theme="hacker"] .mode-btn.active {
+    background: rgba(0,255,65,0.07);
+    border-color: rgba(0,255,65,0.3);
+    color: var(--accent-1);
+    box-shadow: var(--tab-active-shadow);
+    text-shadow: 0 0 8px rgba(0,255,65,0.4);
+}
+[data-theme="hacker"] .mode-btn:not(.active):hover {
+    background: rgba(0,255,65,0.03);
+    color: rgba(0,255,65,0.6);
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.btn-row.left { justify-content: flex-start; }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    border: 1px solid var(--border-strong);
+    background: var(--surface-soft);
+    color: var(--ink);
+    transition: all 0.25s ease;
+}
+.btn:hover {
+    border-color: var(--accent-1);
+    color: var(--accent-1);
+    box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.12);
+    transform: translateY(-1px);
+}
+.btn:active { transform: scale(0.98); }
+
+[data-theme="hacker"] .btn {
+    background: transparent;
+    border-color: rgba(0,255,65,0.25);
+    color: var(--ink-soft);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+[data-theme="hacker"] .btn:hover {
+    border-color: var(--accent-1);
+    color: var(--accent-1);
+    box-shadow: 0 0 15px rgba(0,255,65,0.12);
+    text-shadow: 0 0 8px rgba(0,255,65,0.4);
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: var(--shadow-btn);
+}
+[data-theme="hacker"] .btn-primary { color: #000; letter-spacing: 2px; }
+.btn-primary:hover {
+    filter: brightness(1.1);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.35);
+    border: none;
+}
+[data-theme="hacker"] .btn-primary:hover { color: #000; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; filter: none; transform: none; box-shadow: none; }
+
+.btn-ghost {
+    background: transparent;
+    border: 1px dashed var(--border-strong);
+    color: var(--ink-soft);
+}
+[data-theme="hacker"] .btn-ghost { border-style: dashed; border-color: rgba(0,255,65,0.2); }
+
+input[type="file"] { display: none; }
+
+/* ═══════════════════════════════════════════
+   DROPZONE
+═══════════════════════════════════════════ */
+.dropzone {
+    border: 1.5px dashed var(--dz-border);
+    border-radius: var(--radius-md);
+    padding: 36px 24px;
+    text-align: center;
+    background: var(--surface-soft);
+    margin-top: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.dropzone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(var(--primary-rgb),0.05), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.dropzone:hover::before, .dropzone.drag::before { opacity: 1; }
+.dropzone:hover, .dropzone.drag {
+    border-color: var(--dz-hover-border);
+    background: var(--dz-hover-bg);
+}
+[data-theme="normal"] .dropzone:hover, [data-theme="normal"] .dropzone.drag { box-shadow: 0 0 0 4px rgba(108,99,255,0.08); }
+[data-theme="hacker"] .dropzone:hover, [data-theme="hacker"] .dropzone.drag { box-shadow: 0 0 30px rgba(0,255,65,0.08); }
+
+.dropzone .dz-icon {
+    font-size: 28px;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 12px;
+    position: relative;
+    transition: all 0.3s;
+}
+.dropzone:hover .dz-icon, .dropzone.drag .dz-icon { color: var(--accent-1); transform: translateY(-3px); }
+[data-theme="hacker"] .dropzone:hover .dz-icon { text-shadow: 0 0 12px rgba(0,255,65,0.6); }
+
+.dropzone h3 { margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: var(--ink); position: relative; }
+.dropzone p { margin: 0 0 14px 0; color: var(--ink-faint); font-size: 12px; position: relative; }
+[data-theme="hacker"] .dropzone p { color: rgba(0,255,65,0.4); }
+
+/* ═══════════════════════════════════════════
+   FILE INFO
+═══════════════════════════════════════════ */
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    background: var(--surface-soft);
+    margin-top: 14px;
+    transition: all 0.2s;
+}
+.file-info:hover { border-color: var(--border-strong); box-shadow: var(--shadow-main); }
+.file-info .fi-icon {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--accent-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+[data-theme="hacker"] .file-info .fi-icon { background: rgba(0,255,65,0.07); box-shadow: 0 0 8px rgba(0,255,65,0.06); }
+.file-info .n { font-size: 13px; font-weight: 600; color: var(--ink); }
+.file-info .s { font-size: 11px; color: var(--ink-faint); font-family: var(--font-mono); margin-top: 2px; }
+
+/* ═══════════════════════════════════════════
+   KEYCARD (PEM output blocks)
+═══════════════════════════════════════════ */
+.keycard {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-soft);
+    padding: 18px;
+    margin-top: 16px;
+    transition: all 0.3s;
+}
+.keycard:hover { border-color: var(--border-strong); box-shadow: var(--shadow-main); }
+[data-theme="hacker"] .keycard:hover { border-color: rgba(0,255,65,0.25); box-shadow: 0 0 12px rgba(0,255,65,0.04); }
+
+.keycard-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.keycard-head h4 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    font-family: var(--font-body);
+}
+[data-theme="hacker"] .keycard-head h4 { color: var(--accent-1); letter-spacing: 2px; text-shadow: 0 0 6px rgba(0,255,65,0.25); }
+
+.dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+.dot-public { background: var(--accent-2); color: var(--accent-2); }
+.dot-private { background: var(--accent-1); color: var(--accent-1); }
+[data-theme="hacker"] .dot-public, [data-theme="hacker"] .dot-private { box-shadow: 0 0 10px var(--accent-1); }
+
+.copy-btn {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-1);
+    background: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: var(--radius-xs);
+    transition: all 0.2s;
+    font-family: var(--font-body);
+}
+.copy-btn:hover { background: var(--accent-soft); border-color: var(--border); }
+[data-theme="hacker"] .copy-btn { text-transform: uppercase; letter-spacing: 1px; font-size: 10px; }
+[data-theme="hacker"] .copy-btn:hover { border-color: var(--accent-1); box-shadow: 0 0 8px rgba(0,255,65,0.12); text-shadow: 0 0 6px rgba(0,255,65,0.4); }
+
+pre.keyout {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-break: break-all;
+    color: var(--ink-soft);
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+[data-theme="hacker"] pre.keyout { color: var(--ink); text-shadow: 0 0 4px rgba(0,255,65,0.15); }
+
+/* ═══════════════════════════════════════════
+   FINGERPRINT BOX
+═══════════════════════════════════════════ */
+.fp-box {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    word-break: break-all;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+    line-height: 1.5;
+}
+.fp-box:hover { border-color: var(--border-strong); box-shadow: var(--shadow-main); }
+.fp-box i { color: var(--accent-1); font-size: 13px; flex-shrink: 0; }
+[data-theme="hacker"] .fp-box code { color: var(--accent-1); text-shadow: 0 0 6px rgba(0,255,65,0.25); }
+
+/* ═══════════════════════════════════════════
+   STATUS MESSAGES
+═══════════════════════════════════════════ */
+.status {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-top: 18px;
+    font-size: 13px;
+    line-height: 1.55;
+    border: 1px solid transparent;
+    animation: fadeSlideIn 0.3s ease;
+}
+.status i { flex-shrink: 0; margin-top: 2px; font-size: 15px; }
+.status strong { display: block; margin-bottom: 3px; font-weight: 700; }
+
+.status-good { background: var(--good-bg); color: var(--good); }
+[data-theme="hacker"] .status-good { border-color: var(--good); box-shadow: 0 0 15px rgba(0,255,65,0.08); text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+.status-bad { background: var(--bad-bg); color: var(--bad); }
+[data-theme="hacker"] .status-bad { border-color: var(--bad); box-shadow: 0 0 15px rgba(255,0,64,0.1); }
+.status-warn { background: var(--warn-bg); color: var(--warn); }
+[data-theme="hacker"] .status-warn { border-color: var(--warn); box-shadow: 0 0 10px rgba(255,215,0,0.08); }
+
+/* ═══════════════════════════════════════════
+   DIVIDER & FOOTER
+═══════════════════════════════════════════ */
+.divider { height: 1px; background: var(--border); margin: 26px 0; }
+
+.footnote {
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 12px;
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.footnote i { color: var(--accent-1); }
+[data-theme="hacker"] .footnote {
+    border-color: rgba(0,255,65,0.1);
+    color: rgba(0,255,65,0.4);
+    text-shadow: 0 0 5px rgba(0,255,65,0.1);
+    letter-spacing: 1px;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 640px) {
+    .wrap { padding: 24px 16px 60px; }
+    .topbar { flex-direction: column; align-items: stretch; }
+    .topbar-right { flex-wrap: wrap; }
+    .tabs { flex-direction: column; gap: 4px; }
+    .tab { justify-content: flex-start; padding: 11px 14px; }
+    .field-row { grid-template-columns: 1fr; }
+    .hero { flex-direction: column; }
+    .panel { padding: 20px 16px; }
+    .tag-row { margin-left: 0; }
+    .btn-row { flex-direction: column; }
+    .btn-row .btn { width: 100%; justify-content: center; }
+    .mode-toggle { flex-direction: column; gap: 6px; }
+}
+@media (max-width: 480px) {
+    .lock-pill { font-size: 10px; }
+    .toggle-label { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+    <!-- ══════════════ TOPBAR ══════════════ -->
+    <div class="topbar">
+        <a class="pill back-pill" id="homeBtn" href="index.html" title="Back to CryptoKit">
+            <i class="fa-solid fa-arrow-left"></i> Back to CryptoKit
+        </a>
+        <div class="topbar-right">
+            <div class="pill lock-pill">
+                <i class="fa-solid fa-lock"></i>
+                100% Client-Side — Keys Never Leave Your Browser
+            </div>
+            <div class="pill toggle-pill" id="themeToggle">
+                <span class="toggle-label" id="themeLabel">Normal</span>
+                <span class="switch"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════ KICKER ══════════════ -->
+    <div class="kicker">
+        <i class="fa-solid fa-shield-halved"></i>
+        Cryptographic Tool
+    </div>
+
+    <!-- ══════════════ HERO ══════════════ -->
+    <div class="hero">
+        <div class="hero-icon">
+            <i class="fa-solid fa-signature"></i>
+        </div>
+        <div>
+            <h1>Digital Signature</h1>
+            <p>Generate an ECDSA key pair, sign messages or files, and verify signatures — all locally in your browser using the Web Crypto API.</p>
+        </div>
+    </div>
+
+    <!-- ══════════════ TAGS ══════════════ -->
+    <div class="tag-row">
+        <span class="tag">ECDSA P-256</span>
+        <span class="tag">SHA-256</span>
+        <span class="tag">Non-repudiation</span>
+    </div>
+
+    <!-- ══════════════ TABS ══════════════ -->
+    <div class="tabs">
+        <button class="tab active" data-tab="keys">
+            <i class="fa-solid fa-key"></i> Generate Keys
+        </button>
+        <button class="tab" data-tab="sign">
+            <i class="fa-solid fa-pen-nib"></i> Sign
+        </button>
+        <button class="tab" data-tab="verify">
+            <i class="fa-solid fa-circle-check"></i> Verify
+        </button>
+    </div>
+
+    <!-- ══════════════ GENERATE KEYS ══════════════ -->
+    <div class="tab-panel" id="panel-keys">
+        <div class="panel">
+            <div class="panel-head">
+                <i class="fa-solid fa-sliders"></i>
+                <h2>Key pair</h2>
+            </div>
+            <p class="panel-sub">Generates a fresh ECDSA key pair for signing. Elliptic-curve keys are much smaller than RSA at an equivalent security level.</p>
+
+            <div class="field">
+                <label for="curveSelect">Curve</label>
+                <select id="curveSelect">
+                    <option value="P-256" selected>P-256 (recommended, matches SHA-256)</option>
+                    <option value="P-384">P-384 (stronger, matches SHA-384)</option>
+                    <option value="P-521">P-521 (strongest, matches SHA-512)</option>
+                </select>
+            </div>
+
+            <div class="btn-row left">
+                <button class="btn btn-primary" id="genKeysBtn"><i class="fa-solid fa-bolt"></i> Generate Key Pair</button>
+                <button class="btn btn-ghost" id="clearKeysBtn"><i class="fa-solid fa-eraser"></i> Clear</button>
+            </div>
+
+            <div id="genStatus"></div>
+
+            <div id="keyOutputs" style="display:none;">
+                <div class="divider"></div>
+                <div class="keycard">
+                    <div class="keycard-head">
+                        <h4><span class="dot dot-public"></span>Public Key (PEM)</h4>
+                        <button class="copy-btn" data-copy="pubKeyOut"><i class="fa-regular fa-copy"></i> Copy</button>
+                    </div>
+                    <pre class="keyout" id="pubKeyOut"></pre>
+                </div>
+                <div class="keycard">
+                    <div class="keycard-head">
+                        <h4><span class="dot dot-private"></span>Private Key (PEM)</h4>
+                        <button class="copy-btn" data-copy="privKeyOut"><i class="fa-regular fa-copy"></i> Copy</button>
+                    </div>
+                    <pre class="keyout" id="privKeyOut"></pre>
+                </div>
+                <div class="field" style="margin-top:16px;">
+                    <label>SHA-256 Fingerprint of Public Key</label>
+                    <div class="fp-box">
+                        <i class="fa-solid fa-fingerprint"></i>
+                        <code id="fingerprintOut">—</code>
+                    </div>
+                </div>
+                <div class="btn-row left" style="margin-top:16px;">
+                    <button class="btn" id="downloadPubBtn"><i class="fa-solid fa-download"></i> Download public.pem</button>
+                    <button class="btn" id="downloadPrivBtn"><i class="fa-solid fa-download"></i> Download private.pem</button>
+                    <button class="btn" id="usePubForVerifyBtn"><i class="fa-solid fa-arrow-right"></i> Use in Verify</button>
+                    <button class="btn" id="usePrivForSignBtn"><i class="fa-solid fa-arrow-right"></i> Use in Sign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════ SIGN ══════════════ -->
+    <div class="tab-panel" id="panel-sign" style="display:none;">
+        <div class="panel">
+            <div class="panel-head">
+                <i class="fa-solid fa-pen-nib"></i>
+                <h2>Sign a message or file</h2>
+            </div>
+            <p class="panel-sub">Signing produces proof that the private-key holder approved this exact content — any change to it invalidates the signature.</p>
+
+            <div class="mode-toggle">
+                <button class="mode-btn active" data-mode="text"><i class="fa-solid fa-align-left"></i> Text message</button>
+                <button class="mode-btn" data-mode="file"><i class="fa-solid fa-file"></i> File</button>
+            </div>
+
+            <div id="signModeText">
+                <div class="field">
+                    <label for="signText">Message</label>
+                    <textarea id="signText" placeholder="Type or paste the message to sign..."></textarea>
+                </div>
+            </div>
+            <div id="signModeFile" style="display:none;">
+                <div class="dropzone" id="signDropzone">
+                    <i class="fa-solid fa-cloud-arrow-up dz-icon"></i>
+                    <h3>Drag & drop a file here</h3>
+                    <p>or use the button below</p>
+                    <div class="btn-row" style="justify-content:center;">
+                        <button class="btn" id="chooseSignFileBtn"><i class="fa-solid fa-folder-open"></i> Choose File</button>
+                    </div>
+                    <input type="file" id="signFileInput">
+                </div>
+                <div id="signFileInfo"></div>
+            </div>
+
+            <div class="field" style="margin-top:18px;">
+                <label for="signPrivKey">Private Key (PEM)</label>
+                <textarea id="signPrivKey" placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"></textarea>
+            </div>
+            <div class="field">
+                <label for="signCurve">Curve</label>
+                <select id="signCurve">
+                    <option value="P-256" selected>P-256</option>
+                    <option value="P-384">P-384</option>
+                    <option value="P-521">P-521</option>
+                </select>
+                <div class="hint">Must match the curve used to generate this private key.</div>
+            </div>
+
+            <div class="btn-row left">
+                <button class="btn btn-primary" id="signBtn"><i class="fa-solid fa-stamp"></i> Sign</button>
+            </div>
+
+            <div id="signStatus"></div>
+
+            <div class="keycard" id="sigCard" style="display:none;">
+                <div class="keycard-head">
+                    <h4><span class="dot dot-private"></span>Signature (Base64)</h4>
+                    <button class="copy-btn" data-copy="sigOut"><i class="fa-regular fa-copy"></i> Copy</button>
+                </div>
+                <pre class="keyout" id="sigOut"></pre>
+                <div class="btn-row left" style="margin-top:14px;">
+                    <button class="btn" id="downloadSigBtn"><i class="fa-solid fa-download"></i> Download .sig</button>
+                    <button class="btn" id="downloadBundleBtn"><i class="fa-solid fa-download"></i> Download signed bundle (.json)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════ VERIFY ══════════════ -->
+    <div class="tab-panel" id="panel-verify" style="display:none;">
+        <div class="panel">
+            <div class="panel-head">
+                <i class="fa-solid fa-circle-check"></i>
+                <h2>Verify a signature</h2>
+            </div>
+            <p class="panel-sub">Checks that a signature was produced by the holder of the matching private key, over this exact content.</p>
+
+            <div class="btn-row left" style="margin-bottom:14px;">
+                <button class="btn" id="loadBundleBtn"><i class="fa-solid fa-file-import"></i> Load signed bundle (.json)</button>
+                <input type="file" id="bundleInput" accept=".json,application/json">
+            </div>
+
+            <div class="mode-toggle">
+                <button class="mode-btn active" data-mode="text"><i class="fa-solid fa-align-left"></i> Text message</button>
+                <button class="mode-btn" data-mode="file"><i class="fa-solid fa-file"></i> File</button>
+            </div>
+
+            <div id="verifyModeText">
+                <div class="field">
+                    <label for="verifyText">Original Message</label>
+                    <textarea id="verifyText" placeholder="Paste the exact message that was signed..."></textarea>
+                </div>
+            </div>
+            <div id="verifyModeFile" style="display:none;">
+                <div class="dropzone" id="verifyDropzone">
+                    <i class="fa-solid fa-cloud-arrow-up dz-icon"></i>
+                    <h3>Drag & drop the original file here</h3>
+                    <p>or use the button below</p>
+                    <div class="btn-row" style="justify-content:center;">
+                        <button class="btn" id="chooseVerifyFileBtn"><i class="fa-solid fa-folder-open"></i> Choose File</button>
+                    </div>
+                    <input type="file" id="verifyFileInput">
+                </div>
+                <div id="verifyFileInfo"></div>
+            </div>
+
+            <div class="field" style="margin-top:18px;">
+                <label for="verifyPubKey">Public Key (PEM)</label>
+                <textarea id="verifyPubKey" placeholder="-----BEGIN PUBLIC KEY-----&#10;...&#10;-----END PUBLIC KEY-----"></textarea>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="verifySigInput">Signature (Base64)</label>
+                    <textarea id="verifySigInput" style="min-height:90px;"></textarea>
+                </div>
+                <div class="field">
+                    <label for="verifyCurve">Curve</label>
+                    <select id="verifyCurve">
+                        <option value="P-256" selected>P-256</option>
+                        <option value="P-384">P-384</option>
+                        <option value="P-521">P-521</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row left">
+                <button class="btn btn-primary" id="verifyBtn"><i class="fa-solid fa-shield-halved"></i> Verify Signature</button>
+            </div>
+
+            <div id="verifyStatus"></div>
+        </div>
+    </div>
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <div class="footnote">
+        <i class="fa-solid fa-lock"></i>
+        Everything runs locally via the Web Crypto API. No key, message, or file is ever transmitted.
+    </div>
+
+</div>
+
+<script>
+(function(){
+
+    // ═══════════════════════════════════════
+    //  CONFIG
+    // ═══════════════════════════════════════
+    const HOME_URL = 'index.html';
+
+    // ═══════════════════════════════════════
+    //  THEME MANAGEMENT
+    // ═══════════════════════════════════════
+    (function initTheme(){
+        const saved = localStorage.getItem('cryptokit-theme') || 'normal';
+        document.documentElement.setAttribute('data-theme', saved);
+        updateThemeUI(saved);
+    })();
+
+    function toggleTheme(){
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'hacker' ? 'normal' : 'hacker';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('cryptokit-theme', next);
+        updateThemeUI(next);
+    }
+
+    function updateThemeUI(theme){
+        const label = document.getElementById('themeLabel');
+        if(label) label.textContent = theme === 'hacker' ? 'HACKER' : 'Normal';
+    }
+
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+    // ═══════════════════════════════════════
+    //  HOME / BACK NAVIGATION
+    // ═══════════════════════════════════════
+    const homeBtn = document.getElementById('homeBtn');
+    homeBtn.setAttribute('href', HOME_URL);
+    homeBtn.addEventListener('click', function(e){
+        if(e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        let sameSite = false;
+        try { sameSite = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch(_){}
+        if(sameSite && history.length > 1){
+            history.back();
+            setTimeout(()=>{ if(!document.hidden) location.href = HOME_URL; }, 400);
+        } else {
+            location.href = HOME_URL;
+        }
+    });
+
+    // ═══════════════════════════════════════
+    //  TABS
+    // ═══════════════════════════════════════
+    const tabs = document.querySelectorAll('.tabs > .tab');
+    const panelMap = { keys:'panel-keys', sign:'panel-sign', verify:'panel-verify' };
+    tabs.forEach(t => {
+        t.addEventListener('click', () => {
+            tabs.forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            Object.values(panelMap).forEach(id => document.getElementById(id).style.display = 'none');
+            document.getElementById(panelMap[t.dataset.tab]).style.display = 'block';
+        });
+    });
+
+    // ═══════════════════════════════════════
+    //  MODE TOGGLES (text / file)
+    // ═══════════════════════════════════════
+    function wireModeToggle(containerSel, textId, fileId){
+        document.querySelectorAll(containerSel + ' .mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll(containerSel + ' .mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(textId).style.display = btn.dataset.mode === 'text' ? 'block' : 'none';
+                document.getElementById(fileId).style.display = btn.dataset.mode === 'file' ? 'block' : 'none';
+            });
+        });
+    }
+    wireModeToggle('#panel-sign', 'signModeText', 'signModeFile');
+    wireModeToggle('#panel-verify', 'verifyModeText', 'verifyModeFile');
+
+    // ═══════════════════════════════════════
+    //  HELPERS
+    // ═══════════════════════════════════════
+    function statusHTML(kind, title, msg){
+        const icons = {
+            good: '<i class="fa-solid fa-circle-check"></i>',
+            bad:  '<i class="fa-solid fa-circle-xmark"></i>',
+            warn: '<i class="fa-solid fa-triangle-exclamation"></i>'
+        };
+        return `<div class="status status-${kind}">${icons[kind]}<div><strong>${title}</strong>${msg}</div></div>`;
+    }
+
+    function fmtBytes(n){
+        if(n < 1024) return n + ' B';
+        if(n < 1048576) return (n/1024).toFixed(1) + ' KB';
+        return (n/1048576).toFixed(1) + ' MB';
+    }
+
+    function abToBase64(buf){
+        let binary = '';
+        const bytes = new Uint8Array(buf);
+        for(let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+        return btoa(binary);
+    }
+    function base64ToAb(b64){
+        const binary = atob(b64.trim());
+        const bytes = new Uint8Array(binary.length);
+        for(let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return bytes.buffer;
+    }
+    function pemToArrayBuffer(pem){
+        const lines = pem.trim().split('\n').filter(l => !l.includes('-----'));
+        return base64ToAb(lines.join(''));
+    }
+    function arrayBufferToPem(buf, label){
+        const b64 = abToBase64(buf);
+        const lines = b64.match(/.{1,64}/g).join('\n');
+        return `-----BEGIN ${label}-----\n${lines}\n-----END ${label}-----`;
+    }
+    function curveHash(curve){
+        return curve === 'P-384' ? 'SHA-384' : curve === 'P-521' ? 'SHA-512' : 'SHA-256';
+    }
+    function downloadText(filename, text, mime){
+        const blob = new Blob([text], { type: mime || 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename; a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function renderFileInfo(containerId, file){
+        document.getElementById(containerId).innerHTML = `
+            <div class="file-info">
+                <div class="fi-icon"><i class="fa-solid fa-file"></i></div>
+                <div>
+                    <div class="n">${file.name}</div>
+                    <div class="s">${fmtBytes(file.size)}</div>
+                </div>
+            </div>`;
+    }
+
+    // ═══════════════════════════════════════
+    //  GENERATE KEYS
+    // ═══════════════════════════════════════
+    let lastPublicPem = '', lastPrivatePem = '', lastCurve = 'P-256';
+
+    document.getElementById('genKeysBtn').addEventListener('click', async () => {
+        const status = document.getElementById('genStatus');
+        const curve = document.getElementById('curveSelect').value;
+        status.innerHTML = statusHTML('warn', 'Generating…', `Creating an ECDSA ${curve} key pair.`);
+        try {
+            const keyPair = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: curve }, true, ['sign','verify']);
+            const pubSpki = await crypto.subtle.exportKey('spki', keyPair.publicKey);
+            const privPkcs8 = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
+            lastPublicPem = arrayBufferToPem(pubSpki, 'PUBLIC KEY');
+            lastPrivatePem = arrayBufferToPem(privPkcs8, 'PRIVATE KEY');
+            lastCurve = curve;
+
+            document.getElementById('pubKeyOut').textContent = lastPublicPem;
+            document.getElementById('privKeyOut').textContent = lastPrivatePem;
+
+            const fpBuf = await crypto.subtle.digest('SHA-256', pubSpki);
+            const fpHex = Array.from(new Uint8Array(fpBuf)).map(b => b.toString(16).padStart(2,'0')).join(':');
+            document.getElementById('fingerprintOut').textContent = fpHex;
+
+            document.getElementById('keyOutputs').style.display = 'block';
+            status.innerHTML = statusHTML('good', 'Key pair generated', `ECDSA ${curve} key ready for signing. The private key is shown only once — copy or download it now.`);
+        } catch(err){
+            status.innerHTML = statusHTML('bad', 'Generation failed', err.message);
+        }
+    });
+
+    document.getElementById('clearKeysBtn').addEventListener('click', () => {
+        lastPublicPem = ''; lastPrivatePem = '';
+        document.getElementById('genStatus').innerHTML = '';
+        document.getElementById('keyOutputs').style.display = 'none';
+    });
+
+    // Copy buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const el = document.getElementById(btn.dataset.copy);
+            if(!el) return;
+            navigator.clipboard.writeText(el.textContent).then(() => {
+                const oldHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(() => { btn.innerHTML = oldHTML; }, 1400);
+            });
+        });
+    });
+
+    document.getElementById('downloadPubBtn').addEventListener('click', () => { if(lastPublicPem) downloadText('public.pem', lastPublicPem, 'application/x-pem-file'); });
+    document.getElementById('downloadPrivBtn').addEventListener('click', () => { if(lastPrivatePem) downloadText('private.pem', lastPrivatePem, 'application/x-pem-file'); });
+
+    document.getElementById('usePubForVerifyBtn').addEventListener('click', () => {
+        if(!lastPublicPem) return;
+        document.getElementById('verifyPubKey').value = lastPublicPem;
+        document.getElementById('verifyCurve').value = lastCurve;
+        document.querySelector('[data-tab="verify"]').click();
+    });
+    document.getElementById('usePrivForSignBtn').addEventListener('click', () => {
+        if(!lastPrivatePem) return;
+        document.getElementById('signPrivKey').value = lastPrivatePem;
+        document.getElementById('signCurve').value = lastCurve;
+        document.querySelector('[data-tab="sign"]').click();
+    });
+
+    // ═══════════════════════════════════════
+    //  SIGN
+    // ═══════════════════════════════════════
+    let signFile = null;
+
+    document.getElementById('chooseSignFileBtn').addEventListener('click', () => document.getElementById('signFileInput').click());
+    document.getElementById('signFileInput').addEventListener('change', e => { if(e.target.files[0]) setSignFile(e.target.files[0]); });
+
+    const signDropzone = document.getElementById('signDropzone');
+    ['dragenter','dragover'].forEach(evt => signDropzone.addEventListener(evt, e => { e.preventDefault(); signDropzone.classList.add('drag'); }));
+    ['dragleave','drop'].forEach(evt => signDropzone.addEventListener(evt, e => { e.preventDefault(); signDropzone.classList.remove('drag'); }));
+    signDropzone.addEventListener('drop', e => { if(e.dataTransfer.files[0]) setSignFile(e.dataTransfer.files[0]); });
+
+    function setSignFile(file){
+        signFile = file;
+        renderFileInfo('signFileInfo', file);
+    }
+
+    async function importPrivateKeyFor(pem, curve){
+        return crypto.subtle.importKey('pkcs8', pemToArrayBuffer(pem), { name: 'ECDSA', namedCurve: curve }, true, ['sign']);
+    }
+    async function importPublicKeyFor(pem, curve){
+        return crypto.subtle.importKey('spki', pemToArrayBuffer(pem), { name: 'ECDSA', namedCurve: curve }, true, ['verify']);
+    }
+
+    let lastSignaturePayload = null;
+
+    document.getElementById('signBtn').addEventListener('click', async () => {
+        const status = document.getElementById('signStatus');
+        const sigCard = document.getElementById('sigCard');
+        const mode = document.querySelector('#panel-sign .mode-btn.active').dataset.mode;
+        const pem = document.getElementById('signPrivKey').value;
+        const curve = document.getElementById('signCurve').value;
+
+        if(!pem.includes('PRIVATE KEY')){
+            status.innerHTML = statusHTML('bad', 'Missing private key', 'Paste a valid PEM private key.');
+            sigCard.style.display = 'none'; return;
+        }
+
+        let dataBytes;
+        if(mode === 'text'){
+            const text = document.getElementById('signText').value;
+            if(!text){ status.innerHTML = statusHTML('bad', 'Nothing to sign', 'Type a message first.'); sigCard.style.display = 'none'; return; }
+            dataBytes = new TextEncoder().encode(text);
+        } else {
+            if(!signFile){ status.innerHTML = statusHTML('bad', 'No file selected', 'Choose a file to sign.'); sigCard.style.display = 'none'; return; }
+            dataBytes = new Uint8Array(await signFile.arrayBuffer());
+        }
+
+        status.innerHTML = statusHTML('warn', 'Signing…', 'Computing the signature with your private key.');
+        try {
+            const key = await importPrivateKeyFor(pem, curve);
+            const sigBuf = await crypto.subtle.sign({ name: 'ECDSA', hash: curveHash(curve) }, key, dataBytes);
+            const sigB64 = abToBase64(sigBuf);
+            document.getElementById('sigOut').textContent = sigB64;
+            sigCard.style.display = 'block';
+            status.innerHTML = statusHTML('good', 'Signed', `Signature created with ECDSA ${curve}. Share it along with the ${mode === 'text' ? 'exact message text' : 'original file'} and your public key so others can verify it.`);
+            lastSignaturePayload = { mode, text: mode === 'text' ? document.getElementById('signText').value : undefined, fileName: mode === 'file' ? signFile.name : undefined, signature: sigB64, curve };
+        } catch(err){
+            status.innerHTML = statusHTML('bad', 'Signing failed', err.message + ' — check the private key matches the selected curve.');
+            sigCard.style.display = 'none';
+        }
+    });
+
+    document.getElementById('downloadSigBtn').addEventListener('click', () => {
+        const sig = document.getElementById('sigOut').textContent;
+        if(sig) downloadText('signature.sig', sig, 'text/plain');
+    });
+    document.getElementById('downloadBundleBtn').addEventListener('click', () => {
+        if(!lastSignaturePayload) return;
+        const bundle = {
+            version: 1, curve: lastSignaturePayload.curve, mode: lastSignaturePayload.mode,
+            message: lastSignaturePayload.text, fileName: lastSignaturePayload.fileName,
+            signature: lastSignaturePayload.signature, publicKey: lastPublicPem || undefined,
+            signedAt: new Date().toISOString()
+        };
+        downloadText('signed-bundle.json', JSON.stringify(bundle, null, 2), 'application/json');
+    });
+
+    // ═══════════════════════════════════════
+    //  VERIFY
+    // ═══════════════════════════════════════
+    let verifyFile = null;
+
+    document.getElementById('chooseVerifyFileBtn').addEventListener('click', () => document.getElementById('verifyFileInput').click());
+    document.getElementById('verifyFileInput').addEventListener('change', e => { if(e.target.files[0]) setVerifyFile(e.target.files[0]); });
+
+    const verifyDropzone = document.getElementById('verifyDropzone');
+    ['dragenter','dragover'].forEach(evt => verifyDropzone.addEventListener(evt, e => { e.preventDefault(); verifyDropzone.classList.add('drag'); }));
+    ['dragleave','drop'].forEach(evt => verifyDropzone.addEventListener(evt, e => { e.preventDefault(); verifyDropzone.classList.remove('drag'); }));
+    verifyDropzone.addEventListener('drop', e => { if(e.dataTransfer.files[0]) setVerifyFile(e.dataTransfer.files[0]); });
+
+    function setVerifyFile(file){
+        verifyFile = file;
+        renderFileInfo('verifyFileInfo', file);
+    }
+
+    document.getElementById('loadBundleBtn').addEventListener('click', () => document.getElementById('bundleInput').click());
+    document.getElementById('bundleInput').addEventListener('change', async e => {
+        const file = e.target.files[0];
+        if(!file) return;
+        try {
+            const bundle = JSON.parse(await file.text());
+            if(bundle.mode === 'text'){
+                document.querySelector('#panel-verify .mode-btn[data-mode="text"]').click();
+                document.getElementById('verifyText').value = bundle.message || '';
+            } else {
+                document.querySelector('#panel-verify .mode-btn[data-mode="file"]').click();
+                document.getElementById('verifyFileInfo').innerHTML = statusHTML('warn', 'File needed', `This bundle was signed for "${bundle.fileName}". Add that file below to verify.`);
+            }
+            document.getElementById('verifySigInput').value = bundle.signature || '';
+            document.getElementById('verifyCurve').value = bundle.curve || 'P-256';
+            if(bundle.publicKey) document.getElementById('verifyPubKey').value = bundle.publicKey;
+            document.getElementById('verifyStatus').innerHTML = statusHTML('good', 'Bundle loaded', 'Review the fields below, then click Verify Signature.');
+        } catch(err){
+            document.getElementById('verifyStatus').innerHTML = statusHTML('bad', 'Could not read bundle', err.message);
+        }
+    });
+
+    document.getElementById('verifyBtn').addEventListener('click', async () => {
+        const status = document.getElementById('verifyStatus');
+        const mode = document.querySelector('#panel-verify .mode-btn.active').dataset.mode;
+        const pem = document.getElementById('verifyPubKey').value;
+        const curve = document.getElementById('verifyCurve').value;
+        const sigB64 = document.getElementById('verifySigInput').value.trim();
+
+        if(!pem.includes('PUBLIC KEY') || !sigB64){
+            status.innerHTML = statusHTML('bad', 'Missing input', 'Provide a public key and a signature.');
+            return;
+        }
+
+        let dataBytes;
+        if(mode === 'text'){
+            const text = document.getElementById('verifyText').value;
+            if(!text){ status.innerHTML = statusHTML('bad', 'Missing message', 'Paste the original message.'); return; }
+            dataBytes = new TextEncoder().encode(text);
+        } else {
+            if(!verifyFile){ status.innerHTML = statusHTML('bad', 'Missing file', 'Add the original file.'); return; }
+            dataBytes = new Uint8Array(await verifyFile.arrayBuffer());
+        }
+
+        status.innerHTML = statusHTML('warn', 'Verifying…', 'Checking the signature against the content and public key.');
+        try {
+            const key = await importPublicKeyFor(pem, curve);
+            const sigBuf = base64ToAb(sigB64);
+            const valid = await crypto.subtle.verify({ name: 'ECDSA', hash: curveHash(curve) }, key, sigBuf, dataBytes);
+            status.innerHTML = valid
+                ? statusHTML('good', 'Signature valid', 'This signature was produced by the matching private key over this exact content — nothing has changed since it was signed.')
+                : statusHTML('bad', 'Signature invalid', 'The signature does not match. The content may have changed, the wrong public key or curve was used, or the signature is corrupted.');
+        } catch(err){
+            status.innerHTML = statusHTML('bad', 'Verification failed', err.message + ' — check the curve matches the key.');
+        }
+    });
+
+})();
+</script>
+</body>
+</html>

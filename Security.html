@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security - CryptoKit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+/* ═══════════════════════════════════════════
+   THEME VARIABLES - NORMAL MODE
+═══════════════════════════════════════════ */
+[data-theme="normal"] {
+    --bg-primary: #F0F4FF;
+    --bg-secondary: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #F8F9FF;
+    --primary: #6C63FF;
+    --primary-glow: rgba(108, 99, 255, 0.2);
+    --secondary: #00B4D8;
+    --accent: #FF6584;
+    --success: #06D6A0;
+    --text-primary: #1A1A2E;
+    --text-secondary: #4A5568;
+    --text-muted: #718096;
+    --border: rgba(108, 99, 255, 0.2);
+    --border-hover: rgba(108, 99, 255, 0.5);
+    --glass: rgba(108, 99, 255, 0.05);
+    --glass-border: rgba(108, 99, 255, 0.12);
+    --shadow: 0 4px 24px rgba(108, 99, 255, 0.1);
+    --shadow-hover: 0 12px 40px rgba(108, 99, 255, 0.2);
+    --tag-bg: rgba(108, 99, 255, 0.08);
+    --tag-border: rgba(108, 99, 255, 0.2);
+    --input-bg: #F7F8FF;
+    --scrollbar: #6C63FF;
+}
+
+/* ═══════════════════════════════════════════
+   THEME VARIABLES - HACKER MODE
+═══════════════════════════════════════════ */
+[data-theme="hacker"] {
+    --bg-primary: #000000;
+    --bg-secondary: #0A0A0A;
+    --bg-card: #050505;
+    --bg-card-hover: #0D1A0D;
+    --primary: #00FF41;
+    --primary-glow: rgba(0, 255, 65, 0.25);
+    --secondary: #00FFFF;
+    --accent: #FF0040;
+    --success: #00FF41;
+    --text-primary: #00FF41;
+    --text-secondary: #00CC33;
+    --text-muted: #006611;
+    --border: rgba(0, 255, 65, 0.3);
+    --border-hover: rgba(0, 255, 65, 0.8);
+    --glass: rgba(0, 255, 65, 0.03);
+    --glass-border: rgba(0, 255, 65, 0.15);
+    --shadow: 0 4px 24px rgba(0, 255, 65, 0.1);
+    --shadow-hover: 0 12px 40px rgba(0, 255, 65, 0.25);
+    --tag-bg: rgba(0, 255, 65, 0.05);
+    --tag-border: rgba(0, 255, 65, 0.2);
+    --input-bg: #050505;
+    --scrollbar: #00FF41;
+    --green-bright: #00FF41;
+    --green-neon: #39FF14;
+    --green-lime: #CCFF00;
+    --green-dark: #2D5F2D;
+    --green-glow: rgba(0, 255, 65, 0.4);
+    --accent-red: #FF3131;
+    --accent-amber: #FFB800;
+    --accent-yellow: #FFEA00;
+    --accent-cyan: #00E5FF;
+    --accent-magenta: #FF10F0;
+    --accent-purple: #B026FF;
+    --accent-orange: #FF8C00;
+    --hacker-bg: #030503;
+    --hacker-panel: #0A140A;
+    --hacker-terminal: #0D1B0D;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE STYLES
+═══════════════════════════════════════════ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    line-height: 1.6;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+a { text-decoration: none; }
+
+[data-theme="hacker"] body,
+[data-theme="hacker"] p,
+[data-theme="hacker"] span,
+[data-theme="hacker"] a,
+[data-theme="hacker"] li,
+[data-theme="hacker"] button,
+[data-theme="hacker"] input,
+[data-theme="hacker"] textarea,
+[data-theme="hacker"] select {
+    font-family: 'Share Tech Mono', 'JetBrains Mono', monospace !important;
+}
+
+[data-theme="hacker"] h1,
+[data-theme="hacker"] h2,
+[data-theme="hacker"] h3,
+[data-theme="hacker"] h4,
+[data-theme="hacker"] .section-title,
+[data-theme="hacker"] .page-title {
+    font-family: 'Share Tech Mono', monospace !important;
+    letter-spacing: 2px;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+
+/* ═══════════════════════════════════════════
+   BACKGROUNDS
+═══════════════════════════════════════════ */
+#matrix-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+    display: none; opacity: 0.15;
+}
+[data-theme="hacker"] #matrix-canvas { display: block; }
+
+.scanlines {
+    position: fixed; inset: 0; z-index: 1;
+    pointer-events: none; display: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,65,0.015) 2px, rgba(0,255,65,0.015) 4px);
+}
+[data-theme="hacker"] .scanlines { display: block; }
+
+.bg-shapes {
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none; overflow: hidden;
+}
+[data-theme="hacker"] .bg-shapes { display: none; }
+
+.bg-shape {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); opacity: 0.12;
+}
+.bg-shape-1 {
+    width: 600px; height: 600px; background: #6C63FF;
+    top: -200px; right: -100px;
+    animation: floatShape 8s ease-in-out infinite;
+}
+.bg-shape-2 {
+    width: 400px; height: 400px; background: #00B4D8;
+    bottom: 10%; left: -100px;
+    animation: floatShape 10s ease-in-out infinite reverse;
+}
+.bg-shape-3 {
+    width: 300px; height: 300px; background: #FF6584;
+    top: 50%; right: 20%;
+    animation: floatShape 6s ease-in-out infinite;
+}
+@keyframes floatShape {
+    0%, 100% { transform: translate(0) scale(1); }
+    50% { transform: translate(20px, -20px) scale(1.05); }
+}
+
+/* ═══════════════════════════════════════════
+   GLITCH EFFECTS
+═══════════════════════════════════════════ */
+[data-theme="hacker"] .glitch {
+    position: relative;
+    animation: glitch 3s infinite;
+}
+[data-theme="hacker"] .glitch::before,
+[data-theme="hacker"] .glitch::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0;
+    width: 100%; background: transparent;
+}
+[data-theme="hacker"] .glitch::before {
+    color: #00FFFF;
+    animation: glitch-1 3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+[data-theme="hacker"] .glitch::after {
+    color: #FF0040;
+    animation: glitch-2 3s infinite;
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+@keyframes glitch {
+    0%,90%,100% { transform: translate(0); }
+    92% { transform: translate(-2px, 1px); }
+    94% { transform: translate(2px, -1px); }
+}
+@keyframes glitch-1 {
+    0%,90%,100% { transform: translate(0); opacity: 0; }
+    92% { transform: translate(-3px); opacity: 0.8; }
+    94% { transform: translate(3px); opacity: 0.8; }
+    96% { opacity: 0; }
+}
+@keyframes glitch-2 {
+    0%,90%,100% { transform: translate(0); opacity: 0; }
+    93% { transform: translate(3px); opacity: 0.8; }
+    95% { transform: translate(-3px); opacity: 0.8; }
+    97% { opacity: 0; }
+}
+
+[data-theme="hacker"] .sec-card,
+[data-theme="hacker"] .vuln-card,
+[data-theme="hacker"] .timeline-item {
+    animation: borderPulse 3s ease-in-out infinite;
+}
+@keyframes borderPulse {
+    0%, 100% { border-color: rgba(0, 255, 65, 0.15); }
+    50% { border-color: rgba(0, 255, 65, 0.4); }
+}
+[data-theme="hacker"] .sec-card:hover,
+[data-theme="hacker"] .vuln-card:hover,
+[data-theme="hacker"] .timeline-item:hover { animation: none; }
+
+/* ═══════════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════════ */
+.mode-selector { position: relative; }
+.mode-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 12px; padding: 8px 16px; cursor: pointer;
+    transition: all 0.3s; font-family: inherit;
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+}
+.mode-btn:hover { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
+.mode-arrow { font-size: 10px; transition: transform 0.3s; }
+.mode-arrow.open { transform: rotate(180deg); }
+.mode-dropdown {
+    position: absolute; top: calc(100% + 10px); right: 0;
+    width: 240px; border-radius: 16px; padding: 8px;
+    display: none; z-index: 100; animation: dropIn 0.25s ease;
+}
+.mode-dropdown.open { display: block; }
+@keyframes dropIn {
+    from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+[data-theme="normal"] .mode-dropdown { background: #fff; border: 1px solid rgba(108,99,255,0.15); box-shadow: 0 15px 40px rgba(108,99,255,0.15); }
+[data-theme="hacker"] .mode-dropdown { background: #0A0A0A; border: 1px solid rgba(0,255,65,0.25); box-shadow: 0 15px 40px rgba(0,255,65,0.1); }
+.mode-option {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 12px;
+    cursor: pointer; transition: all 0.2s;
+}
+[data-theme="normal"] .mode-option:hover { background: rgba(108,99,255,0.06); }
+[data-theme="hacker"] .mode-option:hover { background: rgba(0,255,65,0.06); }
+.mode-option-icon {
+    font-size: 22px; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; flex-shrink: 0;
+}
+[data-theme="normal"] .mode-option-icon { background: var(--glass); }
+[data-theme="hacker"] .mode-option-icon { background: rgba(0,255,65,0.05); }
+.mode-option-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.mode-option-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.mode-check { margin-left: auto; color: var(--primary); font-size: 14px; display: none; }
+.mode-option.active .mode-check { display: block; }
+
+.theme-transition-overlay {
+    position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+    display: none; align-items: center; justify-content: center;
+    background: #000; opacity: 0; transition: opacity 0.3s;
+}
+.theme-transition-overlay.active { display: flex; opacity: 1; }
+.transition-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(12px, 1.5vw, 18px); color: #00FF41;
+    text-align: center; text-shadow: 0 0 20px #00FF41;
+    padding: 20px; line-height: 2;
+}
+
+/* ═══════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════ */
+.navbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000; padding: 0 32px; height: 70px;
+    display: flex; align-items: center;
+    justify-content: space-between; transition: all 0.4s;
+}
+[data-theme="normal"] .navbar { background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(108,99,255,0.1); }
+[data-theme="hacker"] .navbar { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0, 255, 65, 0.15); }
+.navbar.scrolled { box-shadow: var(--shadow); }
+
+.nav-logo { display: flex; align-items: center; gap: 10px; color: var(--text-primary); }
+.nav-logo-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; transition: all 0.3s;
+}
+[data-theme="normal"] .nav-logo-icon { background: linear-gradient(135deg, #6C63FF, #00B4D8); box-shadow: 0 4px 15px rgba(108,99,255,0.3); color: #fff; }
+[data-theme="hacker"] .nav-logo-icon { background: transparent; border: 1px solid var(--primary); box-shadow: 0 0 10px var(--primary-glow); color: var(--primary); }
+.nav-logo:hover .nav-logo-icon { transform: rotate(15deg) scale(1.1); }
+
+.nav-logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; }
+[data-theme="normal"] .nav-logo-text { background: linear-gradient(135deg, #6C63FF, #00B4D8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+[data-theme="hacker"] .nav-logo-text { color: var(--primary); letter-spacing: 3px; text-shadow: 0 0 10px var(--primary-glow); -webkit-text-fill-color: var(--primary); }
+
+.nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+.nav-links a {
+    font-size: 14px; font-weight: 500; transition: all 0.3s;
+    position: relative; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 6px;
+}
+.nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 2px; border-radius: 2px; transition: width 0.3s;
+}
+[data-theme="normal"] .nav-links a::after { background: linear-gradient(90deg, #6C63FF, #00B4D8); }
+[data-theme="hacker"] .nav-links a::after { background: var(--primary); box-shadow: 0 0 8px var(--primary); }
+.nav-links a:hover { color: var(--primary); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--primary); }
+.nav-links a.active::after { width: 100%; }
+
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; background: none; border: none; }
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--text-primary); border-radius: 2px; transition: all 0.3s; }
+
+.mobile-menu {
+    display: none; position: fixed; top: 70px; left: 0; right: 0;
+    backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border);
+    padding: 24px; z-index: 999; flex-direction: column; gap: 16px;
+}
+[data-theme="normal"] .mobile-menu { background: rgba(255,255,255,0.95); }
+[data-theme="hacker"] .mobile-menu { background: rgba(0,0,0,0.97); }
+.mobile-menu.open { display: flex; }
+.mobile-menu a { font-size: 16px; padding: 10px 0; border-bottom: 1px solid var(--glass-border); color: var(--text-secondary); }
+.mobile-menu a:hover { color: var(--primary); }
+
+/* ═══════════════════════════════════════════
+   REUSABLE
+═══════════════════════════════════════════ */
+.section-badge {
+    display: inline-block; background: var(--glass);
+    border: 1px solid var(--glass-border); color: var(--primary);
+    padding: 6px 16px; border-radius: 20px;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(24px, 3.5vw, 38px); font-weight: 700;
+    color: var(--text-primary); margin-bottom: 12px;
+}
+
+.section-subtitle {
+    font-size: 15px; color: var(--text-secondary);
+    max-width: 580px; line-height: 1.7;
+}
+
+[data-theme="normal"] .gradient-text { background: linear-gradient(135deg, #6C63FF, #00B4D8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+[data-theme="hacker"] .gradient-text { background: linear-gradient(135deg, #00FF41, #00FFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(0,255,65,0.5)); }
+
+.btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: 10px; border: none;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: all 0.3s; font-family: inherit;
+}
+[data-theme="normal"] .btn-primary { background: linear-gradient(135deg, #6C63FF, #8B5CF6); color: #fff; box-shadow: 0 4px 15px rgba(108,99,255,0.3); }
+[data-theme="normal"] .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(108,99,255,0.4); }
+[data-theme="hacker"] .btn-primary { background: transparent; color: var(--primary); border: 1px solid var(--primary); box-shadow: 0 0 15px var(--primary-glow); letter-spacing: 2px; text-transform: uppercase; }
+[data-theme="hacker"] .btn-primary:hover { background: var(--primary); color: #000; box-shadow: 0 0 30px var(--primary-glow); transform: translateY(-2px); }
+
+.btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: 10px;
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    transition: all 0.3s; font-family: inherit;
+}
+[data-theme="normal"] .btn-secondary { background: #fff; color: var(--text-primary); border: 1px solid var(--border); }
+[data-theme="normal"] .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+[data-theme="hacker"] .btn-secondary { background: transparent; color: var(--secondary); border: 1px solid rgba(0,255,255,0.3); letter-spacing: 2px; text-transform: uppercase; }
+[data-theme="hacker"] .btn-secondary:hover { border-color: var(--secondary); box-shadow: 0 0 20px rgba(0,255,255,0.2); }
+
+.code-text {
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 8px; border-radius: 4px; font-size: 12px;
+}
+[data-theme="normal"] .code-text { background: rgba(108,99,255,0.08); color: var(--primary); }
+[data-theme="hacker"] .code-text { background: rgba(0,255,65,0.08); color: var(--primary); }
+
+/* ═══════════════════════════════════════════
+   PAGE HERO
+═══════════════════════════════════════════ */
+.page-hero {
+    padding: 130px 24px 50px; text-align: center;
+    position: relative; z-index: 2;
+}
+.page-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(32px, 5vw, 54px); font-weight: 700;
+    margin-bottom: 16px; color: var(--text-primary);
+}
+.page-subtitle {
+    font-size: 16px; color: var(--text-secondary);
+    max-width: 640px; margin: 0 auto 30px; line-height: 1.7;
+}
+
+.shield-icon-hero {
+    width: 90px; height: 90px; border-radius: 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; margin: 0 auto 24px; transition: all 0.3s;
+}
+[data-theme="normal"] .shield-icon-hero { background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(0,180,216,0.1)); color: var(--primary); border: 1px solid var(--glass-border); }
+[data-theme="hacker"] .shield-icon-hero { background: rgba(0,255,65,0.05); color: var(--primary); border: 1px solid rgba(0,255,65,0.3); box-shadow: 0 0 25px var(--primary-glow); text-shadow: 0 0 15px var(--primary); }
+
+/* ═══════════════════════════════════════════
+   CONTENT WRAPPER
+═══════════════════════════════════════════ */
+.content-wrapper {
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 24px 80px; position: relative; z-index: 2;
+}
+
+/* ═══════════════════════════════════════════
+   SECURITY STATS BAR
+═══════════════════════════════════════════ */
+.sec-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 20px; margin-bottom: 70px;
+}
+.stat-card {
+    border-radius: 16px; padding: 28px 20px;
+    text-align: center; transition: all 0.3s;
+}
+[data-theme="normal"] .stat-card { background: #fff; border: 1px solid var(--glass-border); box-shadow: var(--shadow); }
+[data-theme="hacker"] .stat-card { background: rgba(13,27,13,0.6); border: 1px solid rgba(0,255,65,0.15); backdrop-filter: blur(10px); }
+[data-theme="normal"] .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+[data-theme="hacker"] .stat-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow); }
+
+.stat-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 36px; font-weight: 700; display: block; margin-bottom: 6px;
+}
+[data-theme="normal"] .stat-number { background: linear-gradient(135deg, #6C63FF, #00B4D8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+[data-theme="hacker"] .stat-number { color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); -webkit-text-fill-color: var(--primary); }
+.stat-label { font-size: 13px; color: var(--text-secondary); }
+.stat-icon { font-size: 24px; margin-bottom: 12px; }
+
+/* ═══════════════════════════════════════════
+   SECURITY PRACTICES GRID
+═══════════════════════════════════════════ */
+.sec-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; margin-bottom: 70px;
+}
+.sec-card {
+    border-radius: 16px; padding: 30px;
+    transition: all 0.4s; position: relative; overflow: hidden;
+}
+[data-theme="normal"] .sec-card { background: #fff; border: 1px solid var(--glass-border); box-shadow: var(--shadow); }
+[data-theme="hacker"] .sec-card { background: rgba(13,27,13,0.6); border: 1px solid rgba(0,255,65,0.15); backdrop-filter: blur(10px); }
+.sec-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; opacity: 0; transition: opacity 0.4s;
+}
+[data-theme="normal"] .sec-card::before { background: linear-gradient(90deg, #6C63FF, #00B4D8); }
+[data-theme="hacker"] .sec-card::before { background: linear-gradient(90deg, #00FF41, #00FFFF); box-shadow: 0 0 10px #00FF41; }
+.sec-card:hover::before { opacity: 1; }
+
+[data-theme="normal"] .sec-card:hover { border-color: rgba(108,99,255,0.4); transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+[data-theme="hacker"] .sec-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 0 25px var(--primary-glow); }
+
+.sec-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 18px; transition: transform 0.3s;
+}
+.sec-card:hover .sec-icon { transform: scale(1.12) rotate(5deg); }
+
+[data-theme="normal"] .sec-icon.i1 { background: rgba(108,99,255,0.1); color: #6C63FF; }
+[data-theme="normal"] .sec-icon.i2 { background: rgba(0,180,216,0.1); color: #00B4D8; }
+[data-theme="normal"] .sec-icon.i3 { background: rgba(6,214,160,0.1); color: #06D6A0; }
+[data-theme="normal"] .sec-icon.i4 { background: rgba(255,101,132,0.1); color: #FF6584; }
+[data-theme="normal"] .sec-icon.i5 { background: rgba(255,215,0,0.1); color: #d4a800; }
+[data-theme="normal"] .sec-icon.i6 { background: rgba(236,72,153,0.1); color: #EC4899; }
+
+[data-theme="hacker"] .sec-icon.i1 { background: rgba(0,255,65,0.08); color: #00FF41; border: 1px solid rgba(0,255,65,0.3); text-shadow: 0 0 8px #00FF41; }
+[data-theme="hacker"] .sec-icon.i2 { background: rgba(0,229,255,0.08); color: #00E5FF; border: 1px solid rgba(0,229,255,0.3); text-shadow: 0 0 8px #00E5FF; }
+[data-theme="hacker"] .sec-icon.i3 { background: rgba(255,184,0,0.08); color: #FFB800; border: 1px solid rgba(255,184,0,0.3); text-shadow: 0 0 8px #FFB800; }
+[data-theme="hacker"] .sec-icon.i4 { background: rgba(255,16,240,0.08); color: #FF10F0; border: 1px solid rgba(255,16,240,0.3); text-shadow: 0 0 8px #FF10F0; }
+[data-theme="hacker"] .sec-icon.i5 { background: rgba(176,38,255,0.08); color: #B026FF; border: 1px solid rgba(176,38,255,0.3); text-shadow: 0 0 8px #B026FF; }
+[data-theme="hacker"] .sec-icon.i6 { background: rgba(255,49,49,0.08); color: #FF3131; border: 1px solid rgba(255,49,49,0.3); text-shadow: 0 0 8px #FF3131; }
+
+.sec-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 17px; font-weight: 600;
+    color: var(--text-primary); margin-bottom: 10px;
+}
+.sec-card p {
+    font-size: 13.5px; color: var(--text-secondary); line-height: 1.65;
+}
+.sec-card .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.sec-tag {
+    background: var(--tag-bg); border: 1px solid var(--tag-border);
+    padding: 3px 10px; border-radius: 12px; font-size: 11px;
+    font-family: 'JetBrains Mono', monospace; color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════
+   VULNERABILITY DISCLOSURE
+═══════════════════════════════════════════ */
+.vuln-section {
+    margin-bottom: 70px;
+}
+.vuln-card {
+    border-radius: 20px; padding: 36px;
+    position: relative; overflow: hidden;
+    width: 100%;
+}
+[data-theme="normal"] .vuln-card { background: #fff; border: 1px solid var(--glass-border); box-shadow: var(--shadow); }
+[data-theme="hacker"] .vuln-card { background: rgba(13,27,13,0.7); border: 1px solid rgba(0, 255, 65, 0.25); backdrop-filter: blur(10px); }
+.vuln-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+[data-theme="normal"] .vuln-card::before { background: linear-gradient(90deg, #6C63FF, #00B4D8); }
+[data-theme="hacker"] .vuln-card::before { background: linear-gradient(90deg, #00FF41, #00FFFF); box-shadow: 0 0 12px #00FF41; }
+
+.vuln-card h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--text-primary); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+}
+.vuln-card p { color: var(--text-secondary); font-size: 14px; line-height: 1.7; margin-bottom: 14px; }
+.vuln-card ul { padding-left: 18px; margin-bottom: 14px; }
+.vuln-card li { color: var(--text-secondary); font-size: 14px; margin-bottom: 8px; line-height: 1.6; }
+[data-theme="normal"] .vuln-card li::marker { color: var(--primary); }
+[data-theme="hacker"] .vuln-card li::marker { color: var(--primary); }
+
+/* ═══════════════════════════════════════════
+   INCIDENT RESPONSE TIMELINE
+═══════════════════════════════════════════ */
+.timeline-section { margin-bottom: 70px; }
+.timeline-header { text-align: center; margin-bottom: 40px; }
+.timeline-header .section-subtitle { margin: 0 auto; }
+
+.timeline {
+    position: relative; max-width: 800px; margin: 0 auto;
+    padding-left: 50px;
+}
+.timeline::before {
+    content: ''; position: absolute; left: 20px; top: 0;
+    bottom: 0; width: 2px;
+}
+[data-theme="normal"] .timeline::before { background: linear-gradient(to bottom, var(--primary), var(--secondary)); }
+[data-theme="hacker"] .timeline::before { background: linear-gradient(to bottom, #00FF41, #00E5FF); box-shadow: 0 0 8px rgba(0,255,65,0.3); }
+
+.timeline-item {
+    position: relative; margin-bottom: 24px;
+    border-radius: 14px; padding: 24px 28px;
+    transition: all 0.3s;
+}
+[data-theme="normal"] .timeline-item { background: #fff; border: 1px solid var(--glass-border); box-shadow: var(--shadow); }
+[data-theme="hacker"] .timeline-item { background: rgba(13,27,13,0.6); border: 1px solid rgba(0,255,65,0.15); }
+[data-theme="normal"] .timeline-item:hover { border-color: rgba(108,99,255,0.35); box-shadow: var(--shadow-hover); }
+[data-theme="hacker"] .timeline-item:hover { border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow); }
+
+.timeline-dot {
+    position: absolute; left: -38px; top: 26px;
+    width: 16px; height: 16px; border-radius: 50%;
+}
+[data-theme="normal"] .timeline-dot { background: var(--primary); border: 3px solid var(--bg-primary); box-shadow: 0 0 0 3px rgba(108,99,255,0.3); }
+[data-theme="hacker"] .timeline-dot { background: var(--primary); border: 3px solid #030503; box-shadow: 0 0 10px var(--primary-glow); }
+
+.timeline-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--primary);
+    font-weight: 600; margin-bottom: 6px; letter-spacing: 1px;
+}
+.timeline-item h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px; font-weight: 600;
+    color: var(--text-primary); margin-bottom: 8px;
+}
+.timeline-item p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; }
+
+/* ═══════════════════════════════════════════
+   SECURITY CONTACT CTA
+═══════════════════════════════════════════ */
+.cta-container {
+    max-width: 720px; margin: 0 auto; text-align: center;
+    border-radius: 24px; padding: 54px 40px;
+    position: relative; overflow: hidden;
+}
+[data-theme="normal"] .cta-container { background: #fff; border: 1px solid rgba(108,99,255,0.2); box-shadow: 0 20px 60px rgba(108,99,255,0.12); }
+[data-theme="hacker"] .cta-container { background: rgba(13,27,13,0.7); border: 1px solid rgba(0,255,65,0.3); box-shadow: 0 0 50px rgba(0,255,65,0.08); }
+
+.cta-glow {
+    position: absolute; top: -60px; left: 50%;
+    transform: translateX(-50%); width: 320px; height: 320px; pointer-events: none;
+}
+[data-theme="normal"] .cta-glow { background: radial-gradient(circle, rgba(108,99,255,0.1), transparent 70%); }
+[data-theme="hacker"] .cta-glow { background: radial-gradient(circle, rgba(0,255,65,0.1), transparent 70%); }
+
+.cta-container h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(22px, 3.5vw, 32px); font-weight: 700;
+    margin-bottom: 14px; color: var(--text-primary); position: relative;
+}
+.cta-container p { color: var(--text-secondary); font-size: 15px; margin-bottom: 30px; position: relative; }
+.cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.footer {
+    position: relative; z-index: 2;
+    border-top: 1px solid var(--glass-border); padding: 60px 24px 30px;
+}
+[data-theme="normal"] .footer { background: #F8F9FF; }
+[data-theme="hacker"] .footer { background: #000; }
+
+.footer-container { max-width: 1200px; margin: 0 auto; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-brand p { font-size: 14px; color: var(--text-secondary); margin: 16px 0 20px; line-height: 1.7; max-width: 250px; }
+.footer-social { display: flex; gap: 12px; }
+.social-btn { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; transition: all 0.3s; border: none; }
+[data-theme="normal"] .social-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-secondary); }
+[data-theme="normal"] .social-btn:hover { background: var(--primary); color: #fff; transform: translateY(-2px); }
+[data-theme="hacker"] .social-btn { background: transparent; border: 1px solid rgba(0,255,65,0.2); color: var(--text-secondary); }
+[data-theme="hacker"] .social-btn:hover { background: rgba(0,255,65,0.1); color: var(--primary); transform: translateY(-2px); }
+.footer-col h4 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; }
+[data-theme="hacker"] .footer-col h4 { color: var(--primary); letter-spacing: 2px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul li a { color: var(--text-secondary); font-size: 14px; transition: color 0.3s; }
+.footer-col ul li a:hover { color: var(--primary); }
+.footer-bottom { border-top: 1px solid var(--glass-border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-bottom p { font-size: 13px; color: var(--text-muted); }
+.footer-bottom-links { display: flex; gap: 20px; }
+.footer-bottom-links a { font-size: 13px; color: var(--text-muted); transition: color 0.3s; }
+.footer-bottom-links a:hover { color: var(--primary); }
+
+/* Scroll Top */
+.scroll-top { position: fixed; bottom: 30px; right: 30px; width: 44px; height: 44px; border-radius: 12px; border: none; font-size: 18px; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 500; transition: all 0.3s; }
+[data-theme="normal"] .scroll-top { background: linear-gradient(135deg, #6C63FF, #8B5CF6); color: #fff; box-shadow: 0 4px 15px rgba(108,99,255,0.3); }
+[data-theme="hacker"] .scroll-top { background: transparent; border: 1px solid var(--primary) !important; color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
+.scroll-top.visible { display: flex; }
+.scroll-top:hover { transform: translateY(-3px); }
+
+/* ═══════════════════════════════════════════
+   HACKER FULL OVERRIDES
+═══════════════════════════════════════════ */
+html[data-theme="hacker"] body { background: #030503 !important; color: #00FF41 !important; }
+html[data-theme="hacker"] body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(0,255,65,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,65,0.08) 1px, transparent 1px); background-size: 40px 40px; z-index: 0; animation: hk-grid-move 20s linear infinite; pointer-events: none; }
+@keyframes hk-grid-move { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
+html[data-theme="hacker"] body::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 30%, rgba(0,255,65,0.15) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(0,229,255,0.1) 0%, transparent 40%), radial-gradient(circle at 50% 50%, rgba(255,16,240,0.08) 0%, transparent 50%), radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%); z-index: 1; pointer-events: none; animation: hk-glow-pulse 8s ease-in-out infinite; }
+@keyframes hk-glow-pulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+html[data-theme="hacker"] .scanlines { display: block !important; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.25), rgba(0,0,0,0.25) 1px, transparent 1px, transparent 3px); z-index: 9999; }
+html[data-theme="hacker"] #matrix-canvas { opacity: 0.35 !important; z-index: 2 !important; }
+html[data-theme="hacker"]::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, transparent, #00FF41, transparent); z-index: 9997; animation: hk-scan 6s linear infinite; pointer-events: none; opacity: 0.6; box-shadow: 0 0 20px #00FF41; }
+@keyframes hk-scan { 0% { transform: translateY(0); } 100% { transform: translateY(100vh); } }
+
+html[data-theme="hacker"] .navbar { background: rgba(5,10,5,0.7) !important; border: 1px solid rgba(0,255,65,0.2) !important; box-shadow: 0 0 30px rgba(0,255,65,0.1); }
+html[data-theme="hacker"] .nav-logo-text { animation: hk-logo-tear 3s infinite; }
+@keyframes hk-logo-tear { 0%,80%,100% { transform: translate(0); text-shadow: 0 0 10px #00FF41; } 82% { transform: translate(-8px,-2px); text-shadow: 4px 0 #FF3131, -4px 0 #00E5FF; } 84% { transform: translate(10px,3px); filter: blur(1px); } 86% { transform: translate(-6px,1px); } 88% { transform: translate(0); } }
+html[data-theme="hacker"] .nav-links li:nth-child(1) a { color: #00FF41 !important; }
+html[data-theme="hacker"] .nav-links li:nth-child(2) a { color: #00E5FF !important; }
+html[data-theme="hacker"] .nav-links li:nth-child(3) a { color: #FFB800 !important; }
+html[data-theme="hacker"] .nav-links li:nth-child(4) a { color: #FF10F0 !important; }
+html[data-theme="hacker"] .nav-links li:nth-child(5) a { color: #FF8C00 !important; }
+html[data-theme="hacker"] .nav-links a:hover { text-shadow: 0 0 15px currentColor; }
+html[data-theme="hacker"] .mode-btn { background: rgba(255,16,240,0.08) !important; border-color: #FF10F0 !important; color: #FF10F0 !important; text-shadow: 0 0 8px #FF10F0; }
+html[data-theme="hacker"] .section-badge { background: rgba(255,184,0,0.08) !important; color: #FFB800 !important; border: 1px solid #FFB800 !important; text-shadow: 0 0 8px #FFB800; }
+html[data-theme="hacker"] .page-title { text-shadow: 0 0 20px rgba(0,255,65,0.4); animation: hk-master-shake 2s infinite; }
+@keyframes hk-master-shake { 0%,100% { transform: translate(0); } 10% { transform: translate(-2px,1px); } 30% { transform: translate(-1px,0); } 50% { transform: translate(0); } 70% { transform: translate(1px,2px); } }
+
+html[data-theme="hacker"] .sec-card h3,
+html[data-theme="hacker"] .vuln-card h2,
+html[data-theme="hacker"] .timeline-item h4,
+html[data-theme="hacker"] .cta-container h2 { color: #00FF41 !important; text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+html[data-theme="hacker"] .sec-card p,
+html[data-theme="hacker"] .vuln-card p,
+html[data-theme="hacker"] .vuln-card li,
+html[data-theme="hacker"] .timeline-item p,
+html[data-theme="hacker"] .cta-container p,
+html[data-theme="hacker"] .stat-label { color: #B8FFB8 !important; }
+
+html[data-theme="hacker"] .footer { background: rgba(3,5,3,0.95) !important; border-top: 1px solid #2D5F2D !important; }
+html[data-theme="hacker"] .footer h4 { color: #00FF41 !important; text-shadow: 0 0 5px rgba(0,255,65,0.4); }
+html[data-theme="hacker"] .footer a { color: #B8FFB8 !important; }
+html[data-theme="hacker"] .footer a:hover { color: #00FF41 !important; text-shadow: 0 0 8px #00FF41; }
+html[data-theme="hacker"] .social-btn { background: rgba(0,255,65,0.1) !important; color: #00FF41 !important; border: 1px solid #2D5F2D; }
+html[data-theme="hacker"] .social-btn:hover { background: #00FF41 !important; color: #000 !important; box-shadow: 0 0 15px rgba(0,255,65,0.4); }
+html[data-theme="hacker"] .scroll-top { background: #00FF41 !important; color: #000 !important; border: none !important; box-shadow: 0 0 20px rgba(0,255,65,0.4) !important; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    .sec-grid { grid-template-columns: repeat(2, 1fr); }
+    .sec-stats { grid-template-columns: repeat(2, 1fr); }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .navbar { padding: 0 20px; }
+    .sec-grid { grid-template-columns: 1fr; }
+    .sec-stats { grid-template-columns: 1fr 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .cta-container { padding: 40px 24px; }
+    .mode-dropdown { right: -50px; }
+    .timeline { padding-left: 40px; }
+    .timeline::before { left: 14px; }
+    .timeline-dot { left: -34px; }
+}
+@media (max-width: 480px) {
+    .mode-label { display: none; }
+    .sec-stats { grid-template-columns: 1fr; }
+    .scroll-top { bottom: 20px; right: 20px; }
+}
+    </style>
+</head>
+<body>
+
+<!-- Backgrounds -->
+<canvas id="matrix-canvas"></canvas>
+<div class="scanlines"></div>
+<div class="bg-shapes">
+    <div class="bg-shape bg-shape-1"></div>
+    <div class="bg-shape bg-shape-2"></div>
+    <div class="bg-shape bg-shape-3"></div>
+</div>
+
+<!-- Theme Transition -->
+<div class="theme-transition-overlay" id="themeOverlay">
+    <div class="transition-text">
+        > INITIATING HACKER PROTOCOL...<br>
+        > SCANNING THREAT VECTORS...<br>
+        > HARDENING DEFENSES...<br>
+        > ACCESS GRANTED_
+    </div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon"><i class="fas fa-shield-halved"></i></div>
+        <span class="nav-logo-text">CryptoKit</span>
+    </a>
+    <ul class="nav-links">
+        <li><a href="index.html"><i class="fas fa-house"></i> Home</a></li>
+        <li><a href="Privacy Policy.html"><i class="fas fa-user-shield"></i> Privacy</a></li>
+        <li><a href="Terms.html"><i class="fas fa-scale-balanced"></i> Terms</a></li>
+        <li><a href="Support.html"><i class="fas fa-headset"></i> Support</a></li>
+        <li><a href="Security.html" class="active"><i class="fas fa-bug-slash"></i> Security</a></li>
+    </ul>
+    <div class="nav-actions">
+        <div class="mode-selector">
+            <button class="mode-btn" onclick="toggleModeDropdown(event)">
+                <span id="modeIcon">✨</span>
+                <span class="mode-label" id="modeLabel">Normal</span>
+                <span class="mode-arrow" id="modeArrow">▼</span>
+            </button>
+            <div class="mode-dropdown" id="modeDropdown">
+                <div class="mode-option active" id="optNormal" onclick="setTheme('normal')">
+                    <div class="mode-option-icon">✨</div>
+                    <div><div class="mode-option-title">Normal Mode</div><div class="mode-option-desc">Clean &amp; professional</div></div>
+                    <span class="mode-check"><i class="fas fa-check"></i></span>
+                </div>
+                <div class="mode-option" id="optHacker" onclick="setTheme('hacker')">
+                    <div class="mode-option-icon">💀</div>
+                    <div><div class="mode-option-title">Hacker Mode</div><div class="mode-option-desc">Matrix cyberpunk</div></div>
+                    <span class="mode-check"><i class="fas fa-check"></i></span>
+                </div>
+            </div>
+        </div>
+        <button class="hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="index.html"><i class="fas fa-house"></i> Home</a>
+    <a href="Privacy Policy.html"><i class="fas fa-user-shield"></i> Privacy Policy</a>
+    <a href="Terms.html"><i class="fas fa-scale-balanced"></i> Terms of Service</a>
+    <a href="Support.html"><i class="fas fa-headset"></i> Support &amp; Contact</a>
+    <a href="Security.html"><i class="fas fa-bug-slash"></i> Security</a>
+</div>
+
+<!-- Hero -->
+<section class="page-hero">
+    <div class="shield-icon-hero"><i class="fas fa-shield-halved"></i></div>
+    <div class="section-badge">🔐 SECURITY CENTER</div>
+    <h1 class="page-title glitch" data-text="Security at CryptoShield">
+        <span class="gradient-text">Security at CryptoKit</span>
+    </h1>
+    <p class="page-subtitle">
+        Security is the foundation of everything we build. Learn about our infrastructure hardening, vulnerability disclosure program, compliance certifications, and how we protect your cryptographic operations around the clock.
+    </p>
+</section>
+
+<div class="content-wrapper">
+
+    <!-- Stats -->
+    <div class="sec-stats">
+        <div class="stat-card">
+            <div class="stat-icon">🔒</div>
+            <span class="stat-number">256-bit</span>
+            <span class="stat-label">AES-GCM Encryption at Rest</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🛡️</div>
+            <span class="stat-number">0</span>
+            <span class="stat-label">Data Breaches — Ever</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🕐</div>
+            <span class="stat-number">&lt; 30m</span>
+            <span class="stat-label">Avg. Security Response</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <span class="stat-number">99.98%</span>
+            <span class="stat-label">Platform Uptime (SLA)</span>
+        </div>
+    </div>
+
+    <!-- Security Practices -->
+    <div style="text-align:center; margin-bottom:40px;">
+        <div class="section-badge">Infrastructure</div>
+        <h2 class="section-title">Our Security Practices</h2>
+        <p class="section-subtitle" style="margin:0 auto;">Every layer of CryptoKit is engineered with defense-in-depth — from network to application to human factors.</p>
+    </div>
+
+    <div class="sec-grid">
+        <div class="sec-card">
+            <div class="sec-icon i1"><i class="fas fa-lock"></i></div>
+            <h3>End-to-End Encryption</h3>
+            <p>All data in transit is protected with <span class="code-text">TLS 1.3</span>. Data at rest is encrypted using <span class="code-text">AES-256-GCM</span> with envelope encryption and HSM-backed key management.</p>
+            <div class="tags"><span class="sec-tag">TLS 1.3</span><span class="sec-tag">AES-256</span><span class="sec-tag">HSM</span></div>
+        </div>
+        <div class="sec-card">
+            <div class="sec-icon i2"><i class="fas fa-key"></i></div>
+            <h3>Zero-Knowledge Architecture</h3>
+            <p>Your encryption keys, plaintext data, and passwords never reach our servers. All cryptographic operations run client-side in your browser via Web Crypto API.</p>
+            <div class="tags"><span class="sec-tag">Client-side</span><span class="sec-tag">Web Crypto</span><span class="sec-tag">No logs</span></div>
+        </div>
+        <div class="sec-card">
+            <div class="sec-icon i3"><i class="fas fa-user-lock"></i></div>
+            <h3>Authentication & Access</h3>
+            <p>Passwords are hashed with <span class="code-text">Argon2id</span>. We offer TOTP/WebAuthn MFA, session management, IP allowlisting, and role-based access controls (RBAC).</p>
+            <div class="tags"><span class="sec-tag">Argon2id</span><span class="sec-tag">WebAuthn</span><span class="sec-tag">RBAC</span></div>
+        </div>
+        <div class="sec-card">
+            <div class="sec-icon i4"><i class="fas fa-server"></i></div>
+            <h3>Infrastructure Security</h3>
+            <p>Hosted in SOC 2 Type II certified data centers with DDoS protection, network micro-segmentation, intrusion detection systems (IDS), and immutable infrastructure via IaC.</p>
+            <div class="tags"><span class="sec-tag">SOC 2</span><span class="sec-tag">IDS/IPS</span><span class="sec-tag">DDoS</span></div>
+        </div>
+        <div class="sec-card">
+            <div class="sec-icon i5"><i class="fas fa-magnifying-glass-chart"></i></div>
+            <h3>Continuous Monitoring</h3>
+            <p>24/7 SIEM-based monitoring with real-time threat detection, automated alerting, anomaly detection on all API endpoints, and quarterly penetration testing by independent firms.</p>
+            <div class="tags"><span class="sec-tag">SIEM</span><span class="sec-tag">Pen Testing</span><span class="sec-tag">24/7</span></div>
+        </div>
+        <div class="sec-card">
+            <div class="sec-icon i6"><i class="fas fa-code-branch"></i></div>
+            <h3>Secure Development (SDLC)</h3>
+            <p>Every code change undergoes SAST/DAST scanning, peer review, dependency auditing via SCA tools, and container image signing before deployment to production.</p>
+            <div class="tags"><span class="sec-tag">SAST</span><span class="sec-tag">DAST</span><span class="sec-tag">SCA</span></div>
+        </div>
+    </div>
+
+    <!-- Vulnerability Disclosure  -->
+    <div class="vuln-section">
+        <div class="vuln-card">
+            <h2><i class="fas fa-bug" style="color:var(--accent)"></i> Vulnerability Disclosure</h2>
+            <p>We appreciate security researchers who help keep CryptoShield safe. If you discover a vulnerability, please report it responsibly:</p>
+            <ul>
+                <li>Email <span class="code-text">security@cryptoshield.com</span> with PGP encryption</li>
+                <li>Include detailed steps to reproduce the issue</li>
+                <li>Provide proof-of-concept code or screenshots</li>
+                <li>Allow up to <strong>90 days</strong> for coordinated disclosure</li>
+                <li>Do not access, modify, or delete other users' data</li>
+                <li>Do not perform DoS/DDoS or social engineering attacks</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Incident Response Timeline -->
+    <div class="timeline-section">
+        <div class="timeline-header">
+            <div class="section-badge">Incident Response</div>
+            <h2 class="section-title">Our Response Protocol</h2>
+            <p class="section-subtitle">When a security event is detected, our team follows a battle-tested incident response plan.</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">T+0 MINUTES</div>
+                <h4>1. Detection & Triage</h4>
+                <p>Automated SIEM alerts trigger our on-call security engineer. Initial severity assessment using CVSS 3.1 scoring within 15 minutes.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">T+30 MINUTES</div>
+                <h4>2. Containment</h4>
+                <p>Affected systems are isolated, compromised credentials are revoked, and network-level blocks are deployed. War room is assembled for critical incidents.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">T+1 – 4 HOURS</div>
+                <h4>3. Investigation & Analysis</h4>
+                <p>Root cause analysis performed using immutable audit logs, memory forensics, and network packet captures. Attack vector and blast radius are fully mapped.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">T+4 – 24 HOURS</div>
+                <h4>4. Eradication & Recovery</h4>
+                <p>Vulnerability is patched, affected infrastructure is rebuilt from known-good images, and service integrity is verified before full restoration.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">T+24 – 72 HOURS</div>
+                <h4>5. Notification & Disclosure</h4>
+                <p>Affected users are notified per GDPR timelines. A public post-mortem is published with technical details, lessons learned, and preventive measures.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">T+7 – 30 DAYS</div>
+                <h4>6. Post-Incident Review</h4>
+                <p>Blameless retrospective conducted. Runbooks are updated, detection rules tuned, and findings are fed back into our secure SDLC and training programs.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-container">
+        <div class="cta-glow"></div>
+        <h2>Found a Vulnerability?</h2>
+        <p>Report it responsibly and help make cryptography safer for everyone. Qualifying reports are eligible for our bug bounty program.</p>
+        <div class="cta-buttons">
+            <a href="mailto:security@cryptoshield.com" class="btn-primary"><i class="fas fa-envelope-circle-check"></i> Report Vulnerability</a>
+            <a href="Support.html" class="btn-secondary"><i class="fas fa-headset"></i> Contact Support</a>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <a href="index.html" class="nav-logo">
+                    <div class="nav-logo-icon"><i class="fas fa-shield-halved"></i></div>
+                    <span class="nav-logo-text">CryptoKit</span>
+                </a>
+                <p>Advanced cryptography tools and resources for developers, researchers, and security professionals worldwide.</p>
+                <div class="footer-social">
+                    <button class="social-btn"><i class="fab fa-github"></i></button>
+                    <button class="social-btn"><i class="fab fa-x-twitter"></i></button>
+                    <button class="social-btn"><i class="fab fa-discord"></i></button>
+                    <button class="social-btn"><i class="fab fa-youtube"></i></button>
+                </div>
+            </div>
+            <div class="footer-col"><h4>Product</h4><ul><li><a href="index.html">Home</a></li><li><a href="#">All Tools</a></li><li><a href="#">API Docs</a></li><li><a href="#">Pricing</a></li></ul></div>
+            <div class="footer-col"><h4>Legal</h4><ul><li><a href="Privacy Policy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Service</a></li><li><a href="#">Cookie Policy</a></li><li><a href="security.html">Security</a></li></ul></div>
+            <div class="footer-col"><h4>Support</h4><ul><li><a href="Support.html">Help Center</a></li><li><a href="support-contact.html#contact">Contact Us</a></li><li><a href="#">Status Page</a></li><li><a href="#">Documentation</a></li></ul></div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CryptoKit Inc. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="index.html">Home</a>
+                <a href="Privacy Policy.html">Privacy</a>
+                <a href="Terms.html">Terms</a>
+                <a href="Security.html">Security</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scroll Top -->
+<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+/* ═══ MATRIX RAIN ═══ */
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const matrixChars = '01アイウエオカキクケコ<>[]{}#$%&*SECURITY';
+const fontSize = 14;
+let columns = Math.floor(canvas.width / fontSize);
+let drops = Array(columns).fill(1);
+function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00FF41';
+    ctx.font = fontSize + 'px monospace';
+    for (let i = 0; i < drops.length; i++) {
+        const ch = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+        ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+    }
+}
+setInterval(drawMatrix, 50);
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    columns = Math.floor(canvas.width / fontSize);
+    drops = Array(columns).fill(1);
+});
+
+/* ═══ SCROLL ═══ */
+window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    document.getElementById('scrollTopBtn').classList.toggle('visible', window.scrollY > 300);
+});
+
+/* ═══ MOBILE MENU ═══ */
+function toggleMobileMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+/* ═══ MODE DROPDOWN ═══ */
+function toggleModeDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('modeDropdown').classList.toggle('open');
+    document.getElementById('modeArrow').classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.mode-selector')) {
+        document.getElementById('modeDropdown').classList.remove('open');
+        document.getElementById('modeArrow').classList.remove('open');
+    }
+});
+
+/* ═══ THEME SWITCHER ═══ */
+function applyThemeUI(theme) {
+    if (theme === 'hacker') {
+        document.getElementById('modeIcon').textContent = '💀';
+        document.getElementById('modeLabel').textContent = 'Hacker';
+        document.getElementById('optNormal').classList.remove('active');
+        document.getElementById('optHacker').classList.add('active');
+    } else {
+        document.getElementById('modeIcon').textContent = '✨';
+        document.getElementById('modeLabel').textContent = 'Normal';
+        document.getElementById('optNormal').classList.add('active');
+        document.getElementById('optHacker').classList.remove('active');
+    }
+}
+
+function setTheme(theme) {
+    const overlay = document.getElementById('themeOverlay');
+    if (theme === 'hacker') {
+        overlay.classList.add('active');
+        setTimeout(() => {
+            document.documentElement.setAttribute('data-theme', 'hacker');
+            applyThemeUI('hacker');
+            localStorage.setItem('cs-theme', 'hacker');
+        }, 500);
+        setTimeout(() => overlay.classList.remove('active'), 1600);
+    } else {
+        document.documentElement.setAttribute('data-theme', 'normal');
+        applyThemeUI('normal');
+        localStorage.setItem('cs-theme', 'normal');
+    }
+    document.getElementById('modeDropdown').classList.remove('open');
+    document.getElementById('modeArrow').classList.remove('open');
+}
+
+// Load saved theme
+(function () {
+    const saved = localStorage.getItem('cs-theme');
+    if (saved === 'hacker') {
+        document.documentElement.setAttribute('data-theme', 'hacker');
+        applyThemeUI('hacker');
+    }
+})();
+
+/* ═══ COPY PGP KEY ═══ */
+function copyPGP() {
+    const key = document.getElementById('pgpKey').textContent;
+    navigator.clipboard.writeText(key).then(() => {
+        const btn = document.querySelector('.pgp-copy-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy Key'; }, 2000);
+    });
+}
+</script>
+</body>
+</html>

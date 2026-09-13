@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changelog - CryptoKit Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="docs-style.css">
+    <style>
+        .version-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        .version-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .version-badge {
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .version-date {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .change-list {
+            list-style: none;
+            padding: 0;
+        }
+        .change-list li {
+            padding: 6px 0;
+            display: flex;
+            gap: 8px;
+        }
+        .change-type {
+            font-weight: 600;
+            min-width: 70px;
+        }
+        .change-added { color: #10b981; }
+        .change-fixed { color: #3b82f6; }
+        .change-changed { color: #f59e0b; }
+        .change-removed { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <nav class="docs-navbar">
+        <div class="docs-nav-left">
+            <a href="index.html" class="docs-logo">
+                <div class="docs-logo-icon">
+                    <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                        <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2.5"/>
+                        <rect x="12" y="14" width="16" height="18" rx="3" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="20" cy="23" r="3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <span>CryptoKit Docs</span>
+            </a>
+        </div>
+        <div class="docs-nav-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="docsSearch" placeholder="Search documentation..." autocomplete="off">
+            <kbd>Ctrl K</kbd>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        <div class="docs-nav-right">
+            <a href="index.html" class="nav-home-btn"><i class="fas fa-home"></i> Home</a>
+            <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+            <a href="https://github.com" class="github-btn" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+    </nav>
+
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <div class="sidebar-section">
+                <h3>Introduction</h3>
+                <ul>
+                    <li><a href="documentation.html"><i class="fas fa-book-open"></i> Overview</a></li>
+                    <li><a href="getting-started.html"><i class="fas fa-rocket"></i> Getting Started</a></li>
+                    <li><a href="core-concepts.html"><i class="fas fa-brain"></i> Core Concepts</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Tools</h3>
+                <ul>
+                    <li><a href="tool-docs.html"><i class="fas fa-tools"></i> Tool Documentation</a></li>
+                    <li><a href="algorithm-reference.html"><i class="fas fa-table"></i> Algorithm Reference</a></li>
+                    <li><a href="terminal-docs.html"><i class="fas fa-terminal"></i> Terminal Mode</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Guides</h3>
+                <ul>
+                    <li><a href="security-practices.html"><i class="fas fa-shield-alt"></i> Security Practices</a></li>
+                    <li><a href="code-examples.html"><i class="fas fa-code"></i> Code Examples</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Reference</h3>
+                <ul>
+                    <li><a href="faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="glossary.html"><i class="fas fa-list"></i> Glossary</a></li>
+                    <li><a href="limitations.html"><i class="fas fa-exclamation-triangle"></i> Limitations</a></li>
+                    <li><a href="changelog.html"><i class="fas fa-history"></i> Changelog</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="docs-main">
+            <div class="breadcrumb">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                <span>/</span>
+                <a href="documentation.html">Docs</a>
+                <span>/</span>
+                <span>Changelog</span>
+            </div>
+
+            <div class="docs-hero">
+                <div class="docs-badge">📅 Changelog</div>
+                <h1>Version <span class="gradient-text">History</span></h1>
+                <p>Track new features, improvements, and bug fixes in CryptoKit.</p>
+            </div>
+
+            <div class="docs-section">
+                <div class="version-block">
+                    <div class="version-header">
+                        <span class="version-badge">v1.0</span>
+                        <span class="version-date">Released: January 2025</span>
+                    </div>
+                    <p><strong>🎉 Initial Public Release</strong></p>
+                    <ul class="change-list">
+                        <li><span class="change-type change-added">ADDED</span> RSA Key Generator tool</li>
+                        <li><span class="change-type change-added">ADDED</span> File Integrity Checker</li>
+                        <li><span class="change-type change-added">ADDED</span> Hash Generator (MD5, SHA family, BLAKE2)</li>
+                        <li><span class="change-type change-added">ADDED</span> Text Encrypt/Decrypt (AES-256, RSA)</li>
+                        <li><span class="change-type change-added">ADDED</span> Digital Signature tool</li>
+                        <li><span class="change-type change-added">ADDED</span> Password Generator & Analyzer</li>
+                        <li><span class="change-type change-added">ADDED</span> Terminal Mode for developers</li>
+                        <li><span class="change-type change-added">ADDED</span> AI Assistant (CryptoBot)</li>
+                        <li><span class="change-type change-added">ADDED</span> Hacker theme mode</li>
+                        <li><span class="change-type change-added">ADDED</span> Complete documentation site</li>
+                    </ul>
+                </div>
+
+                <div class="version-block">
+                    <div class="version-header">
+                        <span class="version-badge">v0.9.0</span>
+                        <span class="version-date">Released: December 2024</span>
+                    </div>
+                    <p><strong>Beta Release</strong></p>
+                    <ul class="change-list">
+                        <li><span class="change-type change-added">ADDED</span> Core cryptographic tools</li>
+                        <li><span class="change-type change-added">ADDED</span> Responsive design</li>
+                        <li><span class="change-type change-fixed">FIXED</span> Multiple UI bugs</li>
+                        <li><span class="change-type change-changed">CHANGED</span> Improved performance</li>
+                    </ul>
+                </div>
+
+                <h2 id="roadmap">🚀 Upcoming Features</h2>
+                <div class="callout info">
+                    <div class="callout-icon">🔮</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Coming Soon</div>
+                        <ul>
+                            <li>Post-quantum cryptography algorithms</li>
+                            <li>PGP/GPG file support</li>
+                            <li>Multi-language documentation</li>
+                            <li>Browser extension</li>
+                            <li>Mobile apps (iOS/Android)</li>
+                            <li>Team collaboration features</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feedback-box">
+                <h3>Was this page helpful?</h3>
+                <div class="feedback-buttons">
+                    <button class="feedback-btn" onclick="submitFeedback('yes')"><i class="fas fa-thumbs-up"></i> Yes</button>
+                    <button class="feedback-btn" onclick="submitFeedback('no')"><i class="fas fa-thumbs-down"></i> No</button>
+                </div>
+            </div>
+
+            <div class="docs-footer-nav">
+                <a href="limitations.html" class="nav-prev">
+                    <span class="nav-label">← Previous</span>
+                    <span class="nav-title">Limitations</span>
+                </a>
+                <a href="documentation.html" class="nav-next">
+                    <span class="nav-label">Back to</span>
+                    <span class="nav-title">Docs Home</span>
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <button class="scroll-top" id="scrollTop"><i class="fas fa-chevron-up"></i></button>
+    <script src="docs-script.js"></script>
+</body>
+</html>

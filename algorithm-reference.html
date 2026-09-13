@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Reference - CryptoKit Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="docs-style.css">
+</head>
+<body>
+    <nav class="docs-navbar">
+        <div class="docs-nav-left">
+            <a href="index.html" class="docs-logo">
+                <div class="docs-logo-icon">
+                    <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                        <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2.5"/>
+                        <rect x="12" y="14" width="16" height="18" rx="3" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="20" cy="23" r="3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <span>CryptoKit Docs</span>
+            </a>
+        </div>
+        <div class="docs-nav-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="docsSearch" placeholder="Search documentation..." autocomplete="off">
+            <kbd>Ctrl K</kbd>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        <div class="docs-nav-right">
+            <a href="index.html" class="nav-home-btn"><i class="fas fa-home"></i> Home</a>
+            <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+            <a href="https://github.com" class="github-btn" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+    </nav>
+
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <div class="sidebar-section">
+                <h3>Introduction</h3>
+                <ul>
+                    <li><a href="documentation.html"><i class="fas fa-book-open"></i> Overview</a></li>
+                    <li><a href="getting-started.html"><i class="fas fa-rocket"></i> Getting Started</a></li>
+                    <li><a href="core-concepts.html"><i class="fas fa-brain"></i> Core Concepts</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Tools</h3>
+                <ul>
+                    <li><a href="tool-docs.html"><i class="fas fa-tools"></i> Tool Documentation</a></li>
+                    <li><a href="algorithm-reference.html"><i class="fas fa-table"></i> Algorithm Reference</a></li>
+                    <li><a href="terminal-docs.html"><i class="fas fa-terminal"></i> Terminal Mode</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Guides</h3>
+                <ul>
+                    <li><a href="security-practices.html"><i class="fas fa-shield-alt"></i> Security Practices</a></li>
+                    <li><a href="code-examples.html"><i class="fas fa-code"></i> Code Examples</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Reference</h3>
+                <ul>
+                    <li><a href="faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="glossary.html"><i class="fas fa-list"></i> Glossary</a></li>
+                    <li><a href="limitations.html"><i class="fas fa-exclamation-triangle"></i> Limitations</a></li>
+                    <li><a href="changelog.html"><i class="fas fa-history"></i> Changelog</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="docs-main">
+            <div class="breadcrumb">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                <span>/</span>
+                <a href="documentation.html">Docs</a>
+                <span>/</span>
+                <span>Algorithm Reference</span>
+            </div>
+
+            <div class="docs-hero">
+                <div class="docs-badge">📊 Reference</div>
+                <h1>Algorithm <span class="gradient-text">Reference</span></h1>
+                <p>Complete reference of all cryptographic algorithms supported by CryptoKit.</p>
+            </div>
+
+            <div class="toc">
+                <div class="toc-title">📑 On This Page</div>
+                <ul id="tocList"></ul>
+            </div>
+
+            <div class="docs-section">
+                <h2 id="overview">Overview</h2>
+                <p>This page provides a comprehensive reference for all cryptographic algorithms, their properties, and recommended use cases.</p>
+
+                <h2 id="symmetric">Symmetric Encryption Algorithms</h2>
+                <table class="docs-table">
+                    <thead>
+                        <tr><th>Algorithm</th><th>Key Size</th><th>Block Size</th><th>Speed</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>AES-128</td><td>128-bit</td><td>128-bit</td><td>Fast</td><td class="status-ok">✅ Secure</td></tr>
+                        <tr><td>AES-192</td><td>192-bit</td><td>128-bit</td><td>Fast</td><td class="status-ok">✅ Secure</td></tr>
+                        <tr><td>AES-256</td><td>256-bit</td><td>128-bit</td><td>Fast</td><td class="status-ok">✅ Best</td></tr>
+                        <tr><td>ChaCha20</td><td>256-bit</td><td>Stream</td><td>Very Fast</td><td class="status-ok">✅ Secure</td></tr>
+                        <tr><td>DES</td><td>56-bit</td><td>64-bit</td><td>Fast</td><td class="status-danger">❌ Broken</td></tr>
+                        <tr><td>3DES</td><td>168-bit</td><td>64-bit</td><td>Slow</td><td class="status-warn">⚠️ Deprecated</td></tr>
+                    </tbody>
+                </table>
+
+                <h2 id="asymmetric">Asymmetric Algorithms</h2>
+                <table class="docs-table">
+                    <thead>
+                        <tr><th>Algorithm</th><th>Key Size</th><th>Speed</th><th>Use Case</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>RSA-1024</td><td>1024-bit</td><td>Medium</td><td>Legacy only</td><td class="status-danger">❌ Weak</td></tr>
+                        <tr><td>RSA-2048</td><td>2048-bit</td><td>Medium</td><td>General use</td><td class="status-ok">✅ Standard</td></tr>
+                        <tr><td>RSA-4096</td><td>4096-bit</td><td>Slow</td><td>High security</td><td class="status-ok">✅ Best</td></tr>
+                        <tr><td>ECC P-256</td><td>256-bit</td><td>Fast</td><td>Modern apps</td><td class="status-ok">✅ Excellent</td></tr>
+                        <tr><td>ECC P-384</td><td>384-bit</td><td>Fast</td><td>High security</td><td class="status-ok">✅ Excellent</td></tr>
+                        <tr><td>Ed25519</td><td>256-bit</td><td>Very Fast</td><td>Signatures</td><td class="status-ok">✅ Best</td></tr>
+                    </tbody>
+                </table>
+
+                <h2 id="hash">Hash Functions</h2>
+                <table class="docs-table">
+                    <thead>
+                        <tr><th>Algorithm</th><th>Output Size</th><th>Speed</th><th>Collision Resistance</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>MD5</td><td>128-bit</td><td>Very Fast</td><td>Broken</td><td class="status-danger">❌ Broken</td></tr>
+                        <tr><td>SHA-1</td><td>160-bit</td><td>Fast</td><td>Broken</td><td class="status-danger">❌ Broken</td></tr>
+                        <tr><td>SHA-256</td><td>256-bit</td><td>Fast</td><td>Strong</td><td class="status-ok">✅ Secure</td></tr>
+                        <tr><td>SHA-384</td><td>384-bit</td><td>Fast</td><td>Very Strong</td><td class="status-ok">✅ Secure</td></tr>
+                        <tr><td>SHA-512</td><td>512-bit</td><td>Fast</td><td>Very Strong</td><td class="status-ok">✅ Secure</td></tr>
+                        <tr><td>SHA-3</td><td>Variable</td><td>Fast</td><td>Very Strong</td><td class="status-ok">✅ Secure</td></tr>
+                        <tr><td>BLAKE2b</td><td>512-bit</td><td>Very Fast</td><td>Very Strong</td><td class="status-ok">✅ Best</td></tr>
+                        <tr><td>BLAKE3</td><td>Variable</td><td>Extremely Fast</td><td>Very Strong</td><td class="status-ok">✅ Best</td></tr>
+                    </tbody>
+                </table>
+
+                <h2 id="kdf">Key Derivation Functions</h2>
+                <table class="docs-table">
+                    <thead>
+                        <tr><th>Algorithm</th><th>Purpose</th><th>Speed</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>PBKDF2</td><td>Password hashing</td><td>Configurable</td><td class="status-ok">✅ Standard</td></tr>
+                        <tr><td>bcrypt</td><td>Password hashing</td><td>Slow (by design)</td><td class="status-ok">✅ Excellent</td></tr>
+                        <tr><td>scrypt</td><td>Password hashing</td><td>Memory-hard</td><td class="status-ok">✅ Excellent</td></tr>
+                        <tr><td>Argon2</td><td>Password hashing</td><td>Memory-hard</td><td class="status-ok">✅ Best</td></tr>
+                    </tbody>
+                </table>
+
+                <h2 id="recommendations">Quick Recommendations</h2>
+                <div class="callout success">
+                    <div class="callout-icon">✅</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Use These</div>
+                        AES-256, RSA-2048+, SHA-256+, ECC P-256, Argon2, BLAKE2/3
+                    </div>
+                </div>
+                <div class="callout danger">
+                    <div class="callout-icon">❌</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Avoid These</div>
+                        MD5, SHA-1, DES, 3DES, RSA-1024, plain SHA for passwords
+                    </div>
+                </div>
+            </div>
+
+            <div class="feedback-box">
+                <h3>Was this page helpful?</h3>
+                <div class="feedback-buttons">
+                    <button class="feedback-btn" onclick="submitFeedback('yes')"><i class="fas fa-thumbs-up"></i> Yes</button>
+                    <button class="feedback-btn" onclick="submitFeedback('no')"><i class="fas fa-thumbs-down"></i> No</button>
+                </div>
+            </div>
+
+            <div class="docs-footer-nav">
+                <a href="tool-docs.html" class="nav-prev">
+                    <span class="nav-label">← Previous</span>
+                    <span class="nav-title">Tool Documentation</span>
+                </a>
+                <a href="security-practices.html" class="nav-next">
+                    <span class="nav-label">Next →</span>
+                    <span class="nav-title">Security Practices</span>
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <button class="scroll-top" id="scrollTop"><i class="fas fa-chevron-up"></i></button>
+    <script src="docs-script.js"></script>
+</body>
+</html>

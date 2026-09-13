@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Examples - CryptoKit Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="docs-style.css">
+</head>
+<body>
+    <nav class="docs-navbar">
+        <div class="docs-nav-left">
+            <a href="index.html" class="docs-logo">
+                <div class="docs-logo-icon">
+                    <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                        <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2.5"/>
+                        <rect x="12" y="14" width="16" height="18" rx="3" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="20" cy="23" r="3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <span>CryptoKit Docs</span>
+            </a>
+        </div>
+        <div class="docs-nav-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="docsSearch" placeholder="Search documentation..." autocomplete="off">
+            <kbd>Ctrl K</kbd>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        <div class="docs-nav-right">
+            <a href="index.html" class="nav-home-btn"><i class="fas fa-home"></i> Home</a>
+            <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+            <a href="https://github.com" class="github-btn" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+    </nav>
+
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <div class="sidebar-section">
+                <h3>Introduction</h3>
+                <ul>
+                    <li><a href="documentation.html"><i class="fas fa-book-open"></i> Overview</a></li>
+                    <li><a href="getting-started.html"><i class="fas fa-rocket"></i> Getting Started</a></li>
+                    <li><a href="core-concepts.html"><i class="fas fa-brain"></i> Core Concepts</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Tools</h3>
+                <ul>
+                    <li><a href="tool-docs.html"><i class="fas fa-tools"></i> Tool Documentation</a></li>
+                    <li><a href="algorithm-reference.html"><i class="fas fa-table"></i> Algorithm Reference</a></li>
+                    <li><a href="terminal-docs.html"><i class="fas fa-terminal"></i> Terminal Mode</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Guides</h3>
+                <ul>
+                    <li><a href="security-practices.html"><i class="fas fa-shield-alt"></i> Security Practices</a></li>
+                    <li><a href="code-examples.html"><i class="fas fa-code"></i> Code Examples</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Reference</h3>
+                <ul>
+                    <li><a href="faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="glossary.html"><i class="fas fa-list"></i> Glossary</a></li>
+                    <li><a href="limitations.html"><i class="fas fa-exclamation-triangle"></i> Limitations</a></li>
+                    <li><a href="changelog.html"><i class="fas fa-history"></i> Changelog</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="docs-main">
+            <div class="breadcrumb">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                <span>/</span>
+                <a href="documentation.html">Docs</a>
+                <span>/</span>
+                <span>Code Examples</span>
+            </div>
+
+            <div class="docs-hero">
+                <div class="docs-badge">💻 Examples</div>
+                <h1>Code <span class="gradient-text">Examples</span></h1>
+                <p>Copy-paste ready code snippets for common cryptographic operations.</p>
+            </div>
+
+            <div class="toc">
+                <div class="toc-title">📑 On This Page</div>
+                <ul id="tocList"></ul>
+            </div>
+
+            <div class="docs-section">
+                <h2 id="javascript">JavaScript (Browser)</h2>
+
+                <h3 id="js-hash">SHA-256 Hash</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">JavaScript</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code>async function sha256(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+// Usage
+sha256('Hello World').then(console.log);</code></pre>
+                </div>
+
+                <h3 id="js-aes">AES-GCM Encryption</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">JavaScript</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code>async function encrypt(text, password) {
+    const encoder = new TextEncoder();
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    
+    // Derive key from password
+    const keyMaterial = await crypto.subtle.importKey(
+        'raw', encoder.encode(password), 'PBKDF2', false, ['deriveKey']
+    );
+    const key = await crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false, ['encrypt']
+    );
+    
+    const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        encoder.encode(text)
+    );
+    
+    return { encrypted, salt, iv };
+}</code></pre>
+                </div>
+
+                <h2 id="python">Python</h2>
+
+                <h3 id="py-hash">SHA-256 Hash</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Python</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code>import hashlib
+
+def sha256(text):
+    return hashlib.sha256(text.encode()).hexdigest()
+
+# Usage
+print(sha256("Hello World"))</code></pre>
+                </div>
+
+                <h3 id="py-aes">AES Encryption</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Python</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code>from cryptography.fernet import Fernet
+
+# Generate key
+key = Fernet.generate_key()
+cipher = Fernet(key)
+
+# Encrypt
+encrypted = cipher.encrypt(b"Secret message")
+print(encrypted)
+
+# Decrypt
+decrypted = cipher.decrypt(encrypted)
+print(decrypted.decode())</code></pre>
+                </div>
+
+                <h3 id="py-rsa">RSA Key Generation</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Python</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code>from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+
+# Generate private key
+private_key = rsa.generate_private_key(
+    public_exponent=65537,
+    key_size=2048
+)
+
+# Get public key
+public_key = private_key.public_key()
+
+# Export as PEM
+private_pem = private_key.private_bytes(
+    encoding=serialization.Encoding.PEM,
+    format=serialization.PrivateFormat.PKCS8,
+    encryption_algorithm=serialization.NoEncryption()
+)
+
+print(private_pem.decode())</code></pre>
+                </div>
+
+                <h2 id="nodejs">Node.js</h2>
+
+                <h3 id="node-hash">Hash Generation</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Node.js</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code>const crypto = require('crypto');
+
+function sha256(text) {
+    return crypto.createHash('sha256').update(text).digest('hex');
+}
+
+console.log(sha256('Hello World'));</code></pre>
+                </div>
+
+                <h3 id="node-aes">AES Encryption</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Node.js</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code>const crypto = require('crypto');
+
+const algorithm = 'aes-256-gcm';
+const key = crypto.randomBytes(32);
+const iv = crypto.randomBytes(16);
+
+function encrypt(text) {
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    const authTag = cipher.getAuthTag();
+    return { encrypted, iv, authTag };
+}
+
+function decrypt(encrypted, iv, authTag) {
+    const decipher = crypto.createDecipheriv(algorithm, key, iv);
+    decipher.setAuthTag(authTag);
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="feedback-box">
+                <h3>Was this page helpful?</h3>
+                <div class="feedback-buttons">
+                    <button class="feedback-btn" onclick="submitFeedback('yes')"><i class="fas fa-thumbs-up"></i> Yes</button>
+                    <button class="feedback-btn" onclick="submitFeedback('no')"><i class="fas fa-thumbs-down"></i> No</button>
+                </div>
+            </div>
+
+            <div class="docs-footer-nav">
+                <a href="security-practices.html" class="nav-prev">
+                    <span class="nav-label">← Previous</span>
+                    <span class="nav-title">Security Practices</span>
+                </a>
+                <a href="faq.html" class="nav-next">
+                    <span class="nav-label">Next →</span>
+                    <span class="nav-title">FAQ</span>
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <button class="scroll-top" id="scrollTop"><i class="fas fa-chevron-up"></i></button>
+    <script src="docs-script.js"></script>
+</body>
+</html>

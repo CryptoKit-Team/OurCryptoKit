@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hash Generator — CryptoKit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+
+/* ═══════════════════════════════════════════
+   THEME VARIABLES — NORMAL MODE
+═══════════════════════════════════════════ */
+[data-theme="normal"] {
+    --bg-0:             #F0F4FF;
+    --surface:          #FFFFFF;
+    --surface-soft:     #F7F8FF;
+    --surface-hover:    #F0F2FF;
+    --border:           rgba(108, 99, 255, 0.15);
+    --border-strong:    rgba(108, 99, 255, 0.25);
+    --ink:              #1A1A2E;
+    --ink-soft:         #4A5568;
+    --ink-faint:        #718096;
+    --accent-1:         #6C63FF;
+    --accent-2:         #00B4D8;
+    --accent-soft:      rgba(108, 99, 255, 0.08);
+    --primary-rgb:      108, 99, 255;
+    --secondary-rgb:    0, 180, 216;
+    --glass:            rgba(108, 99, 255, 0.05);
+    --glass-border:     rgba(108, 99, 255, 0.12);
+    --good:             #06D6A0;
+    --good-bg:          rgba(6, 214, 160, 0.1);
+    --warn:             #FBBF77;
+    --warn-bg:          rgba(251, 191, 119, 0.12);
+    --bad:              #FF4D6A;
+    --bad-bg:           rgba(255, 77, 106, 0.12);
+    --radius-lg:        18px;
+    --radius-md:        12px;
+    --radius-sm:        9px;
+    --radius-xs:        7px;
+    --font-display:     'Space Grotesk', sans-serif;
+    --font-body:        'Inter', sans-serif;
+    --font-mono:        'JetBrains Mono', monospace;
+    --shadow-main:      0 4px 24px rgba(108, 99, 255, 0.1);
+    --shadow-hover:     0 12px 40px rgba(108, 99, 255, 0.2);
+    --shadow-btn:       0 4px 15px rgba(108, 99, 255, 0.3);
+    --shadow-icon:      0 8px 24px rgba(108, 99, 255, 0.35);
+    --gradient-primary: linear-gradient(135deg, #6C63FF, #00B4D8);
+    --gradient-text:    linear-gradient(135deg, #6C63FF, #00B4D8);
+    --tab-active-bg:    linear-gradient(135deg, rgba(108,99,255,0.12), rgba(0,180,216,0.08));
+    --tab-active-shadow:0 4px 15px rgba(108, 99, 255, 0.15);
+    --dz-border:        rgba(108, 99, 255, 0.25);
+    --dz-hover-border:  #6C63FF;
+    --dz-hover-bg:      rgba(108, 99, 255, 0.06);
+    --scrollbar:        #6C63FF;
+    --tag-bg:           rgba(108, 99, 255, 0.08);
+    --tag-border:       rgba(108, 99, 255, 0.2);
+}
+
+/* ═══════════════════════════════════════════
+   THEME VARIABLES — HACKER MODE
+═══════════════════════════════════════════ */
+[data-theme="hacker"] {
+    --bg-0:             #000000;
+    --surface:          #050505;
+    --surface-soft:     #0A0A0A;
+    --surface-hover:    #0D1A0D;
+    --border:           rgba(0, 255, 65, 0.15);
+    --border-strong:    rgba(0, 255, 65, 0.3);
+    --ink:              #00FF41;
+    --ink-soft:         #00CC33;
+    --ink-faint:        #006611;
+    --accent-1:         #00FF41;
+    --accent-2:         #39FF14;
+    --accent-soft:      rgba(0, 255, 65, 0.08);
+    --primary-rgb:      0, 255, 65;
+    --secondary-rgb:    57, 255, 20;
+    --glass:            rgba(0, 255, 65, 0.03);
+    --glass-border:     rgba(0, 255, 65, 0.15);
+    --good:             #00FF41;
+    --good-bg:          rgba(0, 255, 65, 0.08);
+    --warn:             #FFD700;
+    --warn-bg:          rgba(255, 215, 0, 0.1);
+    --bad:              #FF0040;
+    --bad-bg:           rgba(255, 0, 64, 0.12);
+    --radius-lg:        18px;
+    --radius-md:        12px;
+    --radius-sm:        9px;
+    --radius-xs:        7px;
+    --font-display:     'Share Tech Mono', monospace;
+    --font-body:        'Share Tech Mono', monospace;
+    --font-mono:        'Share Tech Mono', monospace;
+    --shadow-main:      0 0 20px rgba(0, 255, 65, 0.05);
+    --shadow-hover:     0 0 30px rgba(0, 255, 65, 0.1);
+    --shadow-btn:       0 0 15px rgba(0, 255, 65, 0.2);
+    --shadow-icon:      0 0 20px rgba(0, 255, 65, 0.4);
+    --gradient-primary: linear-gradient(135deg, #00FF41, #39FF14);
+    --gradient-text:    linear-gradient(135deg, #00FF41, #00FFFF);
+    --tab-active-bg:    rgba(0, 255, 65, 0.07);
+    --tab-active-shadow:0 0 20px rgba(0, 255, 65, 0.2);
+    --dz-border:        rgba(0, 255, 65, 0.25);
+    --dz-hover-border:  #00FF41;
+    --dz-hover-bg:      rgba(0, 255, 65, 0.05);
+    --scrollbar:        #00FF41;
+    --tag-bg:           rgba(0, 255, 65, 0.05);
+    --tag-border:       rgba(0, 255, 65, 0.15);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-0);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+[data-theme="normal"] body {
+    background-image:
+        radial-gradient(ellipse 1100px 500px at 12% -8%, rgba(108,99,255,0.06), transparent 60%),
+        radial-gradient(ellipse 900px 500px at 100% 0%, rgba(0,180,216,0.04), transparent 55%);
+}
+
+[data-theme="hacker"] body {
+    background-image:
+        radial-gradient(ellipse 900px 500px at 15% -5%, rgba(0,255,65,0.04), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 100% 10%, rgba(57,255,20,0.03), transparent 60%);
+}
+
+/* Hacker Mode — Animated Grid */
+[data-theme="hacker"] body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+    pointer-events: none;
+    animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+    0%   { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+}
+
+/* Hacker Mode — CRT Scanlines */
+[data-theme="hacker"] body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent, transparent 2px,
+        rgba(0,255,65,0.008) 2px,
+        rgba(0,255,65,0.008) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+}
+
+::selection {
+    background: rgba(var(--primary-rgb), 0.2);
+    color: var(--accent-1);
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-0); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    position: relative;
+    z-index: 2;
+}
+
+/* ═══════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════ */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 34px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.topbar-right {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* ═══════════════════════════════════════════
+   PILL (shared base for topbar items)
+═══════════════════════════════════════════ */
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    transition: all 0.3s ease;
+    font-family: var(--font-body);
+}
+
+/* Back Pill (link) */
+a.back-pill {
+    color: var(--ink-soft);
+    cursor: pointer;
+    outline: none;
+}
+
+a.back-pill:hover {
+    color: var(--accent-1);
+    border-color: var(--accent-1);
+    box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.15);
+    transform: translateX(-2px);
+}
+
+a.back-pill:active { transform: scale(0.97) translateX(-2px); }
+
+a.back-pill:focus-visible {
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+    border-color: var(--accent-1);
+}
+
+a.back-pill i { transition: transform 0.2s ease; }
+a.back-pill:hover i { transform: translateX(-3px); }
+
+[data-theme="hacker"] a.back-pill {
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+[data-theme="hacker"] a.back-pill:hover {
+    box-shadow: 0 0 16px rgba(0,255,65,0.2);
+    text-shadow: 0 0 8px rgba(0,255,65,0.4);
+}
+
+/* Lock Pill */
+.lock-pill {
+    color: var(--accent-1);
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.lock-pill i { color: var(--accent-1); }
+
+[data-theme="hacker"] .lock-pill {
+    color: var(--accent-1);
+    text-shadow: 0 0 6px rgba(0,255,65,0.3);
+    letter-spacing: 1px;
+    font-size: 11px;
+}
+
+/* ═══════════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════════ */
+.toggle-pill {
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    transition: all 0.3s;
+}
+
+[data-theme="hacker"] .toggle-label {
+    color: var(--accent-1);
+    letter-spacing: 1px;
+    text-shadow: 0 0 6px rgba(0,255,65,0.3);
+}
+
+.switch {
+    width: 34px;
+    height: 19px;
+    border-radius: 999px;
+    background: var(--glass-border);
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+[data-theme="hacker"] .switch {
+    background: rgba(0,255,65,0.2);
+}
+
+[data-theme="hacker"] .switch::after {
+    left: 18px;
+    background: var(--accent-1);
+    box-shadow: 0 0 8px var(--accent-1);
+}
+
+[data-theme="hacker"] .pill {
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    background: rgba(0,255,65,0.03);
+    box-shadow: 0 0 10px rgba(0,255,65,0.03);
+}
+
+/* ═══════════════════════════════════════════
+   KICKER BADGE
+═══════════════════════════════════════════ */
+.kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--accent-1);
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    font-family: var(--font-body);
+    transition: all 0.3s;
+}
+
+[data-theme="hacker"] .kicker {
+    box-shadow: 0 0 12px rgba(0,255,65,0.08);
+    text-shadow: 0 0 8px rgba(0,255,65,0.4);
+    border-color: rgba(0,255,65,0.3);
+}
+
+/* ═══════════════════════════════════════════
+   HERO HEADER
+═══════════════════════════════════════════ */
+.hero {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.hero-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: all 0.3s ease;
+}
+
+[data-theme="normal"] .hero-icon {
+    background: var(--gradient-primary);
+    color: #fff;
+    box-shadow: var(--shadow-icon);
+}
+
+[data-theme="hacker"] .hero-icon {
+    background: transparent;
+    border: 2px solid var(--accent-1);
+    color: var(--accent-1);
+    box-shadow: 0 0 20px rgba(0,255,65,0.25);
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(0,255,65,0.25); }
+    50%      { box-shadow: 0 0 35px rgba(0,255,65,0.5); }
+}
+
+.hero h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(24px, 4vw, 32px);
+    line-height: 1.15;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.01em;
+    transition: all 0.3s ease;
+}
+
+[data-theme="normal"] .hero h1 {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme="hacker"] .hero h1 {
+    color: var(--accent-1);
+    -webkit-text-fill-color: var(--accent-1);
+    text-shadow: 0 0 15px rgba(0,255,65,0.4);
+    letter-spacing: 2px;
+    animation: titleGlitch 4s infinite;
+}
+
+@keyframes titleGlitch {
+    0%, 85%, 100% { transform: translate(0); }
+    86% { transform: translate(-2px, 1px); }
+    87% { transform: translate(2px, -1px); }
+    88% { transform: translate(-1px, 0); }
+    89% { transform: translate(0); }
+}
+
+.hero p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 540px;
+}
+
+[data-theme="hacker"] .hero p { color: #B8FFB8; }
+
+/* ═══════════════════════════════════════════
+   TAG ROW
+═══════════════════════════════════════════ */
+.tag-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 18px 0 30px 76px;
+}
+
+.tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    padding: 4px 12px;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
+    transition: all 0.3s;
+}
+
+[data-theme="hacker"] .tag {
+    color: rgba(0,255,65,0.4);
+}
+
+/* ═══════════════════════════════════════════
+   MODE TABS
+═══════════════════════════════════════════ */
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 22px;
+    background: var(--surface);
+    padding: 7px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-main);
+    transition: all 0.3s;
+}
+
+[data-theme="hacker"] .tabs {
+    background: rgba(5,5,5,0.9);
+    border-color: rgba(0,255,65,0.15);
+    box-shadow: 0 0 20px rgba(0,255,65,0.03);
+}
+
+.tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: var(--font-body);
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+}
+
+.tab i { font-size: 13px; opacity: 0.7; }
+
+[data-theme="normal"] .tab.active {
+    background: var(--tab-active-bg);
+    color: var(--accent-1);
+    border-color: rgba(108,99,255,0.25);
+    box-shadow: var(--tab-active-shadow);
+}
+
+[data-theme="normal"] .tab.active i { opacity: 1; }
+
+[data-theme="hacker"] .tab.active {
+    background: var(--tab-active-bg);
+    color: var(--accent-1);
+    border-color: rgba(0,255,65,0.3);
+    box-shadow: var(--tab-active-shadow);
+    text-shadow: 0 0 8px rgba(0,255,65,0.4);
+    letter-spacing: 1px;
+}
+
+[data-theme="hacker"] .tab.active i { opacity: 1; }
+
+.tab:not(.active):hover {
+    color: var(--ink-soft);
+    background: var(--glass);
+}
+
+[data-theme="hacker"] .tab:not(.active):hover {
+    background: rgba(0,255,65,0.03);
+    color: rgba(0,255,65,0.6);
+}
+
+/* Tab panel animation */
+.tab-panel { animation: fadeSlideIn 0.3s ease; }
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   PANELS / CARDS
+═══════════════════════════════════════════ */
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: var(--shadow-main);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.panel + .panel { margin-top: 20px; }
+
+/* Top accent line on hover */
+.panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+[data-theme="normal"] .panel::before {
+    background: linear-gradient(90deg, #6C63FF, #00B4D8);
+}
+
+[data-theme="hacker"] .panel::before {
+    background: linear-gradient(90deg, #00FF41, #00FFFF);
+    box-shadow: 0 0 10px #00FF41;
+}
+
+.panel:hover::before { opacity: 1; }
+
+[data-theme="hacker"] .panel {
+    background: #050505;
+    border-color: rgba(0,255,65,0.12);
+    box-shadow: 0 0 20px rgba(0,255,65,0.02);
+}
+
+[data-theme="hacker"] .panel:hover {
+    border-color: rgba(0,255,65,0.25);
+    box-shadow: 0 0 30px rgba(0,255,65,0.06);
+}
+
+.panel-head {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 6px;
+}
+
+.panel-head i {
+    color: var(--accent-1);
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.panel-head h2 {
+    font-family: var(--font-display);
+    font-size: 17px;
+    margin: 0;
+    font-weight: 700;
+    color: var(--ink);
+    transition: all 0.3s;
+}
+
+[data-theme="hacker"] .panel-head h2 {
+    text-shadow: 0 0 10px rgba(0,255,65,0.2);
+    letter-spacing: 1px;
+}
+
+.panel-sub {
+    color: var(--ink-soft);
+    font-size: 13px;
+    margin: 0 0 20px 0;
+    line-height: 1.6;
+}
+
+[data-theme="hacker"] .panel-sub { color: rgba(0,255,65,0.5); }
+
+/* ═══════════════════════════════════════════
+   FORM FIELDS & INPUTS
+═══════════════════════════════════════════ */
+.field { margin-bottom: 18px; }
+
+.field label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+    font-family: var(--font-body);
+}
+
+[data-theme="hacker"] .field label {
+    color: rgba(0,255,65,0.6);
+    letter-spacing: 2px;
+}
+
+select,
+input[type="text"],
+input[type="password"],
+textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-soft);
+    font-size: 13px;
+    font-family: var(--font-mono);
+    color: var(--ink);
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+select option {
+    background: var(--surface);
+    color: var(--ink);
+}
+
+[data-theme="hacker"] select,
+[data-theme="hacker"] input[type="text"],
+[data-theme="hacker"] input[type="password"],
+[data-theme="hacker"] textarea {
+    background: #000;
+    border-color: rgba(0,255,65,0.2);
+    caret-color: var(--accent-1);
+}
+
+[data-theme="hacker"] input::placeholder,
+[data-theme="hacker"] textarea::placeholder {
+    color: rgba(0,255,65,0.25);
+}
+
+select:focus,
+input:focus,
+textarea:focus {
+    border-color: var(--accent-1);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
+}
+
+[data-theme="hacker"] select:focus,
+[data-theme="hacker"] input:focus,
+[data-theme="hacker"] textarea:focus {
+    box-shadow: 0 0 0 3px rgba(0,255,65,0.08), 0 0 15px rgba(0,255,65,0.06);
+}
+
+textarea {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.hint {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 6px;
+}
+
+/* ═══════════════════════════════════════════
+   CHECKBOX GRID
+═══════════════════════════════════════════ */
+.check-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-soft);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    color: var(--ink-soft);
+}
+
+.check:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-hover);
+}
+
+[data-theme="hacker"] .check:hover {
+    border-color: rgba(0,255,65,0.3);
+    background: rgba(0,255,65,0.04);
+}
+
+.check input {
+    accent-color: var(--accent-1);
+    width: 15px;
+    height: 15px;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    border: 1px solid var(--border-strong);
+    background: var(--surface-soft);
+    color: var(--ink);
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    border-color: var(--accent-1);
+    color: var(--accent-1);
+    box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.12);
+    transform: translateY(-1px);
+}
+
+.btn:active { transform: scale(0.98); }
+
+[data-theme="hacker"] .btn {
+    background: transparent;
+    border-color: rgba(0,255,65,0.25);
+    color: var(--ink-soft);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+[data-theme="hacker"] .btn:hover {
+    border-color: var(--accent-1);
+    color: var(--accent-1);
+    box-shadow: 0 0 15px rgba(0,255,65,0.12);
+    text-shadow: 0 0 8px rgba(0,255,65,0.4);
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: var(--shadow-btn);
+}
+
+[data-theme="hacker"] .btn-primary {
+    color: #000;
+    letter-spacing: 2px;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.35);
+    border: none;
+}
+
+[data-theme="hacker"] .btn-primary:hover {
+    color: #000;
+}
+
+.btn-primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: none;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ═══════════════════════════════════════════
+   DROPZONE
+═══════════════════════════════════════════ */
+.dropzone {
+    border: 1.5px dashed var(--dz-border);
+    border-radius: var(--radius-md);
+    padding: 40px 24px;
+    text-align: center;
+    background: var(--surface-soft);
+    margin-top: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.dropzone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(var(--primary-rgb),0.05), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.dropzone:hover::before,
+.dropzone.drag::before { opacity: 1; }
+
+.dropzone:hover,
+.dropzone.drag {
+    border-color: var(--dz-hover-border);
+    background: var(--dz-hover-bg);
+}
+
+[data-theme="normal"] .dropzone:hover,
+[data-theme="normal"] .dropzone.drag {
+    box-shadow: 0 0 0 4px rgba(108,99,255,0.08);
+}
+
+[data-theme="hacker"] .dropzone:hover,
+[data-theme="hacker"] .dropzone.drag {
+    box-shadow: 0 0 30px rgba(0,255,65,0.08);
+}
+
+.dropzone .dz-icon {
+    font-size: 28px;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 12px;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.dropzone:hover .dz-icon,
+.dropzone.drag .dz-icon {
+    color: var(--accent-1);
+    transform: translateY(-3px);
+}
+
+[data-theme="hacker"] .dropzone:hover .dz-icon {
+    text-shadow: 0 0 12px rgba(0,255,65,0.6);
+}
+
+.dropzone h3 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    position: relative;
+}
+
+.dropzone p {
+    margin: 0 0 16px 0;
+    color: var(--ink-faint);
+    font-size: 12px;
+    position: relative;
+}
+
+[data-theme="hacker"] .dropzone p { color: rgba(0,255,65,0.4); }
+
+/* ═══════════════════════════════════════════
+   HASH OUTPUT ROWS
+═══════════════════════════════════════════ */
+.hash-list {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.hash-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px 14px;
+    background: var(--surface-soft);
+    transition: all 0.2s;
+}
+
+.hash-row:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-main);
+}
+
+[data-theme="hacker"] .hash-row:hover {
+    border-color: rgba(0,255,65,0.25);
+    box-shadow: 0 0 12px rgba(0,255,65,0.04);
+}
+
+.hash-row .algo {
+    flex-shrink: 0;
+    width: 90px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-1);
+    letter-spacing: 0.04em;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+}
+
+[data-theme="hacker"] .hash-row .algo {
+    text-shadow: 0 0 6px rgba(0,255,65,0.3);
+}
+
+.hash-row .hex {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+    word-break: break-all;
+    line-height: 1.5;
+}
+
+[data-theme="hacker"] .hash-row .hex {
+    text-shadow: 0 0 4px rgba(0,255,65,0.15);
+}
+
+.hash-row .hex.placeholder { color: var(--ink-faint); }
+
+.copy-btn {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-1);
+    background: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: var(--radius-xs);
+    flex-shrink: 0;
+    font-family: var(--font-body);
+    letter-spacing: 0.03em;
+    transition: all 0.2s;
+}
+
+.copy-btn:hover {
+    background: var(--accent-soft);
+    border-color: var(--border);
+}
+
+[data-theme="hacker"] .copy-btn {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 10px;
+}
+
+[data-theme="hacker"] .copy-btn:hover {
+    border-color: var(--accent-1);
+    box-shadow: 0 0 8px rgba(0,255,65,0.12);
+    text-shadow: 0 0 6px rgba(0,255,65,0.4);
+}
+
+/* ═══════════════════════════════════════════
+   STATUS MESSAGES
+═══════════════════════════════════════════ */
+.status {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-top: 18px;
+    font-size: 13px;
+    line-height: 1.5;
+    border: 1px solid transparent;
+    animation: fadeSlideIn 0.3s ease;
+}
+
+.status i { flex-shrink: 0; margin-top: 2px; font-size: 15px; }
+.status strong { display: block; margin-bottom: 2px; font-weight: 700; }
+
+.status-good {
+    background: var(--good-bg);
+    color: var(--good);
+    border-color: rgba(var(--primary-rgb), 0.1);
+}
+
+[data-theme="hacker"] .status-good {
+    border-color: var(--good);
+    box-shadow: 0 0 15px rgba(0,255,65,0.08);
+    text-shadow: 0 0 6px rgba(0,255,65,0.3);
+}
+
+.status-bad {
+    background: var(--bad-bg);
+    color: var(--bad);
+}
+
+[data-theme="hacker"] .status-bad {
+    border-color: var(--bad);
+    box-shadow: 0 0 15px rgba(255,0,64,0.1);
+}
+
+.status-warn {
+    background: var(--warn-bg);
+    color: var(--warn);
+}
+
+[data-theme="hacker"] .status-warn {
+    border-color: var(--warn);
+    box-shadow: 0 0 10px rgba(255,215,0,0.08);
+}
+
+/* ═══════════════════════════════════════════
+   FILE INFO ROW
+═══════════════════════════════════════════ */
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    background: var(--surface-soft);
+    margin-top: 16px;
+    transition: all 0.2s;
+}
+
+.file-info:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-main);
+}
+
+.file-info .fi-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--accent-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+[data-theme="hacker"] .file-info .fi-icon {
+    background: rgba(0,255,65,0.07);
+    box-shadow: 0 0 8px rgba(0,255,65,0.06);
+}
+
+.file-info .n {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.file-info .s {
+    font-size: 11px;
+    color: var(--ink-faint);
+    font-family: var(--font-mono);
+    margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.footnote {
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 12px;
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.footnote i { color: var(--accent-1); }
+
+[data-theme="hacker"] .footnote {
+    border-color: rgba(0,255,65,0.1);
+    color: rgba(0,255,65,0.4);
+    text-shadow: 0 0 5px rgba(0,255,65,0.1);
+    letter-spacing: 1px;
+}
+
+/* ═══════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════ */
+input[type="file"] { display: none; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 640px) {
+    .wrap { padding: 24px 16px 60px; }
+    .topbar { flex-direction: column; align-items: stretch; }
+    .topbar-right { flex-wrap: wrap; }
+    .tabs { flex-direction: column; gap: 4px; }
+    .tab { justify-content: flex-start; padding: 11px 14px; }
+    .field-row { grid-template-columns: 1fr; }
+    .check-grid { grid-template-columns: 1fr; }
+    .tag-row { margin-left: 0; }
+    .hero { flex-direction: column; }
+    .panel { padding: 20px 16px; }
+}
+
+@media (max-width: 480px) {
+    .lock-pill { font-size: 10px; }
+    .toggle-label { display: none; }
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+    <!-- ══════════════ TOPBAR ══════════════ -->
+    <div class="topbar">
+        <a class="pill back-pill" id="homeBtn" href="index.html" title="Back to CryptoKit">
+            <i class="fa-solid fa-arrow-left"></i> Back to CryptoKit
+        </a>
+        <div class="topbar-right">
+            <div class="pill lock-pill">
+                <i class="fa-solid fa-lock"></i>
+                100% Client-Side — Files Never Leave Your Browser
+            </div>
+            <div class="pill toggle-pill" id="themeToggle">
+                <span class="toggle-label" id="themeText">Normal</span>
+                <span class="switch"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════ KICKER ══════════════ -->
+    <div class="kicker">
+        <i class="fa-solid fa-shield-halved"></i>
+        Cryptographic Tool
+    </div>
+
+    <!-- ══════════════ HERO ══════════════ -->
+    <div class="hero">
+        <div class="hero-icon">
+            <i class="fa-solid fa-hashtag"></i>
+        </div>
+        <div>
+            <h1>Hash Generator</h1>
+            <p>Generate cryptographic hashes for text and files, and produce HMAC signatures with a secret key — all locally in your browser using the Web Crypto API.</p>
+        </div>
+    </div>
+
+    <!-- ══════════════ TAGS ══════════════ -->
+    <div class="tag-row">
+        <span class="tag">MD5</span>
+        <span class="tag">SHA-256</span>
+        <span class="tag">SHA-512</span>
+        <span class="tag">HMAC</span>
+    </div>
+
+    <!-- ══════════════ TABS ══════════════ -->
+    <div class="tabs">
+        <button class="tab active" data-tab="text">
+            <i class="fa-solid fa-align-left"></i> Hash Text
+        </button>
+        <button class="tab" data-tab="file">
+            <i class="fa-solid fa-file"></i> Hash File
+        </button>
+        <button class="tab" data-tab="hmac">
+            <i class="fa-solid fa-key"></i> HMAC Signature
+        </button>
+    </div>
+
+    <!-- ══════════════ HASH TEXT ══════════════ -->
+    <div class="tab-panel" id="panel-text">
+        <div class="panel">
+            <div class="panel-head">
+                <i class="fa-solid fa-align-left"></i>
+                <h2>Hash some text</h2>
+            </div>
+            <p class="panel-sub">Type or paste text below — hashes update automatically as you type.</p>
+
+            <div class="field">
+                <label for="textInput">Input Text</label>
+                <textarea id="textInput" placeholder="Type or paste text to hash..."></textarea>
+            </div>
+
+            <div class="check-grid">
+                <label class="check"><input type="checkbox" id="algoMD5" checked> MD5 (legacy)</label>
+                <label class="check"><input type="checkbox" id="algoSHA1" checked> SHA-1 (legacy)</label>
+                <label class="check"><input type="checkbox" id="algoSHA256" checked> SHA-256</label>
+                <label class="check"><input type="checkbox" id="algoSHA384"> SHA-384</label>
+                <label class="check"><input type="checkbox" id="algoSHA512" checked> SHA-512</label>
+                <label class="check"><input type="checkbox" id="uppercaseOut"> Uppercase output</label>
+            </div>
+
+            <div class="hash-list" id="textHashList"></div>
+        </div>
+    </div>
+
+    <!-- ══════════════ HASH FILE ══════════════ -->
+    <div class="tab-panel" id="panel-file" style="display:none;">
+        <div class="panel">
+            <div class="panel-head">
+                <i class="fa-solid fa-file-shield"></i>
+                <h2>Hash a file</h2>
+            </div>
+            <p class="panel-sub">Drop a file to compute its fingerprint in every common algorithm. Nothing leaves this page.</p>
+
+            <div class="dropzone" id="fileDropzone">
+                <i class="fa-solid fa-cloud-arrow-up dz-icon"></i>
+                <h3>Drag & drop a file here</h3>
+                <p>or use the button below</p>
+                <div class="btn-row" style="justify-content:center;">
+                    <button class="btn" id="chooseFileBtn"><i class="fa-solid fa-folder-open"></i> Choose File</button>
+                </div>
+                <input type="file" id="fileInput">
+            </div>
+
+            <div id="fileInfoBox"></div>
+            <div class="hash-list" id="fileHashList"></div>
+        </div>
+    </div>
+
+    <!-- ══════════════ HMAC ══════════════ -->
+    <div class="tab-panel" id="panel-hmac" style="display:none;">
+        <div class="panel">
+            <div class="panel-head">
+                <i class="fa-solid fa-key"></i>
+                <h2>Generate an HMAC signature</h2>
+            </div>
+            <p class="panel-sub">HMAC combines a message with a secret key to produce a keyed hash — used to verify both integrity and authenticity.</p>
+
+            <div class="field">
+                <label for="hmacMessage">Message</label>
+                <textarea id="hmacMessage" style="min-height:90px;" placeholder="Message to sign..."></textarea>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="hmacKey">Secret Key</label>
+                    <input type="text" id="hmacKey" placeholder="Enter a secret key">
+                </div>
+                <div class="field">
+                    <label for="hmacAlgo">Hash Algorithm</label>
+                    <select id="hmacAlgo">
+                        <option value="SHA-256" selected>SHA-256</option>
+                        <option value="SHA-384">SHA-384</option>
+                        <option value="SHA-512">SHA-512</option>
+                        <option value="SHA-1">SHA-1 (legacy)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row" style="justify-content:flex-start;">
+                <button class="btn btn-primary" id="hmacGenBtn">
+                    <i class="fa-solid fa-stamp"></i> Generate HMAC
+                </button>
+            </div>
+
+            <div class="hash-list" id="hmacResult"></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-head">
+                <i class="fa-solid fa-circle-check"></i>
+                <h2>Verify an HMAC signature</h2>
+            </div>
+            <p class="panel-sub">Check whether a given HMAC matches a message and secret key.</p>
+
+            <div class="field">
+                <label for="hmacVerifyMessage">Message</label>
+                <textarea id="hmacVerifyMessage" style="min-height:80px;" placeholder="Paste the original message..."></textarea>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="hmacVerifyKey">Secret Key</label>
+                    <input type="text" id="hmacVerifyKey" placeholder="Enter the same secret key">
+                </div>
+                <div class="field">
+                    <label for="hmacVerifyAlgo">Hash Algorithm</label>
+                    <select id="hmacVerifyAlgo">
+                        <option value="SHA-256" selected>SHA-256</option>
+                        <option value="SHA-384">SHA-384</option>
+                        <option value="SHA-512">SHA-512</option>
+                        <option value="SHA-1">SHA-1 (legacy)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field">
+                <label for="hmacVerifyValue">HMAC to Verify (hex)</label>
+                <input type="text" id="hmacVerifyValue" placeholder="Paste an HMAC hex value">
+            </div>
+
+            <div class="btn-row" style="justify-content:flex-start;">
+                <button class="btn btn-primary" id="hmacVerifyBtn">
+                    <i class="fa-solid fa-shield-halved"></i> Verify
+                </button>
+            </div>
+            <div id="hmacVerifyStatus"></div>
+        </div>
+    </div>
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <div class="footnote">
+        <i class="fa-solid fa-lock"></i>
+        Everything runs locally via the Web Crypto API. No text or file is ever transmitted.
+    </div>
+
+</div>
+
+<script>
+(function(){
+
+    // ═══════════════════════════════════════
+    //  CONFIG
+    // ═══════════════════════════════════════
+    const HOME_URL = 'index.html';
+
+    // ═══════════════════════════════════════
+    //  THEME MANAGEMENT
+    // ═══════════════════════════════════════
+    (function initTheme(){
+        const saved = localStorage.getItem('cryptokit-theme') || 'normal';
+        document.documentElement.setAttribute('data-theme', saved);
+        updateThemeUI(saved);
+    })();
+
+    function toggleTheme(){
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'hacker' ? 'normal' : 'hacker';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('cryptokit-theme', next);
+        updateThemeUI(next);
+    }
+
+    function updateThemeUI(theme){
+        const label = document.getElementById('themeText');
+        if(label) label.textContent = theme === 'hacker' ? 'HACKER' : 'Normal';
+    }
+
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+    // ═══════════════════════════════════════
+    //  HOME / BACK NAVIGATION
+    // ═══════════════════════════════════════
+    const homeBtn = document.getElementById('homeBtn');
+    homeBtn.setAttribute('href', HOME_URL);
+
+    homeBtn.addEventListener('click', function(e){
+        if(e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        let sameSite = false;
+        try { sameSite = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch(_){}
+        if(sameSite && history.length > 1){
+            history.back();
+            setTimeout(()=>{ if(!document.hidden) location.href = HOME_URL; }, 400);
+        } else {
+            location.href = HOME_URL;
+        }
+    });
+
+    // ═══════════════════════════════════════
+    //  TAB SWITCHING
+    // ═══════════════════════════════════════
+    const tabs = document.querySelectorAll('.tab');
+    const panels = { text:'panel-text', file:'panel-file', hmac:'panel-hmac' };
+
+    tabs.forEach(t => {
+        t.addEventListener('click', () => {
+            tabs.forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            Object.values(panels).forEach(id => document.getElementById(id).style.display = 'none');
+            document.getElementById(panels[t.dataset.tab]).style.display = 'block';
+        });
+    });
+
+    // ═══════════════════════════════════════
+    //  HELPERS
+    // ═══════════════════════════════════════
+    function statusHTML(kind, title, msg){
+        const icons = {
+            good: '<i class="fa-solid fa-circle-check"></i>',
+            bad:  '<i class="fa-solid fa-circle-xmark"></i>',
+            warn: '<i class="fa-solid fa-triangle-exclamation"></i>'
+        };
+        return `<div class="status status-${kind}">${icons[kind]}<div><strong>${title}</strong>${msg}</div></div>`;
+    }
+
+    function fmtBytes(n){
+        if(n < 1024) return n + ' B';
+        if(n < 1048576) return (n/1024).toFixed(1) + ' KB';
+        if(n < 1073741824) return (n/1048576).toFixed(1) + ' MB';
+        return (n/1073741824).toFixed(2) + ' GB';
+    }
+
+    function abToHex(buf){
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    async function sha(algo, data){
+        return abToHex(await crypto.subtle.digest(algo, data));
+    }
+
+    // ═══════════════════════════════════════
+    //  MD5 (pure JS — Web Crypto has no MD5)
+    // ═══════════════════════════════════════
+    function md5(input){
+        function rotl(x,c){ return (x<<c)|(x>>>(32-c)); }
+        function toWords(bytes){
+            const words=[];
+            for(let i=0;i<bytes.length;i+=4)
+                words.push(bytes[i]|(bytes[i+1]<<8)|(bytes[i+2]<<16)|(bytes[i+3]<<24));
+            return words;
+        }
+        const s=[7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,
+                 5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,
+                 4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,
+                 6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+        const K=[];
+        for(let i=0;i<64;i++) K[i]=(Math.floor(Math.abs(Math.sin(i+1))*4294967296))|0;
+
+        let bytes=Array.from(input);
+        const origLenBits=bytes.length*8;
+        bytes.push(0x80);
+        while(bytes.length%64!==56) bytes.push(0);
+        for(let i=0;i<8;i++) bytes.push((origLenBits/Math.pow(2,8*i))&0xff);
+
+        let a0=0x67452301,b0=0xefcdab89,c0=0x98badcfe,d0=0x10325476;
+
+        for(let cs=0;cs<bytes.length;cs+=64){
+            const M=toWords(bytes.slice(cs,cs+64));
+            let A=a0,B=b0,C=c0,D=d0;
+            for(let i=0;i<64;i++){
+                let F,g;
+                if(i<16){F=(B&C)|(~B&D);g=i;}
+                else if(i<32){F=(D&B)|(~D&C);g=(5*i+1)%16;}
+                else if(i<48){F=B^C^D;g=(3*i+5)%16;}
+                else{F=C^(B|~D);g=(7*i)%16;}
+                F=(F+A+K[i]+M[g])|0;
+                A=D;D=C;C=B;B=(B+rotl(F,s[i]))|0;
+            }
+            a0=(a0+A)|0;b0=(b0+B)|0;c0=(c0+C)|0;d0=(d0+D)|0;
+        }
+
+        function toHexLE(n){
+            let hex='';
+            for(let i=0;i<4;i++) hex+=((n>>>(i*8))&0xff).toString(16).padStart(2,'0');
+            return hex;
+        }
+        return toHexLE(a0)+toHexLE(b0)+toHexLE(c0)+toHexLE(d0);
+    }
+
+    // ═══════════════════════════════════════
+    //  COPY BUTTON
+    // ═══════════════════════════════════════
+    function copyBtnHTML(hash){
+        return `<button class="copy-btn" data-hash="${hash}"><i class="fa-regular fa-copy"></i> Copy</button>`;
+    }
+
+    function attachCopyHandlers(container){
+        container.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                navigator.clipboard.writeText(btn.dataset.hash);
+                const oldHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(() => { btn.innerHTML = oldHTML; }, 1200);
+            });
+        });
+    }
+
+    // ═══════════════════════════════════════
+    //  HASH TEXT
+    // ═══════════════════════════════════════
+    const textInput = document.getElementById('textInput');
+    const textHashList = document.getElementById('textHashList');
+    const algoBoxes = {
+        MD5:       document.getElementById('algoMD5'),
+        'SHA-1':   document.getElementById('algoSHA1'),
+        'SHA-256': document.getElementById('algoSHA256'),
+        'SHA-384': document.getElementById('algoSHA384'),
+        'SHA-512': document.getElementById('algoSHA512'),
+    };
+    const uppercaseBox = document.getElementById('uppercaseOut');
+
+    async function computeTextHashes(){
+        const text = textInput.value;
+        const upper = uppercaseBox.checked;
+        const enc = new TextEncoder().encode(text);
+        const rows = [];
+
+        for(const [name, box] of Object.entries(algoBoxes)){
+            if(!box.checked) continue;
+            let hex;
+            if(!text) hex = null;
+            else if(name === 'MD5') hex = md5(enc);
+            else hex = await sha(name, enc);
+            if(hex && upper) hex = hex.toUpperCase();
+            rows.push({ name, hex });
+        }
+
+        textHashList.innerHTML = rows.map(r => `
+            <div class="hash-row">
+                <div class="algo">${r.name}</div>
+                <div class="hex ${r.hex ? '' : 'placeholder'}">${r.hex || 'Type something above to see the hash'}</div>
+                ${r.hex ? copyBtnHTML(r.hex) : ''}
+            </div>`).join('');
+        attachCopyHandlers(textHashList);
+    }
+
+    textInput.addEventListener('input', computeTextHashes);
+    uppercaseBox.addEventListener('change', computeTextHashes);
+    Object.values(algoBoxes).forEach(box => box.addEventListener('change', computeTextHashes));
+    computeTextHashes();
+
+    // ═══════════════════════════════════════
+    //  HASH FILE
+    // ═══════════════════════════════════════
+    const fileDropzone = document.getElementById('fileDropzone');
+    const fileInput = document.getElementById('fileInput');
+
+    document.getElementById('chooseFileBtn').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', e => { if(e.target.files[0]) hashFile(e.target.files[0]); });
+
+    ['dragenter','dragover'].forEach(evt =>
+        fileDropzone.addEventListener(evt, e => { e.preventDefault(); fileDropzone.classList.add('drag'); }));
+    ['dragleave','drop'].forEach(evt =>
+        fileDropzone.addEventListener(evt, e => { e.preventDefault(); fileDropzone.classList.remove('drag'); }));
+    fileDropzone.addEventListener('drop', e => { if(e.dataTransfer.files[0]) hashFile(e.dataTransfer.files[0]); });
+
+    async function hashFile(file){
+        const infoBox = document.getElementById('fileInfoBox');
+        const list = document.getElementById('fileHashList');
+
+        infoBox.innerHTML = `
+            <div class="file-info">
+                <div class="fi-icon"><i class="fa-solid fa-file"></i></div>
+                <div>
+                    <div class="n">${file.name}</div>
+                    <div class="s">${fmtBytes(file.size)}</div>
+                </div>
+            </div>`;
+
+        list.innerHTML = statusHTML('warn', 'Hashing…', 'Computing fingerprints for this file.');
+
+        try {
+            const buf = await file.arrayBuffer();
+            const bytes = new Uint8Array(buf);
+            const results = [
+                { name:'MD5',     hex: md5(bytes) },
+                { name:'SHA-1',   hex: await sha('SHA-1', buf) },
+                { name:'SHA-256', hex: await sha('SHA-256', buf) },
+                { name:'SHA-384', hex: await sha('SHA-384', buf) },
+                { name:'SHA-512', hex: await sha('SHA-512', buf) },
+            ];
+
+            list.innerHTML = results.map(r => `
+                <div class="hash-row">
+                    <div class="algo">${r.name}</div>
+                    <div class="hex">${r.hex}</div>
+                    ${copyBtnHTML(r.hex)}
+                </div>`).join('');
+            attachCopyHandlers(list);
+        } catch(err) {
+            list.innerHTML = statusHTML('bad', 'Hashing failed', err.message);
+        }
+    }
+
+    // ═══════════════════════════════════════
+    //  HMAC
+    // ═══════════════════════════════════════
+    async function hmacHex(message, key, algo){
+        const enc = new TextEncoder();
+        const cryptoKey = await crypto.subtle.importKey(
+            'raw', enc.encode(key), {name:'HMAC', hash:algo}, false, ['sign','verify']);
+        const sigBuf = await crypto.subtle.sign('HMAC', cryptoKey, enc.encode(message));
+        return abToHex(sigBuf);
+    }
+
+    document.getElementById('hmacGenBtn').addEventListener('click', async () => {
+        const result = document.getElementById('hmacResult');
+        const message = document.getElementById('hmacMessage').value;
+        const key = document.getElementById('hmacKey').value;
+        const algo = document.getElementById('hmacAlgo').value;
+
+        if(!key){
+            result.innerHTML = statusHTML('bad', 'Missing key', 'Enter a secret key to sign with.');
+            return;
+        }
+
+        try {
+            const hex = await hmacHex(message, key, algo);
+            result.innerHTML = `
+                <div class="hash-row">
+                    <div class="algo">HMAC-${algo}</div>
+                    <div class="hex">${hex}</div>
+                    ${copyBtnHTML(hex)}
+                </div>`;
+            attachCopyHandlers(result);
+        } catch(err) {
+            result.innerHTML = statusHTML('bad', 'Could not generate HMAC', err.message);
+        }
+    });
+
+    document.getElementById('hmacVerifyBtn').addEventListener('click', async () => {
+        const status = document.getElementById('hmacVerifyStatus');
+        const message = document.getElementById('hmacVerifyMessage').value;
+        const key = document.getElementById('hmacVerifyKey').value;
+        const algo = document.getElementById('hmacVerifyAlgo').value;
+        const expected = document.getElementById('hmacVerifyValue').value.trim().toLowerCase();
+
+        if(!key || !expected){
+            status.innerHTML = statusHTML('bad', 'Missing input', 'Provide a secret key and an HMAC value to verify.');
+            return;
+        }
+
+        try {
+            const hex = await hmacHex(message, key, algo);
+            status.innerHTML = hex === expected
+                ? statusHTML('good', 'Signature valid', 'This HMAC matches the message and secret key — the data is authentic and unaltered.')
+                : statusHTML('bad', 'Signature invalid', 'This HMAC does not match. The message may have changed, or the key/algorithm is wrong.');
+        } catch(err) {
+            status.innerHTML = statusHTML('bad', 'Verification failed', err.message);
+        }
+    });
+
+})();
+</script>
+</body>
+</html>

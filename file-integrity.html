@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Integrity Checker</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ═══════════════════════════════════════════
+           THEME VARIABLES — NORMAL MODE
+        ═══════════════════════════════════════════ */
+        [data-theme="normal"] {
+            --bg-0:             #F0F4FF;
+            --surface:          #FFFFFF;
+            --surface-soft:     #F7F8FF;
+            --surface-hover:    #F0F2FF;
+            --border:           rgba(108, 99, 255, 0.15);
+            --border-strong:    rgba(108, 99, 255, 0.25);
+            --ink:              #1A1A2E;
+            --ink-soft:         #4A5568;
+            --ink-faint:        #718096;
+            --accent-1:         #6C63FF;
+            --accent-2:         #00B4D8;
+            --accent-soft:      rgba(108, 99, 255, 0.08);
+            --primary-rgb:      108, 99, 255;
+            --secondary-rgb:    0, 180, 216;
+            --glass:            rgba(108, 99, 255, 0.05);
+            --glass-border:     rgba(108, 99, 255, 0.12);
+            --good:             #06D6A0;
+            --good-bg:          rgba(6, 214, 160, 0.1);
+            --warn:             #FBBF77;
+            --warn-bg:          rgba(251, 191, 119, 0.12);
+            --bad:              #FF4D6A;
+            --bad-bg:           rgba(255, 77, 106, 0.12);
+            --radius-lg:        18px;
+            --radius-md:        12px;
+            --radius-sm:        9px;
+            --radius-xs:        7px;
+            --font-display:     'Space Grotesk', sans-serif;
+            --font-body:        'Inter', sans-serif;
+            --font-mono:        'JetBrains Mono', monospace;
+            --shadow-main:      0 4px 24px rgba(108, 99, 255, 0.1);
+            --shadow-hover:     0 12px 40px rgba(108, 99, 255, 0.2);
+            --shadow-btn:       0 4px 15px rgba(108, 99, 255, 0.3);
+            --shadow-icon:      0 8px 24px rgba(108, 99, 255, 0.35);
+            --gradient-primary: linear-gradient(135deg, #6C63FF, #00B4D8);
+            --gradient-text:    linear-gradient(135deg, #6C63FF, #00B4D8);
+            --tab-active-bg:    linear-gradient(135deg, rgba(108,99,255,0.12), rgba(0,180,216,0.08));
+            --tab-active-shadow:0 4px 15px rgba(108, 99, 255, 0.15);
+            --dz-border:        rgba(108, 99, 255, 0.25);
+            --dz-hover-border:  #6C63FF;
+            --dz-hover-bg:      rgba(108, 99, 255, 0.06);
+            --scrollbar:        #6C63FF;
+            --tag-bg:           rgba(108, 99, 255, 0.08);
+            --tag-border:       rgba(108, 99, 255, 0.2);
+        }
+
+        /* ═══════════════════════════════════════════
+           THEME VARIABLES — HACKER MODE
+        ═══════════════════════════════════════════ */
+        [data-theme="hacker"] {
+            --bg-0:             #000000;
+            --surface:          #050505;
+            --surface-soft:     #0A0A0A;
+            --surface-hover:    #0D1A0D;
+            --border:           rgba(0, 255, 65, 0.15);
+            --border-strong:    rgba(0, 255, 65, 0.3);
+            --ink:              #00FF41;
+            --ink-soft:         #00CC33;
+            --ink-faint:        #006611;
+            --accent-1:         #00FF41;
+            --accent-2:         #39FF14;
+            --accent-soft:      rgba(0, 255, 65, 0.08);
+            --primary-rgb:      0, 255, 65;
+            --secondary-rgb:    57, 255, 20;
+            --glass:            rgba(0, 255, 65, 0.03);
+            --glass-border:     rgba(0, 255, 65, 0.15);
+            --good:             #00FF41;
+            --good-bg:          rgba(0, 255, 65, 0.08);
+            --warn:             #FFD700;
+            --warn-bg:          rgba(255, 215, 0, 0.1);
+            --bad:              #FF0040;
+            --bad-bg:           rgba(255, 0, 64, 0.12);
+            --radius-lg:        18px;
+            --radius-md:        12px;
+            --radius-sm:        9px;
+            --radius-xs:        7px;
+            --font-display:     'Share Tech Mono', monospace;
+            --font-body:        'Share Tech Mono', monospace;
+            --font-mono:        'Share Tech Mono', monospace;
+            --shadow-main:      0 0 20px rgba(0, 255, 65, 0.05);
+            --shadow-hover:     0 0 30px rgba(0, 255, 65, 0.1);
+            --shadow-btn:       0 0 15px rgba(0, 255, 65, 0.2);
+            --shadow-icon:      0 0 20px rgba(0, 255, 65, 0.4);
+            --gradient-primary: linear-gradient(135deg, #00FF41, #39FF14);
+            --gradient-text:    linear-gradient(135deg, #00FF41, #00FFFF);
+            --tab-active-bg:    rgba(0, 255, 65, 0.07);
+            --tab-active-shadow:0 0 20px rgba(0, 255, 65, 0.2);
+            --dz-border:        rgba(0, 255, 65, 0.25);
+            --dz-hover-border:  #00FF41;
+            --dz-hover-bg:      rgba(0, 255, 65, 0.05);
+            --scrollbar:        #00FF41;
+            --tag-bg:           rgba(0, 255, 65, 0.05);
+            --tag-border:       rgba(0, 255, 65, 0.15);
+        }
+
+        /* ═══════════════════════════════════════════
+           RESET & BASE
+        ═══════════════════════════════════════════ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-0);
+            color: var(--ink);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        [data-theme="normal"] body {
+            background-image:
+                radial-gradient(ellipse 1100px 500px at 12% -8%, rgba(108,99,255,0.06), transparent 60%),
+                radial-gradient(ellipse 900px 500px at 100% 0%, rgba(0,180,216,0.04), transparent 55%);
+        }
+
+        [data-theme="hacker"] body {
+            background-image:
+                radial-gradient(ellipse 900px 500px at 15% -5%, rgba(0,255,65,0.04), transparent 60%),
+                radial-gradient(ellipse 700px 500px at 100% 10%, rgba(57,255,20,0.03), transparent 60%);
+        }
+
+        [data-theme="hacker"] body::before {
+            content: ''; position: fixed; inset: 0;
+            background-image: linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: 0; pointer-events: none;
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
+
+        [data-theme="hacker"] body::after {
+            content: ''; position: fixed; inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,65,0.008) 2px, rgba(0,255,65,0.008) 4px);
+            pointer-events: none; z-index: 9999;
+        }
+
+        ::selection { background: rgba(var(--primary-rgb), 0.2); color: var(--accent-1); }
+        a { text-decoration: none; color: inherit; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-0); }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+
+        /* ═══════════════════════════════════════════
+           LAYOUT & TOPBAR
+        ═══════════════════════════════════════════ */
+        .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px 80px; position: relative; z-index: 2; }
+        .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 34px; flex-wrap: wrap; gap: 12px; }
+        .topbar-right { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+        .pill { display: inline-flex; align-items: center; gap: 8px; background: var(--glass); border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--ink-soft); transition: all 0.3s ease; font-family: var(--font-body); }
+        
+        a.back-pill { cursor: pointer; outline: none; }
+        a.back-pill:hover { color: var(--accent-1); border-color: var(--accent-1); box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.15); transform: translateX(-2px); }
+        a.back-pill i { transition: transform 0.2s ease; }
+        a.back-pill:hover i { transform: translateX(-3px); }
+        [data-theme="hacker"] a.back-pill { letter-spacing: 1px; text-transform: uppercase; font-size: 11px; }
+        [data-theme="hacker"] a.back-pill:hover { box-shadow: 0 0 16px rgba(0,255,65,0.2); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+        .lock-pill { color: var(--accent-1); font-weight: 600; font-size: 12px; }
+        .lock-pill i { color: var(--accent-1); }
+        [data-theme="hacker"] .lock-pill { text-shadow: 0 0 6px rgba(0,255,65,0.3); letter-spacing: 1px; font-size: 11px; }
+
+        .toggle-pill { cursor: pointer; user-select: none; }
+        .toggle-label { font-size: 12px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; transition: all 0.3s; }
+        [data-theme="hacker"] .toggle-label { color: var(--accent-1); letter-spacing: 1px; text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+        .switch { width: 34px; height: 19px; border-radius: 999px; background: var(--glass-border); position: relative; flex-shrink: 0; transition: all 0.3s ease; }
+        .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 13px; height: 13px; border-radius: 50%; background: var(--ink-faint); transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); }
+        [data-theme="hacker"] .switch { background: rgba(0,255,65,0.2); }
+        [data-theme="hacker"] .switch::after { left: 18px; background: var(--accent-1); box-shadow: 0 0 8px var(--accent-1); }
+        [data-theme="hacker"] .pill { text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; background: rgba(0,255,65,0.03); box-shadow: 0 0 10px rgba(0,255,65,0.03); }
+
+        .kicker { display: inline-flex; align-items: center; gap: 7px; background: var(--glass); border: 1px solid var(--glass-border); padding: 5px 14px; border-radius: 999px; font-size: 11px; letter-spacing: 1.5px; color: var(--accent-1); font-weight: 700; margin-bottom: 24px; text-transform: uppercase; font-family: var(--font-body); transition: all 0.3s; }
+        [data-theme="hacker"] .kicker { box-shadow: 0 0 12px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); border-color: rgba(0,255,65,0.3); }
+
+        /* ═══════════════════════════════════════════
+           HERO
+        ═══════════════════════════════════════════ */
+        .hero { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 30px; }
+        .hero-icon { width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: all 0.3s ease; }
+        [data-theme="normal"] .hero-icon { background: var(--gradient-primary); color: #fff; box-shadow: var(--shadow-icon); }
+        [data-theme="hacker"] .hero-icon { background: transparent; border: 2px solid var(--accent-1); color: var(--accent-1); box-shadow: 0 0 20px rgba(0,255,65,0.25); animation: iconPulse 2s ease-in-out infinite; }
+        @keyframes iconPulse { 0%, 100% { box-shadow: 0 0 20px rgba(0,255,65,0.25); } 50% { box-shadow: 0 0 35px rgba(0,255,65,0.5); } }
+        
+        .hero-text { flex: 1; }
+        .hero h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(24px, 4vw, 32px); line-height: 1.15; margin: 0 0 10px 0; letter-spacing: -0.01em; transition: all 0.3s ease; }
+        [data-theme="normal"] .hero h1 { background: var(--gradient-text); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        [data-theme="hacker"] .hero h1 { color: var(--accent-1); -webkit-text-fill-color: var(--accent-1); text-shadow: 0 0 15px rgba(0,255,65,0.4); letter-spacing: 2px; animation: titleGlitch 4s infinite; }
+        @keyframes titleGlitch { 0%, 85%, 100% { transform: translate(0); } 86% { transform: translate(-2px, 1px); } 87% { transform: translate(2px, -1px); } 88% { transform: translate(-1px, 0); } 89% { transform: translate(0); } }
+        
+        .hero p { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.6; max-width: 600px; }
+        [data-theme="hacker"] .hero p { color: #B8FFB8; }
+
+        /* ═══════════════════════════════════════════
+           TABS & PANELS
+        ═══════════════════════════════════════════ */
+        .tabs { display: flex; gap: 8px; margin-bottom: 22px; background: var(--surface); padding: 7px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-main); transition: all 0.3s; }
+        [data-theme="hacker"] .tabs { background: rgba(5,5,5,0.9); border-color: rgba(0,255,65,0.15); box-shadow: 0 0 20px rgba(0,255,65,0.03); }
+        .tab { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--ink-faint); border: 1px solid transparent; background: transparent; font-family: var(--font-body); transition: all 0.25s ease; user-select: none; }
+        .tab i { font-size: 13px; opacity: 0.7; }
+        
+        [data-theme="normal"] .tab.active { background: var(--tab-active-bg); color: var(--accent-1); border-color: rgba(108,99,255,0.25); box-shadow: var(--tab-active-shadow); }
+        [data-theme="normal"] .tab.active i { opacity: 1; }
+        [data-theme="hacker"] .tab.active { background: var(--tab-active-bg); color: var(--accent-1); border-color: rgba(0,255,65,0.3); box-shadow: var(--tab-active-shadow); text-shadow: 0 0 8px rgba(0,255,65,0.4); letter-spacing: 1px; }
+        [data-theme="hacker"] .tab.active i { opacity: 1; }
+        .tab:not(.active):hover { color: var(--ink-soft); background: var(--glass); }
+        [data-theme="hacker"] .tab:not(.active):hover { background: rgba(0,255,65,0.03); color: rgba(0,255,65,0.6); }
+
+        .tab-panel { display: none; animation: fadeSlideIn 0.3s ease; }
+        .tab-panel.active { display: block; }
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-main); transition: all 0.3s; position: relative; overflow: hidden; }
+        .panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; opacity: 0; transition: opacity 0.4s; }
+        [data-theme="normal"] .panel::before { background: linear-gradient(90deg, #6C63FF, #00B4D8); }
+        [data-theme="hacker"] .panel::before { background: linear-gradient(90deg, #00FF41, #00FFFF); box-shadow: 0 0 10px #00FF41; }
+        .panel:hover::before { opacity: 1; }
+        [data-theme="hacker"] .panel { background: #050505; border-color: rgba(0,255,65,0.12); box-shadow: 0 0 20px rgba(0,255,65,0.02); }
+        [data-theme="hacker"] .panel:hover { border-color: rgba(0,255,65,0.25); box-shadow: 0 0 30px rgba(0,255,65,0.06); }
+
+        .panel-head { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+        .panel-head i { color: var(--accent-1); font-size: 15px; flex-shrink: 0; }
+        .panel-head h2 { font-family: var(--font-display); font-size: 17px; margin: 0; font-weight: 700; color: var(--ink); transition: all 0.3s; }
+        [data-theme="hacker"] .panel-head h2 { text-shadow: 0 0 10px rgba(0,255,65,0.2); letter-spacing: 1px; }
+        .panel-sub { color: var(--ink-soft); font-size: 13px; margin: 0 0 20px 0; line-height: 1.6; }
+        [data-theme="hacker"] .panel-sub { color: rgba(0,255,65,0.5); }
+
+        /* ═══════════════════════════════════════════
+           FORMS, INPUTS & BUTTONS
+        ═══════════════════════════════════════════ */
+        .field { margin-bottom: 18px; }
+        .field label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 8px; font-family: var(--font-body); }
+        [data-theme="hacker"] .field label { color: rgba(0,255,65,0.6); letter-spacing: 2px; }
+        input[type="text"] { width: 100%; padding: 11px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--surface-soft); font-size: 13px; font-family: var(--font-mono); color: var(--ink); outline: none; transition: all 0.25s ease; }
+        [data-theme="hacker"] input[type="text"] { background: #000; border-color: rgba(0,255,65,0.2); caret-color: var(--accent-1); }
+        [data-theme="hacker"] input::placeholder { color: rgba(0,255,65,0.25); }
+        input:focus { border-color: var(--accent-1); background: var(--surface); box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12); }
+        [data-theme="hacker"] input:focus { box-shadow: 0 0 0 3px rgba(0,255,65,0.08), 0 0 15px rgba(0,255,65,0.06); }
+
+        .check-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 6px; }
+        .check { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-soft); font-size: 13px; font-weight: 500; cursor: pointer; user-select: none; transition: all 0.2s ease; color: var(--ink-soft); }
+        .check:hover { border-color: var(--border-strong); background: var(--surface-hover); }
+        [data-theme="hacker"] .check:hover { border-color: rgba(0,255,65,0.3); background: rgba(0,255,65,0.04); }
+        .check input { accent-color: var(--accent-1); width: 15px; height: 15px; }
+
+        .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; font-family: var(--font-body); cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface-soft); color: var(--ink); transition: all 0.25s ease; }
+        .btn:hover { border-color: var(--accent-1); color: var(--accent-1); box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.12); transform: translateY(-1px); }
+        .btn:active { transform: scale(0.98); }
+        [data-theme="hacker"] .btn { background: transparent; border-color: rgba(0,255,65,0.25); color: var(--ink-soft); letter-spacing: 1px; text-transform: uppercase; font-size: 11px; }
+        [data-theme="hacker"] .btn:hover { border-color: var(--accent-1); color: var(--accent-1); box-shadow: 0 0 15px rgba(0,255,65,0.12); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+        
+        .btn-primary { background: var(--gradient-primary); border: none; color: #fff; font-weight: 700; box-shadow: var(--shadow-btn); }
+        [data-theme="hacker"] .btn-primary { color: #000; letter-spacing: 2px; }
+        .btn-primary:hover { filter: brightness(1.1); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.35); border: none; }
+        [data-theme="hacker"] .btn-primary:hover { color: #000; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(1); }
+
+        /* ═══════════════════════════════════════════
+           DROPZONE & FILE INFO
+        ═══════════════════════════════════════════ */
+        .dropzone { border: 1.5px dashed var(--dz-border); border-radius: var(--radius-md); padding: 40px 24px; text-align: center; background: var(--surface-soft); margin-top: 6px; transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; }
+        .dropzone::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(var(--primary-rgb),0.05), transparent 70%); opacity: 0; transition: opacity 0.3s; }
+        .dropzone:hover::before, .dropzone.drag::before { opacity: 1; }
+        .dropzone:hover, .dropzone.drag { border-color: var(--dz-hover-border); background: var(--dz-hover-bg); }
+        [data-theme="normal"] .dropzone:hover, [data-theme="normal"] .dropzone.drag { box-shadow: 0 0 0 4px rgba(108,99,255,0.08); }
+        [data-theme="hacker"] .dropzone:hover, [data-theme="hacker"] .dropzone.drag { box-shadow: 0 0 30px rgba(0,255,65,0.08); }
+        .dropzone .dz-icon { font-size: 28px; color: var(--ink-faint); display: block; margin-bottom: 12px; position: relative; transition: all 0.3s; }
+        .dropzone:hover .dz-icon, .dropzone.drag .dz-icon { color: var(--accent-1); transform: translateY(-3px); }
+        [data-theme="hacker"] .dropzone:hover .dz-icon { text-shadow: 0 0 12px rgba(0,255,65,0.6); }
+        .dropzone h3 { margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: var(--ink); position: relative; }
+        .dropzone p { margin: 0; color: var(--ink-faint); font-size: 12px; position: relative; }
+        [data-theme="hacker"] .dropzone p { color: rgba(0,255,65,0.4); }
+
+        .file-info { display: none; align-items: center; gap: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; background: var(--surface-soft); margin-top: 16px; transition: all 0.2s; animation: fadeSlideIn 0.3s ease; }
+        .file-info.active { display: flex; }
+        .file-info:hover { border-color: var(--border-strong); box-shadow: var(--shadow-main); }
+        .file-info .fi-icon { width: 34px; height: 34px; border-radius: 9px; background: rgba(var(--primary-rgb), 0.1); color: var(--accent-1); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        [data-theme="hacker"] .file-info .fi-icon { background: rgba(0,255,65,0.07); box-shadow: 0 0 8px rgba(0,255,65,0.06); }
+        .file-info .fi-details { flex: 1; overflow: hidden; }
+        .file-info .n { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-info .s { font-size: 11px; color: var(--ink-faint); font-family: var(--font-mono); margin-top: 2px; }
+        .file-info .fi-remove { cursor: pointer; color: var(--ink-faint); padding: 5px; transition: 0.2s; }
+        .file-info .fi-remove:hover { color: var(--bad); }
+
+        input[type="file"] { display: none; }
+
+        /* ═══════════════════════════════════════════
+           OUTPUT & STATUS
+        ═══════════════════════════════════════════ */
+        .hash-list { margin-top: 24px; display: flex; flex-direction: column; gap: 8px; }
+        .hash-row { display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 13px 14px; background: var(--surface-soft); transition: all 0.2s; animation: fadeSlideIn 0.3s ease;}
+        .hash-row:hover { border-color: var(--border-strong); box-shadow: var(--shadow-main); }
+        [data-theme="hacker"] .hash-row:hover { border-color: rgba(0,255,65,0.25); box-shadow: 0 0 12px rgba(0,255,65,0.04); }
+        .hash-row .algo { flex-shrink: 0; width: 75px; font-size: 11px; font-weight: 700; color: var(--accent-1); letter-spacing: 0.04em; font-family: var(--font-mono); text-transform: uppercase; }
+        [data-theme="hacker"] .hash-row .algo { text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+        .hash-row .hex { flex: 1; min-width: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink); word-break: break-all; line-height: 1.5; }
+        [data-theme="hacker"] .hash-row .hex { text-shadow: 0 0 4px rgba(0,255,65,0.15); }
+        
+        .copy-btn { font-size: 11px; font-weight: 700; color: var(--accent-1); background: none; border: 1px solid transparent; cursor: pointer; padding: 5px 10px; border-radius: var(--radius-xs); flex-shrink: 0; font-family: var(--font-body); letter-spacing: 0.03em; transition: all 0.2s; }
+        .copy-btn:hover { background: var(--accent-soft); border-color: var(--border); }
+        [data-theme="hacker"] .copy-btn { text-transform: uppercase; letter-spacing: 1px; font-size: 10px; }
+        [data-theme="hacker"] .copy-btn:hover { border-color: var(--accent-1); box-shadow: 0 0 8px rgba(0,255,65,0.12); text-shadow: 0 0 6px rgba(0,255,65,0.4); }
+
+        .status { display: none; align-items: flex-start; gap: 10px; border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 24px; font-size: 13px; line-height: 1.5; border: 1px solid transparent; animation: fadeSlideIn 0.3s ease; }
+        .status.active { display: flex; }
+        .status i { flex-shrink: 0; margin-top: 2px; font-size: 15px; }
+        .status strong { display: block; margin-bottom: 2px; font-weight: 700; }
+        .status-good { background: var(--good-bg); color: var(--good); border-color: rgba(var(--primary-rgb), 0.1); }
+        [data-theme="hacker"] .status-good { border-color: var(--good); box-shadow: 0 0 15px rgba(0,255,65,0.08); text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+        .status-bad { background: var(--bad-bg); color: var(--bad); }
+        [data-theme="hacker"] .status-bad { border-color: var(--bad); box-shadow: 0 0 15px rgba(255,0,64,0.1); }
+
+        .loader { display: none; margin-left: 8px; font-size: 14px; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .wrap { padding: 24px 16px 60px; }
+            .topbar { flex-direction: column; align-items: stretch; }
+            .topbar-right { flex-wrap: wrap; }
+            .tabs { flex-direction: column; gap: 4px; }
+            .tab { justify-content: flex-start; padding: 11px 14px; }
+            .check-grid { grid-template-columns: 1fr; }
+            .hero { flex-direction: column; }
+            .panel { padding: 20px 16px; }
+            .hash-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+            .hash-row .copy-btn { align-self: flex-end; }
+        }
+        @media (max-width: 480px) {
+            .lock-pill { font-size: 10px; }
+            .toggle-label { display: none; }
+        }
+    </style>
+</head>
+<body data-theme="normal">
+
+<div class="wrap">
+    
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <a href="index.html" class="pill back-pill">
+            <i class="fa-solid fa-arrow-left"></i> Back to CryptoKit
+        </a>
+        <div class="topbar-right">
+            <div class="pill lock-pill">
+                <i class="fa-solid fa-lock"></i> 100% Client-Side — Files Never Leave Your Browser
+            </div>
+            <div class="pill toggle-pill" id="theme-toggle">
+                <span class="toggle-label" id="theme-text">Normal</span>
+                <div class="switch"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="kicker"><i class="fa-solid fa-shield-halved"></i> INTEGRITY TOOL</div>
+    <div class="hero">
+        <div class="hero-icon">
+            <i class="fa-solid fa-file-shield"></i>
+        </div>
+        <div class="hero-text">
+            <h1>File Integrity Checker</h1>
+            <p>Calculate cryptographic hashes (SHA-256, SHA-512, etc.) to verify the authenticity and integrity of audio, video, text, and binary files locally.</p>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" data-target="tab-calc">
+            <i class="fa-solid fa-calculator"></i> Calculate Hashes
+        </div>
+        <div class="tab" data-target="tab-verify">
+            <i class="fa-solid fa-check-double"></i> Verify File Match
+        </div>
+    </div>
+
+    <!-- TAB 1: CALCULATE HASHES -->
+    <div id="tab-calc" class="tab-panel active">
+        <div class="panel">
+            <div class="panel-head">
+                <i class="fa-solid fa-sliders"></i>
+                <h2>Hash Parameters</h2>
+            </div>
+            <p class="panel-sub">Select algorithms and drop a file to generate its cryptographic fingerprints.</p>
+
+            <div class="field">
+                <div class="dropzone" id="dz-calc">
+                    <i class="fa-solid fa-cloud-arrow-up dz-icon"></i>
+                    <h3>Drag & Drop file here</h3>
+                    <p>or click to browse from your device</p>
+                    <input type="file" id="file-calc">
+                </div>
+                <!-- File Info Badge -->
+                <div class="file-info" id="fi-calc">
+                    <div class="fi-icon"><i class="fa-solid fa-file"></i></div>
+                    <div class="fi-details">
+                        <div class="n" id="fi-name-calc">filename.ext</div>
+                        <div class="s" id="fi-size-calc">0 B</div>
+                    </div>
+                    <i class="fa-solid fa-xmark fi-remove" id="fi-rm-calc" title="Remove file"></i>
+                </div>
+            </div>
+
+            <div class="field" style="margin-top:20px;">
+                <label>Target Algorithms</label>
+                <div class="check-grid">
+                    <label class="check"><input type="checkbox" value="SHA-256" checked> SHA-256 (Recommended)</label>
+                    <label class="check"><input type="checkbox" value="SHA-512"> SHA-512</label>
+                    <label class="check"><input type="checkbox" value="SHA-384"> SHA-384</label>
+                    <label class="check"><input type="checkbox" value="SHA-1"> SHA-1 (Legacy)</label>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" id="btn-run-calc" disabled>
+                    <i class="fa-solid fa-bolt"></i> Generate Hashes
+                    <i class="fa-solid fa-circle-notch loader" id="loader-calc"></i>
+                </button>
+                <button class="btn" id="btn-clear-calc">
+                    <i class="fa-solid fa-eraser"></i> Clear
+                </button>
+            </div>
+
+            <!-- Results List -->
+            <div class="hash-list" id="results-calc"></div>
+        </div>
+    </div>
+
+    <!-- TAB 2: VERIFY FILE -->
+    <div id="tab-verify" class="tab-panel">
+        <div class="panel">
+            <div class="panel-head">
+                <i class="fa-solid fa-scale-balanced"></i>
+                <h2>Compare Expected Hash</h2>
+            </div>
+            <p class="panel-sub">Provide a file and the hash you expect it to have. We will calculate and compare them to ensure the file hasn't been altered.</p>
+
+            <div class="field">
+                <div class="dropzone" id="dz-verify">
+                    <i class="fa-solid fa-cloud-arrow-up dz-icon"></i>
+                    <h3>Drag & Drop file to verify</h3>
+                    <p>or click to browse</p>
+                    <input type="file" id="file-verify">
+                </div>
+                <div class="file-info" id="fi-verify">
+                    <div class="fi-icon"><i class="fa-solid fa-file-circle-check"></i></div>
+                    <div class="fi-details">
+                        <div class="n" id="fi-name-verify">filename.ext</div>
+                        <div class="s" id="fi-size-verify">0 B</div>
+                    </div>
+                    <i class="fa-solid fa-xmark fi-remove" id="fi-rm-verify" title="Remove file"></i>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="hash-input">Expected Hash (Hexadecimal)</label>
+                <input type="text" id="hash-input" placeholder="e.g., e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" autocomplete="off" spellcheck="false">
+            </div>
+
+            <div class="field">
+                <label>Algorithm used for expected hash</label>
+                <div class="check-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <label class="check"><input type="radio" name="v-algo" value="SHA-256" checked> SHA-256</label>
+                    <label class="check"><input type="radio" name="v-algo" value="SHA-512"> SHA-512</label>
+                    <label class="check"><input type="radio" name="v-algo" value="SHA-384"> SHA-384</label>
+                    <label class="check"><input type="radio" name="v-algo" value="SHA-1"> SHA-1</label>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" id="btn-run-verify" disabled>
+                    <i class="fa-solid fa-shield-check"></i> Verify Integrity
+                    <i class="fa-solid fa-circle-notch loader" id="loader-verify"></i>
+                </button>
+                <button class="btn" id="btn-clear-verify">
+                    <i class="fa-solid fa-eraser"></i> Reset
+                </button>
+            </div>
+
+            <!-- Verification Status -->
+            <div id="status-area"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /* ═══════════════════════════════════════════
+       THEME TOGGLE
+    ═══════════════════════════════════════════ */
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeText = document.getElementById('theme-text');
+    const body = document.body;
+
+    themeToggle.addEventListener('click', () => {
+        if (body.getAttribute('data-theme') === 'normal') {
+            body.setAttribute('data-theme', 'hacker');
+            themeText.textContent = 'Hacker';
+        } else {
+            body.setAttribute('data-theme', 'normal');
+            themeText.textContent = 'Normal';
+        }
+    });
+
+    /* ═══════════════════════════════════════════
+       TAB SWITCHING
+    ═══════════════════════════════════════════ */
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            panels.forEach(p => p.classList.remove('active'));
+            
+            tab.classList.add('active');
+            document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+        });
+    });
+
+    /* ═══════════════════════════════════════════
+       UTILITIES
+    ═══════════════════════════════════════════ */
+    function formatBytes(bytes, decimals = 2) {
+        if (!+bytes) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+    }
+
+    // Convert ArrayBuffer to Hex String
+    function buf2hex(buffer) {
+        return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+    }
+
+    // Hash calculation using Web Crypto API
+    async function calculateHash(file, algorithm) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const hashBuffer = await crypto.subtle.digest(algorithm, e.target.result);
+                    resolve(buf2hex(hashBuffer));
+                } catch (err) { reject(err); }
+            };
+            reader.onerror = reject;
+            // Read as ArrayBuffer for the Crypto API
+            reader.readAsArrayBuffer(file); 
+        });
+    }
+
+    async function copyToClipboard(text, btnElement) {
+        try {
+            await navigator.clipboard.writeText(text);
+            const originalText = btnElement.innerHTML;
+            btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+            setTimeout(() => btnElement.innerHTML = originalText, 2000);
+        } catch (err) {
+            console.error('Failed to copy', err);
+        }
+    }
+
+    /* ═══════════════════════════════════════════
+       FILE HANDLING SETUP (Generic for both tabs)
+    ═══════════════════════════════════════════ */
+    function setupFileHandling(prefix) {
+        const dropzone = document.getElementById(`dz-${prefix}`);
+        const fileInput = document.getElementById(`file-${prefix}`);
+        const fileInfo = document.getElementById(`fi-${prefix}`);
+        const fiName = document.getElementById(`fi-name-${prefix}`);
+        const fiSize = document.getElementById(`fi-size-${prefix}`);
+        const fiRemove = document.getElementById(`fi-rm-${prefix}`);
+        const runBtn = document.getElementById(`btn-run-${prefix}`);
+        let currentFile = null;
+
+        // Click to open dialog
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        // Drag & Drop events
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag'); });
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('drag');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            currentFile = file;
+            dropzone.style.display = 'none';
+            fileInfo.classList.add('active');
+            fiName.textContent = file.name;
+            fiSize.textContent = formatBytes(file.size);
+            runBtn.disabled = false;
+        }
+
+        // Remove file
+        fiRemove.addEventListener('click', () => {
+            currentFile = null;
+            fileInput.value = '';
+            fileInfo.classList.remove('active');
+            dropzone.style.display = 'block';
+            runBtn.disabled = true;
+            
+            // Clear outputs specific to the tab
+            if(prefix === 'calc') document.getElementById('results-calc').innerHTML = '';
+            if(prefix === 'verify') document.getElementById('status-area').innerHTML = '';
+        });
+
+        return {
+            getFile: () => currentFile,
+            clear: () => fiRemove.click()
+        };
+    }
+
+    const calcState = setupFileHandling('calc');
+    const verifyState = setupFileHandling('verify');
+
+    /* ═══════════════════════════════════════════
+       LOGIC: CALCULATE HASHES TAB
+    ═══════════════════════════════════════════ */
+    const btnRunCalc = document.getElementById('btn-run-calc');
+    const btnClearCalc = document.getElementById('btn-clear-calc');
+    const resultsCalc = document.getElementById('results-calc');
+    const loaderCalc = document.getElementById('loader-calc');
+
+    btnRunCalc.addEventListener('click', async () => {
+        const file = calcState.getFile();
+        if (!file) return;
+
+        // Get selected algorithms
+        const checkboxes = document.querySelectorAll('#tab-calc input[type="checkbox"]:checked');
+        if (checkboxes.length === 0) {
+            alert('Please select at least one algorithm.');
+            return;
+        }
+
+        btnRunCalc.disabled = true;
+        loaderCalc.style.display = 'inline-block';
+        resultsCalc.innerHTML = ''; // Clear previous
+
+        try {
+            for (const cb of checkboxes) {
+                const algoName = cb.value; // e.g. "SHA-256"
+                const hashHex = await calculateHash(file, algoName);
+                
+                // Create result row
+                const row = document.createElement('div');
+                row.className = 'hash-row';
+                row.innerHTML = `
+                    <div class="algo">${algoName}</div>
+                    <div class="hex">${hashHex}</div>
+                    <button class="copy-btn" onclick="copyToClipboard('${hashHex}', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                `;
+                resultsCalc.appendChild(row);
+            }
+        } catch (error) {
+            console.error("Hashing failed", error);
+            resultsCalc.innerHTML = `<div class="status status-bad active"><i class="fa-solid fa-circle-exclamation"></i><div><strong>Error</strong>Failed to read or hash file. File might be too large for browser memory.</div></div>`;
+        }
+
+        btnRunCalc.disabled = false;
+        loaderCalc.style.display = 'none';
+    });
+
+    btnClearCalc.addEventListener('click', () => {
+        calcState.clear();
+        document.querySelectorAll('#tab-calc input[type="checkbox"]').forEach(cb => cb.checked = (cb.value === 'SHA-256'));
+    });
+
+    /* ═══════════════════════════════════════════
+       LOGIC: VERIFY FILE TAB
+    ═══════════════════════════════════════════ */
+    const btnRunVerify = document.getElementById('btn-run-verify');
+    const btnClearVerify = document.getElementById('btn-clear-verify');
+    const hashInput = document.getElementById('hash-input');
+    const statusArea = document.getElementById('status-area');
+    const loaderVerify = document.getElementById('loader-verify');
+
+    // Enable/disable button based on file AND input text
+    hashInput.addEventListener('input', checkVerifyState);
+    
+    // Override handleFile slightly to trigger validation
+    const originalVerifyGetFile = verifyState.getFile;
+    document.getElementById('file-verify').addEventListener('change', checkVerifyState);
+    document.getElementById('dz-verify').addEventListener('drop', () => setTimeout(checkVerifyState, 50));
+    document.getElementById('fi-rm-verify').addEventListener('click', checkVerifyState);
+
+
+    function checkVerifyState() {
+        const file = verifyState.getFile();
+        const hash = hashInput.value.trim();
+        btnRunVerify.disabled = !(file && hash.length > 0);
+    }
+
+    btnRunVerify.addEventListener('click', async () => {
+        const file = verifyState.getFile();
+        let expectedHash = hashInput.value.trim().toLowerCase();
+        
+        // Remove spaces or colons if user pasted a formatted hash
+        expectedHash = expectedHash.replace(/[:\s]/g, '');
+
+        const algoInput = document.querySelector('input[name="v-algo"]:checked');
+        const algoName = algoInput ? algoInput.value : 'SHA-256';
+
+        if (!file || !expectedHash) return;
+
+        btnRunVerify.disabled = true;
+        loaderVerify.style.display = 'inline-block';
+        statusArea.innerHTML = '';
+
+        try {
+            const calculatedHash = await calculateHash(file, algoName);
+            
+            if (calculatedHash === expectedHash) {
+                statusArea.innerHTML = `
+                    <div class="status status-good active">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <div>
+                            <strong>Integrity Verified</strong>
+                            The generated ${algoName} hash matches the expected hash perfectly. The file is authentic and unaltered.
+                        </div>
+                    </div>`;
+            } else {
+                statusArea.innerHTML = `
+                    <div class="status status-bad active">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div>
+                            <strong>Verification Failed</strong>
+                            The hashes do not match. The file may be corrupted, altered, or you selected the wrong algorithm.<br><br>
+                            <span style="font-family: var(--font-mono); font-size: 11px; opacity: 0.8">
+                            Expected: ${expectedHash}<br>
+                            Actual&nbsp;&nbsp;: ${calculatedHash}
+                            </span>
+                        </div>
+                    </div>`;
+            }
+        } catch (error) {
+             statusArea.innerHTML = `<div class="status status-warn active"><i class="fa-solid fa-circle-exclamation"></i><div><strong>Processing Error</strong>Could not calculate hash.</div></div>`;
+        }
+
+        btnRunVerify.disabled = false;
+        loaderVerify.style.display = 'none';
+    });
+
+    btnClearVerify.addEventListener('click', () => {
+        verifyState.clear();
+        hashInput.value = '';
+        document.querySelector('input[name="v-algo"][value="SHA-256"]').checked = true;
+        statusArea.innerHTML = '';
+        checkVerifyState();
+    });
+
+</script>
+</body>
+</html>

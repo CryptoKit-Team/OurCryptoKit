@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - CryptoKit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+/* ═══════════════════════════════════════════
+   THEME VARIABLES - NORMAL MODE
+═══════════════════════════════════════════ */
+[data-theme="normal"] {
+    --bg-primary: #F0F4FF;
+    --bg-secondary: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #F8F9FF;
+    --primary: #6C63FF;
+    --primary-glow: rgba(108, 99, 255, 0.2);
+    --secondary: #00B4D8;
+    --accent: #FF6584;
+    --success: #06D6A0;
+    --text-primary: #1A1A2E;
+    --text-secondary: #4A5568;
+    --text-muted: #718096;
+    --border: rgba(108, 99, 255, 0.2);
+    --border-hover: rgba(108, 99, 255, 0.5);
+    --glass: rgba(108, 99, 255, 0.05);
+    --glass-border: rgba(108, 99, 255, 0.12);
+    --shadow: 0 4px 24px rgba(108, 99, 255, 0.1);
+    --shadow-hover: 0 12px 40px rgba(108, 99, 255, 0.2);
+    --tag-bg: rgba(108, 99, 255, 0.08);
+    --tag-border: rgba(108, 99, 255, 0.2);
+    --input-bg: #F7F8FF;
+    --scrollbar: #6C63FF;
+}
+
+/* ═══════════════════════════════════════════
+   THEME VARIABLES - HACKER MODE
+═══════════════════════════════════════════ */
+[data-theme="hacker"] {
+    --bg-primary: #000000;
+    --bg-secondary: #0A0A0A;
+    --bg-card: #050505;
+    --bg-card-hover: #0D1A0D;
+    --primary: #00FF41;
+    --primary-glow: rgba(0, 255, 65, 0.25);
+    --secondary: #00FFFF;
+    --accent: #FF0040;
+    --success: #00FF41;
+    --text-primary: #00FF41;
+    --text-secondary: #00CC33;
+    --text-muted: #006611;
+    --border: rgba(0, 255, 65, 0.3);
+    --border-hover: rgba(0, 255, 65, 0.8);
+    --glass: rgba(0, 255, 65, 0.03);
+    --glass-border: rgba(0, 255, 65, 0.15);
+    --shadow: 0 4px 24px rgba(0, 255, 65, 0.1);
+    --shadow-hover: 0 12px 40px rgba(0, 255, 65, 0.25);
+    --tag-bg: rgba(0, 255, 65, 0.05);
+    --tag-border: rgba(0, 255, 65, 0.2);
+    --input-bg: #050505;
+    --scrollbar: #00FF41;
+}
+
+/* ═══════════════════════════════════════════
+   HACKER EXTENDED VARS
+═══════════════════════════════════════════ */
+[data-theme="hacker"] {
+    --green-bright: #00FF41;
+    --green-neon: #39FF14;
+    --green-lime: #CCFF00;
+    --green-dark: #2D5F2D;
+    --green-glow: rgba(0, 255, 65, 0.4);
+    --accent-red: #FF3131;
+    --accent-amber: #FFB800;
+    --accent-yellow: #FFEA00;
+    --accent-cyan: #00E5FF;
+    --accent-magenta: #FF10F0;
+    --accent-purple: #B026FF;
+    --accent-orange: #FF8C00;
+    --hacker-bg: #030503;
+    --hacker-panel: #0A140A;
+    --hacker-terminal: #0D1B0D;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE STYLES
+═══════════════════════════════════════════ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    line-height: 1.6;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* Hacker Mode Font Override */
+[data-theme="hacker"] body,
+[data-theme="hacker"] p,
+[data-theme="hacker"] span,
+[data-theme="hacker"] a,
+[data-theme="hacker"] li,
+[data-theme="hacker"] button,
+[data-theme="hacker"] input,
+[data-theme="hacker"] textarea,
+[data-theme="hacker"] select {
+    font-family: 'Share Tech Mono', 'JetBrains Mono', monospace !important;
+}
+
+[data-theme="hacker"] h1,
+[data-theme="hacker"] h2,
+[data-theme="hacker"] h3,
+[data-theme="hacker"] h4 {
+    font-family: 'Share Tech Mono', monospace !important;
+    letter-spacing: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+
+/* ═══════════════════════════════════════════
+   BACKGROUNDS
+═══════════════════════════════════════════ */
+#matrix-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    display: none;
+    opacity: 0.15;
+}
+[data-theme="hacker"] #matrix-canvas { display: block; }
+
+.scanlines {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    display: none;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent, transparent 2px,
+        rgba(0, 255, 65, 0.015) 2px,
+        rgba(0, 255, 65, 0.015) 4px
+    );
+}
+[data-theme="hacker"] .scanlines { display: block; }
+
+.bg-shapes {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+[data-theme="hacker"] .bg-shapes { display: none; }
+
+.bg-shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.12;
+}
+.bg-shape-1 {
+    width: 600px; height: 600px;
+    background: #6C63FF;
+    top: -200px; right: -100px;
+    animation: floatShape 8s ease-in-out infinite;
+}
+.bg-shape-2 {
+    width: 400px; height: 400px;
+    background: #00B4D8;
+    bottom: 10%; left: -100px;
+    animation: floatShape 10s ease-in-out infinite reverse;
+}
+.bg-shape-3 {
+    width: 300px; height: 300px;
+    background: #FF6584;
+    top: 50%; right: 20%;
+    animation: floatShape 6s ease-in-out infinite;
+}
+
+@keyframes floatShape {
+    0%, 100% { transform: translate(0) scale(1); }
+    50% { transform: translate(20px, -20px) scale(1.05); }
+}
+
+/* ═══════════════════════════════════════════
+   GLITCH EFFECT - Hacker Mode
+═══════════════════════════════════════════ */
+[data-theme="hacker"] .glitch {
+    position: relative;
+    animation: glitch 3s infinite;
+}
+
+[data-theme="hacker"] .glitch::before,
+[data-theme="hacker"] .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    background: transparent;
+}
+
+[data-theme="hacker"] .glitch::before {
+    color: #00FFFF;
+    animation: glitch-1 3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+
+[data-theme="hacker"] .glitch::after {
+    color: #FF0040;
+    animation: glitch-2 3s infinite;
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch {
+    0%, 90%, 100% { transform: translate(0); }
+    92% { transform: translate(-2px, 1px); }
+    94% { transform: translate(2px, -1px); }
+}
+
+@keyframes glitch-1 {
+    0%, 90%, 100% { transform: translate(0); opacity: 0; }
+    92% { transform: translate(-3px); opacity: 0.8; }
+    94% { transform: translate(3px); opacity: 0.8; }
+    96% { transform: translate(0); opacity: 0; }
+}
+
+@keyframes glitch-2 {
+    0%, 90%, 100% { transform: translate(0); opacity: 0; }
+    93% { transform: translate(3px); opacity: 0.8; }
+    95% { transform: translate(-3px); opacity: 0.8; }
+    97% { transform: translate(0); opacity: 0; }
+}
+
+[data-theme="hacker"] .policy-card {
+    animation: borderPulse 3s ease-in-out infinite;
+}
+
+@keyframes borderPulse {
+    0%, 100% { border-color: rgba(0, 255, 65, 0.15); }
+    50% { border-color: rgba(0, 255, 65, 0.4); }
+}
+
+[data-theme="hacker"] .policy-card:hover {
+    animation: none;
+}
+
+/* ═══════════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════════ */
+.mode-selector { position: relative; }
+
+.mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.mode-btn:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.mode-arrow {
+    font-size: 10px;
+    transition: transform 0.3s;
+}
+
+.mode-arrow.open { transform: rotate(180deg); }
+
+.mode-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 240px;
+    border-radius: 16px;
+    padding: 8px;
+    display: none;
+    z-index: 100;
+    animation: dropIn 0.25s ease;
+}
+
+.mode-dropdown.open { display: block; }
+
+@keyframes dropIn {
+    from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+[data-theme="normal"] .mode-dropdown {
+    background: #fff;
+    border: 1px solid rgba(108, 99, 255, 0.15);
+    box-shadow: 0 15px 40px rgba(108, 99, 255, 0.15);
+}
+
+[data-theme="hacker"] .mode-dropdown {
+    background: #0A0A0A;
+    border: 1px solid rgba(0, 255, 65, 0.25);
+    box-shadow: 0 15px 40px rgba(0, 255, 65, 0.1);
+}
+
+.mode-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+[data-theme="normal"] .mode-option:hover { background: rgba(108, 99, 255, 0.06); }
+[data-theme="hacker"] .mode-option:hover { background: rgba(0, 255, 65, 0.06); }
+
+.mode-option-icon {
+    font-size: 22px;
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+[data-theme="normal"] .mode-option-icon { background: var(--glass); }
+[data-theme="hacker"] .mode-option-icon { background: rgba(0, 255, 65, 0.05); }
+
+.mode-option-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.mode-option-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.mode-check {
+    margin-left: auto;
+    color: var(--primary);
+    font-size: 14px;
+    display: none;
+}
+
+.mode-option.active .mode-check { display: block; }
+
+/* Theme Transition Overlay */
+.theme-transition-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.theme-transition-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+.transition-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(12px, 1.5vw, 18px);
+    color: #00FF41;
+    text-align: center;
+    text-shadow: 0 0 20px #00FF41;
+    padding: 20px;
+    line-height: 2;
+}
+
+/* ═══════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════ */
+.navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 0 32px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.4s;
+}
+
+[data-theme="normal"] .navbar {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+}
+[data-theme="hacker"] .navbar {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 255, 65, 0.15);
+}
+.navbar.scrolled { box-shadow: var(--shadow); }
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+}
+
+.nav-logo-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s;
+}
+[data-theme="normal"] .nav-logo-icon {
+    background: linear-gradient(135deg, #6C63FF, #00B4D8);
+    box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+    color: #fff;
+}
+[data-theme="hacker"] .nav-logo-icon {
+    background: transparent;
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 10px var(--primary-glow);
+    color: var(--primary);
+}
+
+.nav-logo-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+}
+[data-theme="normal"] .nav-logo-text {
+    background: linear-gradient(135deg, #6C63FF, #00B4D8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+[data-theme="hacker"] .nav-logo-text {
+    color: var(--primary);
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px var(--primary-glow);
+    -webkit-text-fill-color: var(--primary);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+}
+.nav-links a {
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+    position: relative;
+    color: var(--text-secondary);
+}
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    border-radius: 2px;
+    transition: width 0.3s;
+}
+[data-theme="normal"] .nav-links a::after {
+    background: linear-gradient(90deg, #6C63FF, #00B4D8);
+}
+[data-theme="hacker"] .nav-links a::after {
+    background: var(--primary);
+    box-shadow: 0 0 8px var(--primary);
+}
+.nav-links a:hover { color: var(--primary); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--primary); }
+.nav-links a.active::after { width: 100%; }
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 5px;
+    background: none;
+    border: none;
+}
+.hamburger span {
+    display: block;
+    width: 24px; height: 2px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 70px; left: 0; right: 0;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 24px;
+    z-index: 999;
+    flex-direction: column;
+    gap: 16px;
+}
+[data-theme="normal"] .mobile-menu { background: rgba(255, 255, 255, 0.95); }
+[data-theme="hacker"] .mobile-menu { background: rgba(0, 0, 0, 0.97); }
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+    font-size: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+}
+.mobile-menu a:hover { color: var(--primary); }
+
+/* ═══════════════════════════════════════════
+   PAGE HERO
+═══════════════════════════════════════════ */
+.page-hero {
+    padding: 130px 24px 60px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.section-badge {
+    display: inline-block;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: var(--primary);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    transition: all 0.3s;
+}
+
+.page-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+[data-theme="normal"] .gradient-text {
+    background: linear-gradient(135deg, #6C63FF, #00B4D8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme="hacker"] .gradient-text {
+    background: linear-gradient(135deg, #00FF41, #00FFFF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 65, 0.5));
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+.last-updated {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* ═══════════════════════════════════════════
+   CONTENT WRAPPER
+═══════════════════════════════════════════ */
+.content-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 2;
+}
+
+/* ═══════════════════════════════════════════
+   TABLE OF CONTENTS
+═══════════════════════════════════════════ */
+.toc {
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 40px;
+    transition: all 0.3s;
+}
+
+[data-theme="normal"] .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+}
+
+[data-theme="hacker"] .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.toc h3 {
+    font-size: 16px;
+    color: var(--primary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toc ol {
+    padding-left: 20px;
+    columns: 2;
+    column-gap: 30px;
+}
+
+.toc li {
+    margin-bottom: 8px;
+    break-inside: avoid;
+}
+
+.toc a {
+    color: var(--text-secondary);
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.toc a:hover {
+    color: var(--primary);
+}
+
+/* ═══════════════════════════════════════════
+   POLICY CARDS
+═══════════════════════════════════════════ */
+.policy-card {
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="normal"] .policy-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+}
+
+[data-theme="hacker"] .policy-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(0, 255, 65, 0.15);
+}
+
+.policy-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+[data-theme="normal"] .policy-card::before {
+    background: linear-gradient(90deg, #6C63FF, #00B4D8);
+}
+
+[data-theme="hacker"] .policy-card::before {
+    background: linear-gradient(90deg, #00FF41, #00FFFF);
+    box-shadow: 0 0 10px #00FF41;
+}
+
+.policy-card:hover::before { opacity: 1; }
+
+[data-theme="normal"] .policy-card:hover {
+    border-color: rgba(108, 99, 255, 0.4);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+[data-theme="hacker"] .policy-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 25px var(--primary-glow);
+    transform: translateY(-2px);
+    animation: none;
+}
+
+.section-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+[data-theme="normal"] .section-number {
+    background: linear-gradient(135deg, #6C63FF, #8B5CF6);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+}
+
+[data-theme="hacker"] .section-number {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.policy-card h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+.policy-card p {
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.policy-card ul {
+    padding-left: 20px;
+    margin-bottom: 12px;
+}
+
+.policy-card li {
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+[data-theme="normal"] .policy-card li::marker { color: var(--primary); }
+[data-theme="hacker"] .policy-card li::marker { color: var(--primary); }
+
+/* ═══════════════════════════════════════════
+   HIGHLIGHT BOXES
+═══════════════════════════════════════════ */
+.highlight-box {
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    margin: 16px 0;
+}
+
+[data-theme="normal"] .highlight-box {
+    background: rgba(108, 99, 255, 0.05);
+    border-left: 3px solid var(--primary);
+}
+
+[data-theme="hacker"] .highlight-box {
+    background: rgba(0, 255, 65, 0.03);
+    border-left: 3px solid var(--primary);
+}
+
+.highlight-box p {
+    color: var(--text-primary) !important;
+    font-size: 13px !important;
+}
+
+.warning-box {
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    margin: 16px 0;
+}
+
+[data-theme="normal"] .warning-box {
+    background: rgba(255, 101, 132, 0.05);
+    border-left: 3px solid var(--accent);
+}
+
+[data-theme="hacker"] .warning-box {
+    background: rgba(255, 0, 64, 0.05);
+    border-left: 3px solid var(--accent);
+}
+
+.warning-box p {
+    font-size: 13px !important;
+}
+
+[data-theme="normal"] .warning-box p { color: #c53030 !important; }
+[data-theme="hacker"] .warning-box p { color: #FF6666 !important; }
+
+.info-box {
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    margin: 16px 0;
+}
+
+[data-theme="normal"] .info-box {
+    background: rgba(0, 180, 216, 0.05);
+    border-left: 3px solid var(--secondary);
+}
+
+[data-theme="hacker"] .info-box {
+    background: rgba(0, 229, 255, 0.05);
+    border-left: 3px solid var(--secondary);
+}
+
+.info-box p {
+    font-size: 13px !important;
+}
+
+[data-theme="normal"] .info-box p { color: #0077B6 !important; }
+[data-theme="hacker"] .info-box p { color: #00E5FF !important; }
+
+.code-text {
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+[data-theme="normal"] .code-text {
+    background: rgba(108, 99, 255, 0.08);
+    color: var(--primary);
+}
+
+[data-theme="hacker"] .code-text {
+    background: rgba(0, 255, 65, 0.08);
+    color: var(--primary);
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.footer {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid var(--glass-border);
+    padding: 60px 24px 30px;
+}
+[data-theme="normal"] .footer { background: #F8F9FF; }
+[data-theme="hacker"] .footer { background: #000; }
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+}
+
+.footer-brand p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 16px 0 20px;
+    line-height: 1.7;
+    max-width: 240px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 12px;
+}
+
+.social-btn {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+}
+
+[data-theme="normal"] .social-btn {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+}
+[data-theme="normal"] .social-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    transform: translateY(-2px);
+}
+[data-theme="hacker"] .social-btn {
+    background: transparent;
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    color: var(--text-secondary);
+}
+[data-theme="hacker"] .social-btn:hover {
+    background: rgba(0, 255, 65, 0.1);
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.footer-col h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-col ul li a {
+    color: var(--text-secondary);
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.footer-col ul li a:hover { color: var(--primary); }
+
+.footer-bottom {
+    border-top: 1px solid var(--glass-border);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.footer-bottom p {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.footer-bottom-links {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-bottom-links a {
+    font-size: 13px;
+    color: var(--text-muted);
+    transition: color 0.3s;
+}
+
+.footer-bottom-links a:hover { color: var(--primary); }
+
+/* ═══════════════════════════════════════════
+   SCROLL TO TOP
+═══════════════════════════════════════════ */
+.scroll-top {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    transition: all 0.3s;
+}
+[data-theme="normal"] .scroll-top {
+    background: linear-gradient(135deg, #6C63FF, #8B5CF6);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+}
+[data-theme="hacker"] .scroll-top {
+    background: transparent;
+    border: 1px solid var(--primary) !important;
+    color: var(--primary);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+.scroll-top.visible { display: flex; }
+.scroll-top:hover { transform: translateY(-3px); }
+
+/* ═══════════════════════════════════════════
+   HACKER FULL OVERRIDES
+═══════════════════════════════════════════ */
+html[data-theme="hacker"] body {
+    background: #030503 !important;
+}
+
+html[data-theme="hacker"] body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image:
+        linear-gradient(rgba(0, 255, 65, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 65, 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+    animation: hk-grid-move 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes hk-grid-move {
+    0% { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+}
+
+html[data-theme="hacker"] .navbar {
+    background: rgba(5, 10, 5, 0.7) !important;
+    border: 1px solid rgba(0, 255, 65, 0.2) !important;
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.1);
+}
+
+html[data-theme="hacker"] .nav-logo-text {
+    text-shadow: 0 0 10px var(--primary);
+}
+
+html[data-theme="hacker"] .section-badge {
+    background: rgba(255, 184, 0, 0.08) !important;
+    color: #FFB800 !important;
+    border: 1px solid #FFB800 !important;
+    text-shadow: 0 0 8px #FFB800;
+}
+
+html[data-theme="hacker"] .page-title {
+    text-shadow: 0 0 20px var(--primary-glow);
+}
+
+html[data-theme="hacker"] .mode-btn {
+    background: rgba(255, 16, 240, 0.08) !important;
+    border-color: #FF10F0 !important;
+    color: #FF10F0 !important;
+    text-shadow: 0 0 8px #FF10F0;
+}
+
+html[data-theme="hacker"] .policy-card {
+    background: rgba(13, 27, 13, 0.6) !important;
+    border: 1px solid rgba(0, 255, 65, 0.3) !important;
+    backdrop-filter: blur(10px);
+}
+
+html[data-theme="hacker"] .policy-card:hover {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 30px var(--primary-glow) !important;
+}
+
+html[data-theme="hacker"] .toc {
+    background: rgba(13, 27, 13, 0.6) !important;
+    border: 1px solid rgba(0, 255, 65, 0.3) !important;
+}
+
+html[data-theme="hacker"] .policy-card h2 {
+    color: var(--primary) !important;
+    text-shadow: 0 0 8px var(--primary-glow);
+}
+
+html[data-theme="hacker"] .policy-card p,
+html[data-theme="hacker"] .policy-card li {
+    color: #B8FFB8 !important;
+}
+
+html[data-theme="hacker"] .footer {
+    background: rgba(3, 5, 3, 0.95) !important;
+    border-top: 1px solid rgba(0, 255, 65, 0.15) !important;
+}
+
+html[data-theme="hacker"] .footer h4 {
+    color: var(--primary) !important;
+    text-shadow: 0 0 5px var(--primary-glow);
+}
+
+html[data-theme="hacker"] .footer a {
+    color: #B8FFB8 !important;
+}
+
+html[data-theme="hacker"] .footer a:hover {
+    color: var(--primary) !important;
+    text-shadow: 0 0 8px var(--primary);
+}
+
+html[data-theme="hacker"] .social-btn {
+    background: rgba(0, 255, 65, 0.1) !important;
+    color: var(--primary) !important;
+    border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+html[data-theme="hacker"] .social-btn:hover {
+    background: var(--primary) !important;
+    color: #000 !important;
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+html[data-theme="hacker"] .scroll-top {
+    background: var(--primary) !important;
+    color: #000 !important;
+    box-shadow: 0 0 20px var(--primary-glow) !important;
+    border: none !important;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    .toc ol { columns: 1; }
+    .policy-card { padding: 24px; }
+    .mode-dropdown { right: -60px; }
+}
+
+@media (max-width: 480px) {
+    .footer-top { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .mode-label { display: none; }
+}
+    </style>
+</head>
+<body>
+    <!-- Backgrounds -->
+    <canvas id="matrix-canvas"></canvas>
+    <div class="scanlines"></div>
+    <div class="bg-shapes">
+        <div class="bg-shape bg-shape-1"></div>
+        <div class="bg-shape bg-shape-2"></div>
+        <div class="bg-shape bg-shape-3"></div>
+    </div>
+
+    <!-- Theme Transition -->
+    <div class="theme-transition-overlay" id="themeOverlay">
+        <div class="transition-text">
+            > INITIATING HACKER PROTOCOL...<br>
+            > DECRYPTING INTERFACE...<br>
+            > ACCESS GRANTED_
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">
+            <div class="nav-logo-icon"><i class="fas fa-shield-halved"></i></div>
+            <span class="nav-logo-text">CryptoKit</span>
+        </a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="Privacy Policy.html" class="active">Privacy</a></li>
+            <li><a href="Terms.html">Terms</a></li>
+            <li><a href="support.html">Support</a></li>
+        
+        </ul>
+        <div class="nav-actions">
+            <div class="mode-selector">
+                <button class="mode-btn" onclick="toggleModeDropdown()">
+                    <span id="modeIcon">✨</span>
+                    <span class="mode-label" id="modeLabel">Normal</span>
+                    <span class="mode-arrow" id="modeArrow">▼</span>
+                </button>
+                <div class="mode-dropdown" id="modeDropdown">
+                    <div class="mode-option active" id="optNormal" onclick="setTheme('normal')">
+                        <div class="mode-option-icon">✨</div>
+                        <div>
+                            <div class="mode-option-title">Normal Mode</div>
+                            <div class="mode-option-desc">Clean & professional</div>
+                        </div>
+                        <span class="mode-check">✓</span>
+                    </div>
+                    <div class="mode-option" id="optHacker" onclick="setTheme('hacker')">
+                        <div class="mode-option-icon">💀</div>
+                        <div>
+                            <div class="mode-option-title">Hacker Mode</div>
+                            <div class="mode-option-desc">Matrix cyberpunk</div>
+                        </div>
+                        <span class="mode-check">✓</span>
+                    </div>
+                </div>
+            </div>
+            <button class="hamburger" onclick="toggleMobileMenu()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="Privacy Policy.html">Privacy Policy</a>
+        <a href="Terms.html">Terms of Service</a>
+        <a href="support.html">Support Center</a>
+    </div>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="section-badge">🛡️ YOUR DATA PROTECTED</div>
+        <h1 class="page-title glitch" data-text="Privacy Policy">
+            <span class="gradient-text">Privacy Policy</span>
+        </h1>
+        <p class="page-subtitle">We take your privacy seriously. This policy explains how we collect, use, and protect your information on our cryptography platform.</p>
+        <div class="last-updated">Last Updated: September 6, 2026 | v1.0</v1></div>
+    </section>
+
+    <!-- Content -->
+    <div class="content-wrapper">
+        <div class="toc">
+            <h3><i class="fas fa-list"></i> Table of Contents</h3>
+            <ol>
+                <li><a href="#s1">Information We Collect</a></li>
+                <li><a href="#s2">How We Use Your Info</a></li>
+                <li><a href="#s3">Cryptographic Data Handling</a></li>
+                <li><a href="#s4">Data Storage & Security</a></li>
+                <li><a href="#s5">Cookies & Tracking</a></li>
+                <li><a href="#s6">Third-Party Services</a></li>
+                <li><a href="#s7">Data Retention</a></li>
+                <li><a href="#s8">Your Rights & Choices</a></li>
+                <li><a href="#s9">Children's Privacy</a></li>
+                <li><a href="#s10">Changes to This Policy</a></li>
+                <li><a href="#s11">Contact Us</a></li>
+            </ol>
+        </div>
+
+        <div class="policy-card" id="s1">
+            <h2><span class="section-number">1</span> Information We Collect</h2>
+            <p><strong>Information you provide directly:</strong></p>
+            <ul>
+                <li>Account registration details (name, email, username)</li>
+                <li>Profile information and preferences</li>
+                <li>Communications you send to us (support tickets, feedback)</li>
+                <li>Payment information for premium services (via secure third-party processors)</li>
+            </ul>
+            <p><strong>Information collected automatically:</strong></p>
+            <ul>
+                <li>Device information (browser type, OS, device ID)</li>
+                <li>Usage data (pages visited, features used, time spent)</li>
+                <li>IP address and approximate geographic location</li>
+                <li>Log data and error reports</li>
+            </ul>
+            <div class="highlight-box">
+                <p>🔒 <strong>Important:</strong> We do NOT collect, store, or access your encryption keys, plaintext data, passwords used in our cryptographic tools, or any content you encrypt/decrypt.</p>
+            </div>
+        </div>
+
+        <div class="policy-card" id="s2">
+            <h2><span class="section-number">2</span> How We Use Your Information</h2>
+            <ul>
+                <li><strong>Service Delivery:</strong> Provide, maintain, and improve cryptography tools</li>
+                <li><strong>Account Management:</strong> Create and manage your user account</li>
+                <li><strong>Communication:</strong> Send service updates, security alerts, respond to inquiries</li>
+                <li><strong>Security:</strong> Detect, prevent, and address fraud and security issues</li>
+                <li><strong>Analytics:</strong> Understand usage patterns and improve experience</li>
+                <li><strong>Legal Compliance:</strong> Comply with applicable laws and regulations</li>
+            </ul>
+            <div class="info-box">
+                <p>ℹ️ We will never sell your personal information to third parties.</p>
+            </div>
+        </div>
+
+        <div class="policy-card" id="s3">
+            <h2><span class="section-number">3</span> Cryptographic Data Handling</h2>
+            <ul>
+                <li>All encryption/decryption operations are performed <strong>client-side</strong> in your browser</li>
+                <li>We employ <span class="code-text">AES-256</span> encryption for any server-side processing</li>
+                <li>Encryption keys generated on our platform are <strong>never transmitted</strong> to servers</li>
+                <li>Hash computations are local; results are not logged</li>
+                <li>API operations use <span class="code-text">TLS 1.3</span> encrypted connections</li>
+            </ul>
+            <div class="warning-box">
+                <p>⚠️ <strong>Zero-Knowledge Architecture:</strong> We cannot access or recover your encrypted data. If you lose your encryption keys, we cannot help recover your data.</p>
+            </div>
+        </div>
+
+        <div class="policy-card" id="s4">
+            <h2><span class="section-number">4</span> Data Storage & Security</h2>
+            <ul>
+                <li>Data at rest encrypted using <span class="code-text">AES-256-GCM</span></li>
+                <li>Data in transit protected via <span class="code-text">TLS 1.3</span></li>
+                <li>Passwords hashed using <span class="code-text">Argon2id</span> with unique salts</li>
+                <li>Regular security audits and penetration testing</li>
+                <li>Multi-factor authentication (MFA) available for all accounts</li>
+                <li>SOC 2 Type II certified data center infrastructure</li>
+            </ul>
+        </div>
+
+        <div class="policy-card" id="s5">
+            <h2><span class="section-number">5</span> Cookies & Tracking</h2>
+            <ul>
+                <li><strong>Essential Cookies:</strong> Required for basic functionality and security</li>
+                <li><strong>Preference Cookies:</strong> Remember settings (theme, language)</li>
+                <li><strong>Analytics Cookies:</strong> Anonymized usage analytics</li>
+            </ul>
+            <p>We do <strong>not</strong> use advertising or cross-site tracking cookies.</p>
+        </div>
+
+        <div class="policy-card" id="s6">
+            <h2><span class="section-number">6</span> Third-Party Services</h2>
+            <ul>
+                <li><strong>Payment Processors:</strong> Stripe, PayPal (own privacy policies)</li>
+                <li><strong>Analytics:</strong> Privacy-focused analytics (Plausible / self-hosted Matomo)</li>
+                <li><strong>Infrastructure:</strong> Cloud hosting with data protection agreements</li>
+                <li><strong>CDN:</strong> Fast and secure content delivery</li>
+            </ul>
+        </div>
+
+        <div class="policy-card" id="s7">
+            <h2><span class="section-number">7</span> Data Retention</h2>
+            <ul>
+                <li><strong>Account Data:</strong> Deleted within 30 days of account deletion</li>
+                <li><strong>Usage Logs:</strong> Anonymized after 90 days, deleted after 12 months</li>
+                <li><strong>Support Tickets:</strong> Retained 24 months after resolution</li>
+                <li><strong>Payment Records:</strong> As required by law (typically 7 years)</li>
+                <li><strong>Cryptographic Operations:</strong> No retention — processed and discarded</li>
+            </ul>
+        </div>
+
+        <div class="policy-card" id="s8">
+            <h2><span class="section-number">8</span> Your Rights & Choices</h2>
+            <ul>
+                <li><strong>Access:</strong> Request a copy of your personal data</li>
+                <li><strong>Rectification:</strong> Correct inaccurate data</li>
+                <li><strong>Erasure:</strong> Request deletion ("Right to be Forgotten")</li>
+                <li><strong>Portability:</strong> Receive data in machine-readable format</li>
+                <li><strong>Restriction:</strong> Limit processing of your data</li>
+                <li><strong>Withdraw Consent:</strong> Withdraw at any time</li>
+            </ul>
+            <p>Contact us at <span class="code-text">privacy@cryptoshield.com</span> to exercise these rights.</p>
+        </div>
+
+        <div class="policy-card" id="s9">
+            <h2><span class="section-number">9</span> Children's Privacy</h2>
+            <p>Our services are not directed to individuals under 16. We do not knowingly collect personal information from children. If we become aware, we will delete such information promptly.</p>
+        </div>
+
+        <div class="policy-card" id="s10">
+            <h2><span class="section-number">10</span> Changes to This Policy</h2>
+            <ul>
+                <li>Updated policy posted with new "Last Updated" date</li>
+                <li>Registered users notified via email</li>
+                <li>Prominent notice displayed on platform</li>
+                <li>Summary of key changes provided</li>
+            </ul>
+        </div>
+
+        <div class="policy-card" id="s11">
+            <h2><span class="section-number">11</span> Contact Us</h2>
+            <ul>
+                <li><strong>Email:</strong> <span class="code-text">privacy@cryptokit.com</span></li>
+                <li><strong>DPO:</strong> <span class="code-text">dpo@cryptokit.com</span></li>
+                <li><strong>Address:</strong> CryptoKit Inc. , Jaipur , Rajasthan, India</li>
+                <li><strong>Support:</strong> <a href="Support.html" style="color: var(--primary);">Contact Form</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="index.html" class="nav-logo">
+                        <div class="nav-logo-icon"><i class="fas fa-shield-halved"></i></div>
+                        <span class="nav-logo-text">CryptoKit</span>
+                    </a>
+                    <p>Advanced cryptography tools for developers, researchers, and security professionals.</p>
+                    <div class="footer-social">
+                        <button class="social-btn"><i class="fab fa-github"></i></button>
+                        <button class="social-btn"><i class="fab fa-twitter"></i></button>
+                        <button class="social-btn"><i class="fab fa-discord"></i></button>
+                        <button class="social-btn"><i class="fab fa-youtube"></i></button>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="Privacy Policy.html">Privacy Policy</a></li>
+                        <li><a href="Terms.html">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">DMCA</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="Support.html">Help Center</a></li>
+                        <li><a href="Support.html">Support</a></li>
+                        <li><a href="Documentation.html">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">Twitter / X</a></li>
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 CryptoKit. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="Privacy Policy.html">Privacy</a>
+                    <a href="Terms.html">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll Top -->
+    <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+    // ═══ MATRIX RAIN ═══
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
+
+    function drawMatrix() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#00FF41';
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+
+    setInterval(drawMatrix, 50);
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // ═══ NAVBAR SCROLL ═══
+    window.addEventListener('scroll', () => {
+        const navbar = document.getElementById('navbar');
+        const scrollBtn = document.getElementById('scrollTopBtn');
+        navbar.classList.toggle('scrolled', window.scrollY > 50);
+        scrollBtn.classList.toggle('visible', window.scrollY > 300);
+    });
+
+    // ═══ MOBILE MENU ═══
+    function toggleMobileMenu() {
+        document.getElementById('mobileMenu').classList.toggle('open');
+    }
+
+    // ═══ MODE DROPDOWN ═══
+    function toggleModeDropdown() {
+        const dd = document.getElementById('modeDropdown');
+        const arrow = document.getElementById('modeArrow');
+        dd.classList.toggle('open');
+        arrow.classList.toggle('open');
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.mode-selector')) {
+            document.getElementById('modeDropdown').classList.remove('open');
+            document.getElementById('modeArrow').classList.remove('open');
+        }
+    });
+
+    // ═══ THEME SWITCHER ═══
+    function setTheme(theme) {
+        const overlay = document.getElementById('themeOverlay');
+
+        if (theme === 'hacker') {
+            overlay.classList.add('active');
+            setTimeout(() => {
+                document.documentElement.setAttribute('data-theme', 'hacker');
+                document.getElementById('modeIcon').textContent = '💀';
+                document.getElementById('modeLabel').textContent = 'Hacker';
+                document.getElementById('optNormal').classList.remove('active');
+                document.getElementById('optHacker').classList.add('active');
+                localStorage.setItem('theme', 'hacker');
+            }, 500);
+            setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 1500);
+        } else {
+            document.documentElement.setAttribute('data-theme', 'normal');
+            document.getElementById('modeIcon').textContent = '✨';
+            document.getElementById('modeLabel').textContent = 'Normal';
+            document.getElementById('optNormal').classList.add('active');
+            document.getElementById('optHacker').classList.remove('active');
+            localStorage.setItem('theme', 'normal');
+        }
+
+        document.getElementById('modeDropdown').classList.remove('open');
+        document.getElementById('modeArrow').classList.remove('open');
+    }
+
+    // Load saved theme
+    (function() {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'hacker') {
+            document.documentElement.setAttribute('data-theme', 'hacker');
+            document.getElementById('modeIcon').textContent = '💀';
+            document.getElementById('modeLabel').textContent = 'Hacker';
+            document.getElementById('optNormal').classList.remove('active');
+            document.getElementById('optHacker').classList.add('active');
+        }
+    })();
+
+    // ═══ SMOOTH SCROLL TOC ═══
+    document.querySelectorAll('.toc a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    </script>
+</body>
+</html>

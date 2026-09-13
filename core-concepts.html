@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Concepts - CryptoKit Docs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="docs-style.css">
+</head>
+<body>
+
+    <nav class="docs-navbar">
+        <div class="docs-nav-left">
+            <a href="index.html" class="docs-logo">
+                <div class="docs-logo-icon">
+                    <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                        <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M20 8L20 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                        <rect x="12" y="14" width="16" height="18" rx="3" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="20" cy="23" r="3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <span>CryptoKit Docs</span>
+            </a>
+        </div>
+        <div class="docs-nav-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="docsSearch" placeholder="Search documentation..." autocomplete="off">
+            <kbd>Ctrl K</kbd>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        <div class="docs-nav-right">
+            <a href="index.html" class="nav-home-btn"><i class="fas fa-home"></i> Home</a>
+            <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+            <a href="https://github.com" class="github-btn" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+    </nav>
+
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+
+    <div class="docs-layout">
+
+        <aside class="docs-sidebar">
+            <div class="sidebar-section">
+                <h3>Introduction</h3>
+                <ul>
+                    <li><a href="documentation.html"><i class="fas fa-book-open"></i> Overview</a></li>
+                    <li><a href="getting-started.html"><i class="fas fa-rocket"></i> Getting Started</a></li>
+                    <li><a href="core-concepts.html"><i class="fas fa-brain"></i> Core Concepts</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Tools</h3>
+                <ul>
+                    <li><a href="tool-docs.html"><i class="fas fa-tools"></i> Tool Documentation</a></li>
+                    <li><a href="algorithm-reference.html"><i class="fas fa-table"></i> Algorithm Reference</a></li>
+                    <li><a href="terminal-docs.html"><i class="fas fa-terminal"></i> Terminal Mode</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Guides</h3>
+                <ul>
+                    <li><a href="security-practices.html"><i class="fas fa-shield-alt"></i> Security Practices</a></li>
+                    <li><a href="code-examples.html"><i class="fas fa-code"></i> Code Examples</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Reference</h3>
+                <ul>
+                    <li><a href="faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="glossary.html"><i class="fas fa-list"></i> Glossary</a></li>
+                    <li><a href="limitations.html"><i class="fas fa-exclamation-triangle"></i> Limitations</a></li>
+                    <li><a href="changelog.html"><i class="fas fa-history"></i> Changelog</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="docs-main">
+
+            <div class="breadcrumb">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                <span>/</span>
+                <a href="documentation.html">Docs</a>
+                <span>/</span>
+                <span>Core Concepts</span>
+            </div>
+
+            <div class="docs-hero">
+                <div class="docs-badge">🧠 Core Concepts</div>
+                <h1>Cryptography <span class="gradient-text">Fundamentals</span></h1>
+                <p>Understand the core concepts that power all cryptographic operations.</p>
+            </div>
+
+            <div class="toc">
+                <div class="toc-title">📑 On This Page</div>
+                <ul id="tocList"></ul>
+            </div>
+
+            <div class="docs-section">
+                <h2 id="what-is-crypto">What is Cryptography?</h2>
+                <p>Cryptography is the practice and study of techniques for <strong>secure communication</strong> in the presence of adversaries. It transforms readable data (plaintext) into unreadable data (ciphertext) that only authorized parties can access.</p>
+
+                <div class="callout info">
+                    <div class="callout-icon">ℹ️</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Origin</div>
+                        The word "cryptography" comes from Greek: <em>kryptós</em> (hidden) + <em>graphein</em> (to write).
+                    </div>
+                </div>
+
+                <h2 id="symmetric-asymmetric">Symmetric vs Asymmetric Encryption</h2>
+                
+                <h3 id="symmetric">Symmetric Encryption</h3>
+                <p>Uses the <strong>same key</strong> for both encryption and decryption. It's fast but has a key distribution problem — how do you share the key securely?</p>
+                <ul>
+                    <li><strong>Examples:</strong> AES, DES, ChaCha20</li>
+                    <li><strong>Speed:</strong> Very fast</li>
+                    <li><strong>Best for:</strong> Encrypting large amounts of data</li>
+                </ul>
+
+                <h3 id="asymmetric">Asymmetric Encryption</h3>
+                <p>Uses <strong>two different keys</strong> — a public key (shared openly) and a private key (kept secret). Data encrypted with one can only be decrypted with the other.</p>
+                <ul>
+                    <li><strong>Examples:</strong> RSA, ECC, ElGamal</li>
+                    <li><strong>Speed:</strong> Slower</li>
+                    <li><strong>Best for:</strong> Key exchange, digital signatures</li>
+                </ul>
+
+                <h2 id="hash-vs-encrypt">Hashing vs Encryption</h2>
+                <p>A common source of confusion! Here's the key difference:</p>
+                <table class="docs-table">
+                    <thead>
+                        <tr><th>Feature</th><th>Hashing</th><th>Encryption</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Direction</td><td>One-way</td><td>Two-way (reversible)</td></tr>
+                        <tr><td>Key Needed</td><td>No</td><td>Yes</td></tr>
+                        <tr><td>Output Size</td><td>Fixed</td><td>Variable</td></tr>
+                        <tr><td>Use Case</td><td>Verify integrity, store passwords</td><td>Protect confidentiality</td></tr>
+                        <tr><td>Examples</td><td>SHA-256, MD5</td><td>AES, RSA</td></tr>
+                    </tbody>
+                </table>
+
+                <h2 id="public-private-key">Public Key vs Private Key</h2>
+                <p>In asymmetric cryptography, you have a <strong>key pair</strong>:</p>
+                
+                <h3 id="public-key">🔓 Public Key</h3>
+                <ul>
+                    <li>Can be shared with anyone</li>
+                    <li>Used to encrypt data or verify signatures</li>
+                    <li>Typically distributed openly</li>
+                </ul>
+
+                <h3 id="private-key">🔐 Private Key</h3>
+                <ul>
+                    <li>Must be kept absolutely secret</li>
+                    <li>Used to decrypt data or create signatures</li>
+                    <li>Never share this — anyone with it controls your identity!</li>
+                </ul>
+
+                <div class="callout danger">
+                    <div class="callout-icon">⚠️</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Critical Warning</div>
+                        If your private key is exposed, all data encrypted for you can be decrypted, and someone can impersonate you. Store it safely!
+                    </div>
+                </div>
+
+                <h2 id="digital-signatures">Digital Signatures Explained</h2>
+                <p>Digital signatures prove that a message came from a specific person and hasn't been altered. They work like this:</p>
+                <ol>
+                    <li>Signer creates a hash of the message</li>
+                    <li>Signer encrypts the hash with their <strong>private key</strong> → signature</li>
+                    <li>Recipient decrypts the signature with signer's <strong>public key</strong></li>
+                    <li>Recipient compares the decrypted hash with their own hash of the message</li>
+                    <li>If they match → the signature is valid ✅</li>
+                </ol>
+
+                <h2 id="salt-iv-nonce">Salt, IV, and Nonce</h2>
+                <p>These are all random values used in cryptography, but they serve different purposes:</p>
+
+                <h3 id="salt">Salt</h3>
+                <p>A random value added to a password before hashing. Prevents rainbow table attacks.</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Example</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code>password: "hunter2"
+salt: "x9k$mP2q"
+hash(password + salt) = "a3b7c2d..."</code></pre>
+                </div>
+
+                <h3 id="iv">IV (Initialization Vector)</h3>
+                <p>Random value used in block cipher modes (like AES-CBC). Ensures that encrypting the same message twice produces different ciphertexts.</p>
+
+                <h3 id="nonce">Nonce (Number Used Once)</h3>
+                <p>Similar to IV but must never be reused with the same key. Common in AES-GCM.</p>
+
+                <h2 id="key-sizes">Key Sizes & Security Levels</h2>
+                <p>Bigger isn't always better — but for keys, size matters a lot:</p>
+                <table class="docs-table">
+                    <thead>
+                        <tr><th>Algorithm</th><th>Key Size</th><th>Security Level</th><th>Recommended?</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>AES</td><td>128-bit</td><td>Standard</td><td class="status-ok">✅ Good</td></tr>
+                        <tr><td>AES</td><td>256-bit</td><td>High</td><td class="status-ok">✅ Best</td></tr>
+                        <tr><td>RSA</td><td>1024-bit</td><td>Weak</td><td class="status-danger">❌ Deprecated</td></tr>
+                        <tr><td>RSA</td><td>2048-bit</td><td>Standard</td><td class="status-ok">✅ Good</td></tr>
+                        <tr><td>RSA</td><td>4096-bit</td><td>High</td><td class="status-ok">✅ Best</td></tr>
+                        <tr><td>ECC</td><td>256-bit</td><td>High</td><td class="status-ok">✅ Best</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="feedback-box">
+                <h3>Was this page helpful?</h3>
+                <div class="feedback-buttons">
+                    <button class="feedback-btn" onclick="submitFeedback('yes')"><i class="fas fa-thumbs-up"></i> Yes</button>
+                    <button class="feedback-btn" onclick="submitFeedback('no')"><i class="fas fa-thumbs-down"></i> No</button>
+                </div>
+            </div>
+
+            <div class="docs-footer-nav">
+                <a href="getting-started.html" class="nav-prev">
+                    <span class="nav-label">← Previous</span>
+                    <span class="nav-title">Getting Started</span>
+                </a>
+                <a href="tool-docs.html" class="nav-next">
+                    <span class="nav-label">Next →</span>
+                    <span class="nav-title">Tool Documentation</span>
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+    <button class="scroll-top" id="scrollTop"><i class="fas fa-chevron-up"></i></button>
+    <script src="docs-script.js"></script>
+</body>
+</html>
