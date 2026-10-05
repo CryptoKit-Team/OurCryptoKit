@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="images/Logo.jpeg" alt="OurCryptoKit Logo" width="180"/>
+  <img src="images/logo.jpeg" alt="OurCryptoKit Logo" width="180"/>
 
   # 🔐 CryptoKit
 
