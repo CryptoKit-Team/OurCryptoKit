@@ -10,8 +10,8 @@
   powerful security tools, educational resources, and practical solutions.
 
   <p>
-    <a href="https://cryptokit-vert.vercel.app/">
-      🌐 Visit Our Website
+    <a>
+      🌐  Website under active development
     </a>
   </p>
 
@@ -42,9 +42,6 @@ concepts to create a reliable and user-friendly experience.
 
 ## 🌐 Official Website
 
-Visit our live website:
-
-🔗 **[https://cryptokit-vert.vercel.app/](https://cryptokit-vert.vercel.app/)**
 
 > The website is currently under active development. New tools,
 > improvements, and security features will be added in future updates.
@@ -258,7 +255,7 @@ For questions, suggestions, or collaboration:
 
 📧 **Email:** cryptokit.team@gmail.com
 
-🌐 **Website:** https://cryptokit-vert.vercel.app/
+🌐 **Website:** "Under Development"
 
 💻 **GitHub:** https://github.com/CryptoKit-Team
 
