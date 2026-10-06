@@ -50,40 +50,100 @@ concepts to create a reliable and user-friendly experience.
 
 ## ✨ Key Features
 
-### 🔒 File Integrity Checker
 
-- Verify the integrity of files using cryptographic hashing.
-- Detect unexpected file modifications.
-- Generate and compare file hashes.
+### 🔐 1. Normal — Core Cryptography Tools
 
-### 🔑 RSA Security Tools
+- 🔑 **RSA Key Generator**
+  - Generate RSA key pairs with configurable key sizes.
+  - Support for RSA-2048 and RSA-4096.
+  - Export keys in PEM format.
 
-- RSA key generation.
-- Cryptographic security experiments.
-- Digital signature-related functionality.
-- Learn the fundamentals of RSA cryptography.
+- 🛡️ **File Integrity Checker**
+  - Verify file integrity using cryptographic hashing.
+  - Detect unexpected file modifications.
+  - Generate and compare file hashes.
+  - Support for SHA-256 and SHA-512.
 
-### 🛡️ ECC Security Tools
+- #️⃣ **Hash Generator**
+  - Generate cryptographic hashes using multiple algorithms.
+  - Support for MD5, SHA-1, and BLAKE2.
 
-- Explore Elliptic Curve Cryptography.
-- Understand modern public-key cryptography.
-- Experiment with ECC-based security concepts.
+- 🔒 **Text Encrypt / Decrypt**
+  - Encrypt and decrypt messages using AES-256 or RSA.
+  - Explore different encryption modes and cryptographic concepts.
 
-### 💻 Developer-Friendly Interface
+- ✍️ **Digital Signature**
+  - Sign and verify documents digitally.
+  - Support for RSA-PSS and ECDSA.
 
-- Clean and modern user interface.
-- Easy-to-use security tools.
-- Responsive website design.
-- Organized documentation and resources.
+- 🔐 **Password Tools**
+  - Generate secure passwords.
+  - Analyze password strength and entropy.
+  - Use cryptographically secure random generation.
 
-### 📚 Educational Resources
+- 🖥️ **Developer-Friendly Interface**
+  - Clean and modern user interface.
+  - Easy-to-use security tools.
+  - Responsive website design.
+  - Organized documentation and resources.
 
-- Cryptography concepts.
-- Cybersecurity fundamentals.
-- Security tool documentation.
-- Practical learning resources.
+- 📚 **Educational Resources**
+  - Learn fundamental cryptography concepts.
+  - Explore cybersecurity fundamentals.
+  - Access security tool documentation.
+  - Practice with hands-on cryptographic tools.
 
----
+
+### ⚡ 2. Pro — Advanced Security Arsenal
+
+- 🛡️ **Crypto Security Scanner**
+  - Deep-scan cryptographic implementations.
+  - Identify weak ciphers and deprecated protocols.
+  - Perform vulnerability and security checks.
+
+- 🔑 **Advanced RSA Lab**
+  - Inspect RSA keys and cryptographic parameters.
+  - Analyze CRT optimizations.
+  - Experiment with factorization attack simulations.
+  - Explore Pollard's Rho and related RSA concepts.
+
+- 📈 **Advanced ECC Suite**
+  - Explore ECDH key exchange.
+  - Inspect ECDSA signature components.
+  - Visualize elliptic curves using curve plotting tools.
+  - Experiment with advanced ECC concepts.
+
+- 📂 **Batch File Integrity Checker**
+  - Verify the integrity of multiple files simultaneously.
+  - Perform parallel hashing and bulk comparison.
+  - Generate detailed integrity reports.
+
+- 📄 **Security Report Generator**
+  - Generate comprehensive security audit reports.
+  - Include vulnerability findings and risk scores.
+  - Export security reports as PDF.
+  - Maintain an audit trail.
+
+
+### 🚀 3. Quantum — Advanced Security Labs
+
+- 🎯 **Cryptographic Attack Simulator**
+  - Simulate Padding Oracle attacks.
+  - Experiment with Brute Force attacks.
+  - Explore Length Extension attacks.
+  - Test attacks against custom payloads in a controlled environment.
+
+- 🚩 **Crypto CTF / Challenge Mode**
+  - Solve interactive cryptography challenges.
+  - Practice cryptographic problem-solving skills.
+  - Work through isolated security challenges.
+  - Develop practical cryptanalysis skills.
+
+- 🔬 **Crypto Forensics Lab**
+  - Investigate compromised cryptographic keys.
+  - Analyze packet captures and PCAP files.
+  - Explore cryptographic evidence in controlled forensic scenarios.
+  - Practice security investigation techniques.
 
 ## 🛠️ Technologies Used
 
