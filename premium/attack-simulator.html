@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cryptographic Attack Simulator — Quantum Elite Labs</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  /* ---------------- NORMAL THEME ---------------- */
+  [data-theme="normal"]{
+    --bg-0:#eef0fc;
+    --surface:#ffffff;
+    --surface-soft:#f6f7fc;
+    --border:#e7e8f3;
+    --ink:#15172b;
+    --ink-soft:#5b5f7e;
+    --ink-faint:#9599b8;
+    --grad-1:#2563eb;
+    --grad-2:#7c3aed;
+    --grad-3:#ec4899;
+    --purple-bg:#f1ecfd;
+    --purple:#7c3aed;
+    --ok:#16a34a;
+    --bad:#dc2626;
+    --warn:#d97706;
+    --console-bg:#0f1124;
+    --console-ok:#6ee7b7;
+    --console-bad:#fca5a5;
+    --console-info:#93c5fd;
+    --console-warn:#fcd34d;
+    --console-hdr:#e9d5ff;
+    --console-default:#9ae6b4;
+    --radius-lg:20px;
+    --radius-md:12px;
+    --font-display:'Arial Rounded MT Bold','Arial Rounded MT',ui-rounded,'SF Pro Rounded','Baloo 2',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    --font-mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  }
+
+  /* ---------------- HACKER THEME ---------------- */
+  [data-theme="hacker"]{
+    --bg-0:#000000;
+    --surface:#050505;
+    --surface-soft:#0a0a0a;
+    --border:rgba(0, 255, 65, 0.25);
+    --ink:#00FF41;
+    --ink-soft:#00CC33;
+    --ink-faint:#006611;
+    --grad-1:#00FF41;
+    --grad-2:#39FF14;
+    --grad-3:#00FF41;
+    --purple-bg:rgba(0, 255, 65, 0.08);
+    --purple:#00FF41;
+    --ok:#00FF41;
+    --bad:#FF0040;
+    --warn:#FFD700;
+    --console-bg:#000000;
+    --console-ok:#00FF41;
+    --console-bad:#FF0040;
+    --console-info:#39FF14;
+    --console-warn:#FFD700;
+    --console-hdr:#00FF41;
+    --console-default:#00CC33;
+    --radius-lg:18px;
+    --radius-md:12px;
+    --font-display:'Share Tech Mono',monospace;
+    --font-body:'Share Tech Mono',monospace;
+    --font-mono:'Share Tech Mono',monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;
+    background:var(--bg-0);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    transition:background-color 0.4s ease, color 0.4s ease;
+  }
+
+  [data-theme="normal"] body{
+    background:
+      radial-gradient(900px 420px at 15% -10%, #dde3fb 0%, transparent 60%),
+      radial-gradient(900px 420px at 100% 0%, #fbe3f0 0%, transparent 55%),
+      var(--bg-0);
+  }
+
+  [data-theme="hacker"] body{
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(0,255,65,0.06), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(57,255,20,0.04), transparent 60%);
+  }
+
+  /* Hacker CRT grid */
+  [data-theme="hacker"] body::before{
+    content:''; position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size:40px 40px; z-index:-1; pointer-events:none;
+    animation:gridMove 20s linear infinite;
+  }
+  @keyframes gridMove{
+    0%{background-position:0 0;}
+    100%{background-position:40px 40px;}
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 24px 100px;position:relative;z-index:2;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:14px;}
+
+  .back-pill{
+    display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+    background:var(--surface);border:1px solid var(--border);
+    padding:9px 16px;border-radius:999px;font-size:13.5px;color:var(--ink);
+    font-weight:600;cursor:pointer;transition:all 0.3s ease;
+  }
+  .back-pill:hover{border-color:var(--purple);color:var(--purple);transform:translateX(-2px);}
+  [data-theme="hacker"] .back-pill{
+    text-transform:uppercase;font-size:11px;letter-spacing:0.05em;
+    background:rgba(0,255,65,0.03);box-shadow:0 0 10px rgba(0,255,65,0.03);
+  }
+  [data-theme="hacker"] .back-pill:hover{
+    box-shadow:0 0 16px rgba(0,255,65,0.2);text-shadow:0 0 8px rgba(0,255,65,0.4);
+    border-color:var(--ink);color:var(--ink);
+  }
+
+  .topbar-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+  .lock-pill{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--surface);border:1px solid var(--border);
+    padding:9px 16px;border-radius:999px;font-size:13.5px;color:var(--purple);
+    font-weight:600;transition:all 0.3s ease;
+  }
+  .lock-pill svg{color:var(--purple);}
+  [data-theme="hacker"] .lock-pill{
+    text-transform:uppercase;font-size:11px;letter-spacing:0.05em;
+    background:rgba(0,255,65,0.03);box-shadow:0 0 10px rgba(0,255,65,0.03);
+    text-shadow:0 0 6px rgba(0,255,65,0.3);
+  }
+
+  .elite-tag{
+    display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;
+    background:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3));
+    color:#fff;font-size:13px;font-weight:700;transition:all 0.3s ease;
+  }
+  [data-theme="hacker"] .elite-tag{
+    background:transparent;
+    border:1px solid var(--ink);
+    color:var(--ink);
+    text-shadow:0 0 8px rgba(0,255,65,0.4);
+    box-shadow:0 0 12px rgba(0,255,65,0.15);
+    text-transform:uppercase;letter-spacing:0.05em;
+  }
+
+  .toggle-pill{
+    display:inline-flex;align-items:center;gap:10px;background:var(--surface);
+    border:1px solid var(--border);padding:9px 16px;border-radius:999px;
+    font-size:13.5px;color:var(--ink-soft);font-weight:500;cursor:pointer;user-select:none;
+    transition:all 0.3s ease;
+  }
+  [data-theme="hacker"] .toggle-pill{background:rgba(0,255,65,0.03);text-transform:uppercase;font-size:11px;letter-spacing:0.05em;box-shadow:0 0 10px rgba(0,255,65,0.03);}
+  [data-theme="hacker"] #themeLabel{text-shadow:0 0 6px rgba(0,255,65,0.4);}
+
+  .switch{width:34px;height:19px;border-radius:999px;background:#d5d8ee;position:relative;flex-shrink:0;transition:background 0.3s;}
+  .switch::after{
+    content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;
+    border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);
+    transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  [data-theme="hacker"] .switch{background:rgba(0,255,65,0.3);}
+  [data-theme="hacker"] .switch::after{left:17px;background:var(--ink);box-shadow:0 0 8px var(--ink);}
+
+  .hero{text-align:center;margin-bottom:28px;}
+  .hero h1{font-family:var(--font-display);font-weight:800;font-size:38px;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;}
+  .hero h1 .accent{
+    background:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  [data-theme="hacker"] .hero h1{letter-spacing:2px;text-shadow:0 0 15px rgba(0,255,65,0.4);}
+  [data-theme="hacker"] .hero h1 .accent{
+    background:none;color:var(--ink);-webkit-text-fill-color:var(--ink);
+  }
+  .hero p{margin:0;color:var(--ink-soft);font-size:15.5px;max-width:620px;margin:0 auto;}
+
+  .mode-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:22px 0 30px;}
+  .seg{display:flex;background:var(--surface-soft);border:1px solid var(--border);border-radius:999px;padding:4px;}
+  .seg button{
+    border:none;background:transparent;padding:9px 18px;border-radius:999px;
+    font-size:13.5px;font-weight:700;color:var(--ink-soft);cursor:pointer;font-family:var(--font-body);
+    transition:all 0.3s ease;
+  }
+  .seg button.active{
+    background:linear-gradient(90deg,var(--grad-2),#8b3df0);color:#fff;
+    box-shadow:0 8px 18px -8px rgba(124,58,237,.6);
+  }
+  [data-theme="hacker"] .seg button{text-transform:uppercase;letter-spacing:0.05em;}
+  [data-theme="hacker"] .seg button.active{
+    background:var(--ink);color:#000;
+    box-shadow:0 0 15px rgba(0,255,65,0.4);
+  }
+
+  .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
+  .tabbtn{
+    flex:1;min-width:210px;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;text-align:left;
+    display:flex;align-items:center;gap:12px;transition:all 0.3s ease;
+    font-family:var(--font-body);
+  }
+  .tabbtn:hover{border-color:var(--purple);}
+  [data-theme="hacker"] .tabbtn:hover{box-shadow:0 0 15px rgba(0,255,65,0.1);}
+  .tabbtn.active{
+    border-color:var(--purple);
+    box-shadow:0 10px 24px -14px rgba(124,58,237,.5);
+    background:var(--purple-bg);
+  }
+  [data-theme="hacker"] .tabbtn.active{box-shadow:0 0 20px rgba(0,255,65,0.15);}
+
+  .tabbtn .ic{
+    width:36px;height:36px;border-radius:10px;background:var(--purple-bg);
+    display:flex;align-items:center;justify-content:center;color:var(--purple);flex-shrink:0;
+  }
+  .tabbtn.active .ic{background:var(--surface);}
+  [data-theme="hacker"] .tabbtn .ic{border:1px solid rgba(0,255,65,0.3);}
+  [data-theme="hacker"] .tabbtn.active .ic{background:rgba(0,255,65,0.15);box-shadow:0 0 10px rgba(0,255,65,0.3);}
+
+  .tabbtn .tt{font-weight:700;font-size:13.5px;color:var(--ink);}
+  .tabbtn .ts{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+  [data-theme="hacker"] .tabbtn .tt{text-transform:uppercase;letter-spacing:0.05em;}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-lg);padding:24px;
+    box-shadow:0 14px 34px -22px rgba(30,20,80,.2);
+    transition:all 0.4s ease;
+  }
+  [data-theme="hacker"] .card{box-shadow:0 0 25px rgba(0,255,65,0.03);}
+  [data-theme="hacker"] .card:hover{border-color:rgba(0,255,65,0.35);box-shadow:0 0 30px rgba(0,255,65,0.08);}
+
+  .card h2{font-family:var(--font-display);font-size:17px;margin:0 0 14px;}
+  [data-theme="hacker"] .card h2{text-shadow:0 0 8px rgba(0,255,65,0.3);letter-spacing:1px;}
+  .card h2 .sub{display:block;font-family:var(--font-body);font-weight:500;color:var(--ink-soft);font-size:12.5px;margin-top:4px;}
+  [data-theme="hacker"] .card h2 .sub{text-shadow:none;letter-spacing:0;}
+
+  label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin:14px 0 6px;}
+  label:first-of-type{margin-top:0;}
+  [data-theme="hacker"] label{text-transform:uppercase;letter-spacing:0.05em;color:rgba(0,255,65,0.6);}
+
+  input[type=text],input[type=number],select,textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;
+    font-family:var(--font-mono);font-size:13px;background:var(--surface-soft);color:var(--ink);
+    outline:none;transition:all 0.3s ease;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--purple);}
+  [data-theme="hacker"] input:focus,[data-theme="hacker"] select:focus,[data-theme="hacker"] textarea:focus{
+    box-shadow:0 0 0 3px rgba(0,255,65,0.1),0 0 15px rgba(0,255,65,0.1);
+  }
+
+  textarea{resize:vertical;min-height:60px;}
+  .row{display:flex;gap:10px;}
+  .row > *{flex:1;}
+
+  .btn{
+    border:none;border-radius:10px;padding:11px 18px;font-weight:700;font-size:13.5px;
+    cursor:pointer;font-family:var(--font-body);display:inline-flex;align-items:center;gap:8px;
+    transition:all 0.3s ease;
+  }
+  [data-theme="hacker"] .btn{text-transform:uppercase;letter-spacing:1px;font-size:12px;}
+
+  .btn-primary{
+    background:linear-gradient(90deg,var(--grad-2),#8b3df0);color:#fff;
+    box-shadow:0 10px 22px -10px rgba(124,58,237,.6);
+  }
+  .btn-primary:hover{filter:brightness(1.06);}
+  [data-theme="hacker"] .btn-primary{
+    background:var(--ink);color:#000;font-weight:800;
+    box-shadow:0 0 15px rgba(0,255,65,0.3);
+  }
+  [data-theme="hacker"] .btn-primary:hover{box-shadow:0 0 25px rgba(0,255,65,0.6);}
+
+  .btn-ghost{background:var(--surface-soft);border:1px solid var(--border);color:var(--ink);}
+  [data-theme="hacker"] .btn-ghost:hover{border-color:var(--ink);color:var(--ink);text-shadow:0 0 8px rgba(0,255,65,0.4);}
+
+  .btn-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;}
+
+  .console{
+    background:var(--console-bg);border-radius:var(--radius-md);padding:16px;
+    height:340px;overflow-y:auto;font-family:var(--font-mono);font-size:12px;
+    line-height:1.7;color:var(--console-default);
+    border:1px solid var(--border);
+  }
+  [data-theme="hacker"] .console{box-shadow:inset 0 0 20px rgba(0,255,65,0.05);}
+  .console .ln{white-space:pre-wrap;word-break:break-all;}
+  .console .ln.ok{color:var(--console-ok);}
+  .console .ln.bad{color:var(--console-bad);}
+  .console .ln.info{color:var(--console-info);}
+  .console .ln.warn{color:var(--console-warn);}
+  .console .ln.hdr{color:var(--console-hdr);font-weight:700;}
+  [data-theme="hacker"] .console .ln.ok{text-shadow:0 0 5px rgba(0,255,65,0.4);}
+  [data-theme="hacker"] .console .ln.bad{text-shadow:0 0 5px rgba(255,0,64,0.4);}
+  [data-theme="hacker"] .console .ln.hdr{text-shadow:0 0 6px rgba(0,255,65,0.5);}
+  .console::-webkit-scrollbar{width:8px;}
+  .console::-webkit-scrollbar-thumb{background:#2d2f55;border-radius:8px;}
+  [data-theme="hacker"] .console::-webkit-scrollbar-thumb{background:rgba(0,255,65,0.3);}
+
+  .progress-wrap{margin-top:12px;}
+  .progress-bar{height:8px;background:var(--surface-soft);border:1px solid var(--border);border-radius:999px;overflow:hidden;}
+  .progress-fill{
+    height:100%;width:0%;
+    background:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3));
+    transition:width .15s;
+  }
+  [data-theme="hacker"] .progress-fill{background:var(--ink);box-shadow:0 0 10px rgba(0,255,65,0.5);}
+  .progress-label{font-size:11.5px;color:var(--ink-soft);margin-top:6px;display:flex;justify-content:space-between;font-family:var(--font-mono);}
+
+  .result-box{
+    margin-top:16px;padding:14px 16px;border-radius:12px;border:1px solid var(--border);
+    background:var(--surface-soft);font-family:var(--font-mono);font-size:13px;
+    word-break:break-all;display:none;white-space:pre-wrap;
+  }
+  .result-box.ok{border-color:#bbf3d1;background:#f0fdf6;color:#166534;}
+  .result-box.bad{border-color:#fbd2d2;background:#fef2f2;color:#991b1b;}
+  [data-theme="hacker"] .result-box.ok{
+    border-color:var(--ok);background:rgba(0,255,65,0.08);color:var(--ok);
+    box-shadow:0 0 15px rgba(0,255,65,0.1);text-shadow:0 0 5px rgba(0,255,65,0.3);
+  }
+  [data-theme="hacker"] .result-box.bad{
+    border-color:var(--bad);background:rgba(255,0,64,0.08);color:var(--bad);
+    box-shadow:0 0 15px rgba(255,0,64,0.1);text-shadow:0 0 5px rgba(255,0,64,0.3);
+  }
+
+  .remediation{
+    margin-top:16px;padding:14px 16px;border-radius:12px;
+    background:var(--purple-bg);border:1px solid #e2d4fb;
+    font-size:13px;color:#4c1d95;display:none;
+  }
+  .remediation b{display:block;margin-bottom:4px;}
+  [data-theme="hacker"] .remediation{
+    background:rgba(0,255,65,0.05);border-color:rgba(0,255,65,0.3);color:var(--ink);
+    box-shadow:0 0 15px rgba(0,255,65,0.05);
+  }
+
+  .explain{
+    background:var(--surface-soft);border:1px dashed var(--border);border-radius:12px;
+    padding:12px 14px;font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;line-height:1.6;
+  }
+  [data-theme="hacker"] .explain code{color:var(--ink);text-shadow:0 0 5px rgba(0,255,65,0.3);}
+
+  .stat-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .stat{
+    flex:1;min-width:110px;background:var(--surface-soft);border:1px solid var(--border);
+    border-radius:10px;padding:10px 12px;text-align:center;
+  }
+  .stat .v{font-family:var(--font-mono);font-weight:700;font-size:15px;}
+  .stat .l{font-size:10.5px;color:var(--ink-soft);margin-top:2px;}
+  [data-theme="hacker"] .stat .v{text-shadow:0 0 6px rgba(0,255,65,0.3);}
+  [data-theme="hacker"] .stat .l{text-transform:uppercase;letter-spacing:0.05em;}
+
+  .bytegrid{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0;}
+  .byte{
+    font-family:var(--font-mono);font-size:11px;background:var(--surface-soft);
+    border:1px solid var(--border);border-radius:5px;padding:4px 6px;cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .byte:hover{border-color:var(--purple);}
+  .byte.sel{background:var(--purple);color:#fff;border-color:var(--purple);}
+  [data-theme="hacker"] .byte.sel{background:var(--ink);color:#000;box-shadow:0 0 8px rgba(0,255,65,0.4);}
+
+  .log-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px;}
+  .log-table th,.log-table td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  .log-table th{color:var(--ink-soft);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;}
+  .pill.ok{background:#dcfce7;color:#166534;}
+  .pill.bad{background:#fee2e2;color:#991b1b;}
+  [data-theme="hacker"] .pill.ok{background:rgba(0,255,65,0.15);color:var(--ok);border:1px solid var(--ok);box-shadow:0 0 8px rgba(0,255,65,0.2);}
+  [data-theme="hacker"] .pill.bad{background:rgba(255,0,64,0.15);color:var(--bad);border:1px solid var(--bad);box-shadow:0 0 8px rgba(255,0,64,0.2);}
+
+  .section-gap{margin-top:40px;}
+  .small-note{font-size:11.5px;color:var(--ink-faint);margin-top:10px;}
+
+  .footnote{
+    text-align:center;color:var(--ink-faint);font-size:12.5px;margin-top:26px;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  [data-theme="hacker"] .footnote{letter-spacing:1px;text-shadow:0 0 5px rgba(0,255,65,0.2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="../index.html" class="back-pill" id="homeBtn" title="Go back to Home">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to CryptoKit
+    </a>
+    <div class="topbar-right">
+      <div class="lock-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+        100% Client-Side
+      </div>
+      <div class="elite-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-7 5 7 4-3-2 11H5L3 8z"/></svg>
+        Quantum Elite — Lab Unlocked
+      </div>
+      <div class="toggle-pill" id="themeToggle" title="Toggle Theme">
+        <span id="themeLabel">Normal</span>
+        <span class="switch"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1>Cryptographic Attack <span class="accent">Simulator</span></h1>
+    <p>Run real, working exploit demos against toy crypto implementations in your browser — then flip to a patched implementation and watch each attack fail.</p>
+  </div>
+
+  <div class="mode-row">
+    <div class="seg" id="modeSeg">
+      <button class="active" data-mode="guided">Guided</button>
+      <button data-mode="free">Free Play</button>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabRow">
+    <button class="tabbtn active" data-panel="padding">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 4v16M4 8h16"/></svg></span>
+      <span><span class="tt">Padding Oracle</span><span class="ts">CBC byte-by-byte decryption</span></span>
+    </button>
+    <button class="tabbtn" data-panel="brute">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></span>
+      <span><span class="tt">Brute Force</span><span class="ts">Hash crack speed & time-to-break</span></span>
+    </button>
+    <button class="tabbtn" data-panel="length">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span>
+      <span><span class="tt">Length Extension</span><span class="ts">Forge a MAC without the secret</span></span>
+    </button>
+    <button class="tabbtn" data-panel="bitflip">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></span>
+      <span><span class="tt">Bit-Flipping</span><span class="ts">Tamper CTR ciphertext, flip plaintext</span></span>
+    </button>
+  </div>
+
+  <!-- ========================= PADDING ORACLE ========================= -->
+  <div class="panel active" id="panel-padding">
+    <div class="explain" data-guided>
+      A server decrypts AES-CBC ciphertext and tells you only whether the <b>padding</b> was valid or not. That single bit of information, repeated thousands of times with crafted inputs, is enough to decrypt the entire message without ever knowing the key.
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h2>Target Setup<span class="sub">Encrypts a secret message with AES-128-CBC</span></h2>
+        <label>Secret message (server-side)</label>
+        <textarea id="poSecret">THE EAGLE FLIES AT MIDNIGHT — RENDEZVOUS POINT BRAVO</textarea>
+        <label>Server implementation</label>
+        <div class="row">
+          <select id="poMode">
+            <option value="vuln">Vulnerable — raw AES-CBC, leaks padding errors</option>
+            <option value="patched">Patched — AES-GCM, tamper always rejected</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="poEncryptBtn">Encrypt & Deploy Target</button>
+        </div>
+        <div id="poCipherOut" class="result-box"></div>
+      </div>
+      <div class="card">
+        <h2>Attacker Console<span class="sub">Byte-by-byte CBC padding oracle attack</span></h2>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="poAttackBtn" disabled>Run Padding Oracle Attack</button>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill" id="poProgFill"></div></div>
+          <div class="progress-label"><span id="poProgText">Idle</span><span id="poProgPct">0%</span></div>
+        </div>
+        <div class="console" id="poConsole"><div class="ln info">$ awaiting target...</div></div>
+        <div id="poResult" class="result-box"></div>
+        <div id="poRemediation" class="remediation">
+          <b>Remediation</b>
+          Use authenticated encryption (AES-GCM / ChaCha20-Poly1305) instead of raw CBC, or verify a MAC before attempting decryption (encrypt-then-MAC), and always return identical generic errors regardless of failure reason.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================= BRUTE FORCE ========================= -->
+  <div class="panel" id="panel-brute">
+    <div class="explain" data-guided>
+      A weak, fast hash (like a single SHA-256 pass) lets an attacker try millions of guesses per second. A slow, salted hash (like PBKDF2 with a high iteration count) makes each guess expensive — turning a brute force that takes seconds into one that would take centuries.
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h2>Target Setup<span class="sub">A PIN/password hashed and stored</span></h2>
+        <label>Target secret (what the attacker is trying to find)</label>
+        <input type="text" id="bfSecret" value="4821" maxlength="4">
+        <label>Charset</label>
+        <select id="bfCharset">
+          <option value="digits">Digits only (0-9), length 4</option>
+          <option value="lower">Lowercase a-z, length 3</option>
+          <option value="alnum">Alphanumeric, length 3</option>
+        </select>
+        <label>Hashing scheme</label>
+        <select id="bfScheme">
+          <option value="fast">Vulnerable — single SHA-256 pass, no salt</option>
+          <option value="slow">Patched — PBKDF2-SHA256, 250,000 iterations, salted</option>
+        </select>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="bfSetupBtn">Hash & Store Target</button>
+        </div>
+        <div id="bfTargetOut" class="result-box"></div>
+      </div>
+      <div class="card">
+        <h2>Attacker Console<span class="sub">Exhaustive search over the keyspace</span></h2>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="bfAttackBtn" disabled>Run Brute Force Attack</button>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="v" id="bfAttempts">0</div><div class="l">attempts</div></div>
+          <div class="stat"><div class="v" id="bfRate">0/s</div><div class="l">rate</div></div>
+          <div class="stat"><div class="v" id="bfEta">—</div><div class="l">est. full crack time</div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill" id="bfProgFill"></div></div>
+          <div class="progress-label"><span id="bfProgText">Idle</span><span id="bfProgPct">0%</span></div>
+        </div>
+        <div class="console" id="bfConsole"><div class="ln info">$ awaiting target...</div></div>
+        <div id="bfResult" class="result-box"></div>
+        <div id="bfRemediation" class="remediation">
+          <b>Remediation</b>
+          Never store fast, unsalted hashes for secrets. Use PBKDF2, bcrypt, scrypt or Argon2 with a high cost factor and a unique random salt per record, plus rate-limiting and lockouts on the verification endpoint.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================= LENGTH EXTENSION ========================= -->
+  <div class="panel" id="panel-length">
+    <div class="explain" data-guided>
+      Some systems authenticate messages with <code>MAC = Hash(secret ‖ message)</code>. For Merkle–Damgård hashes like MD5/SHA-1/SHA-256, knowing only the MAC and the message length lets an attacker compute a valid MAC for <code>message ‖ glue-padding ‖ extra-data</code> — without ever learning the secret.
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h2>Server Setup<span class="sub">MAC = MD5(secret ‖ message)</span></h2>
+        <label>Secret key length (bytes) — assumed known/guessed for this demo</label>
+        <input type="number" id="leSecretLen" value="8" min="1" max="32">
+        <label>Original message</label>
+        <input type="text" id="leMessage" value="user=guest&action=view">
+        <div class="btn-row">
+          <button class="btn btn-primary" id="leSetupBtn">Compute Server MAC</button>
+        </div>
+        <div id="leTargetOut" class="result-box"></div>
+        <div class="small-note">A random secret of the given length is generated server-side and never shown to the attacker panel.</div>
+      </div>
+      <div class="card">
+        <h2>Attacker Console<span class="sub">Forge an extended, validly-signed message</span></h2>
+        <label>Data to append</label>
+        <input type="text" id="leAppend" value="&admin=true">
+        <div class="btn-row">
+          <button class="btn btn-primary" id="leAttackBtn" disabled>Run Length Extension Attack</button>
+        </div>
+        <div class="console" id="leConsole"><div class="ln info">$ awaiting target...</div></div>
+        <div id="leResult" class="result-box"></div>
+        <div id="leRemediation" class="remediation">
+          <b>Remediation</b>
+          Use HMAC (e.g. HMAC-SHA256) instead of Hash(secret‖message) — HMAC's nested construction is immune to length-extension. Or use a hash from the SHA-3 family, which is not Merkle–Damgård based.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================= BIT FLIPPING ========================= -->
+  <div class="panel" id="panel-bitflip">
+    <div class="explain" data-guided>
+      Stream-cipher modes like CTR produce ciphertext by XOR-ing plaintext with a keystream. Flip a bit in the ciphertext and the corresponding bit in the decrypted plaintext flips too — with no integrity check, an attacker can edit encrypted data without knowing the key.
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h2>Target Setup<span class="sub">AES-CTR vs AES-GCM encryption</span></h2>
+        <label>Plaintext</label>
+        <input type="text" id="bfpPlain" value="role=guest;access=low">
+        <label>Mode</label>
+        <select id="bfpMode">
+          <option value="ctr">Vulnerable — AES-CTR, no integrity check</option>
+          <option value="gcm">Patched — AES-GCM, authenticated</option>
+        </select>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="bfpEncryptBtn">Encrypt</button>
+        </div>
+        <div id="bfpCipherOut" class="result-box"></div>
+        <div id="bfpByteGridWrap" style="display:none;">
+          <label>Click a byte to flip (XOR with 0x01), then decrypt</label>
+          <div class="bytegrid" id="bfpByteGrid"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Attacker Console<span class="sub">Tamper ciphertext, observe decrypted result</span></h2>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="bfpDecryptBtn" disabled>Decrypt Tampered Ciphertext</button>
+          <button class="btn btn-ghost" id="bfpResetBtn" disabled>Reset Flips</button>
+        </div>
+        <div class="console" id="bfpConsole"><div class="ln info">$ awaiting target...</div></div>
+        <div id="bfpResult" class="result-box"></div>
+        <div id="bfpRemediation" class="remediation">
+          <b>Remediation</b>
+          Always pair stream/CTR-mode encryption with a MAC (encrypt-then-MAC), or use an authenticated mode like AES-GCM that detects any ciphertext tampering before returning plaintext.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================= ATTACK LOG ========================= -->
+  <div class="card section-gap">
+    <h2>Session Attack Log<span class="sub">Every run this session — clears on reload</span></h2>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="logCsvBtn">Export CSV</button>
+      <button class="btn btn-ghost" id="logJsonBtn">Export JSON</button>
+      <button class="btn btn-ghost" id="logClearBtn">Clear</button>
+    </div>
+    <table class="log-table">
+      <thead><tr><th>Time</th><th>Module</th><th>Mode</th><th>Outcome</th><th>Detail</th></tr></thead>
+      <tbody id="logBody"><tr><td colspan="5" style="color:var(--ink-faint);">No attacks run yet.</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="footnote">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+    Everything runs locally in your browser. No code or content is ever transmitted.
+  </div>
+
+</div>
+
+<script>
+/* ============================= THEME SYNC ============================= */
+const THEME_KEY = 'cryptokit-theme';
+const themeToggle = document.getElementById('themeToggle');
+const themeLabel  = document.getElementById('themeLabel');
+
+function applyTheme(theme, saveToStorage){
+  if(theme !== 'hacker') theme = 'normal';
+  document.documentElement.setAttribute('data-theme', theme);
+  themeLabel.textContent = (theme === 'hacker') ? 'HACKER' : 'Normal';
+  if(saveToStorage){
+    try{ localStorage.setItem(THEME_KEY, theme); }catch(_){}
+  }
+}
+
+let savedTheme = 'normal';
+try{ savedTheme = localStorage.getItem(THEME_KEY) || 'normal'; }catch(_){}
+if(savedTheme !== 'hacker') savedTheme = 'normal';
+applyTheme(savedTheme, false);
+
+themeToggle.addEventListener('click', ()=>{
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = (current === 'hacker' ? 'normal' : 'hacker');
+  applyTheme(next, true);
+});
+
+window.addEventListener('storage', function(e){
+  if(e.key === THEME_KEY && e.newValue){
+    applyTheme(e.newValue, false);
+  }
+});
+
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden){
+    let current = 'normal';
+    try{ current = localStorage.getItem(THEME_KEY) || 'normal'; }catch(_){}
+    if(current !== 'hacker') current = 'normal';
+    if(current !== document.documentElement.getAttribute('data-theme')){
+      applyTheme(current, false);
+    }
+  }
+});
+
+/* ============================= SMART BACK NAV ============================= */
+document.getElementById('homeBtn').addEventListener('click', function(e){
+  if(e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
+  e.preventDefault();
+  let sameSite = false;
+  try{
+    sameSite = !!document.referrer && new URL(document.referrer).origin === location.origin;
+  }catch(_){}
+  if(sameSite && history.length > 1){
+    history.back();
+    setTimeout(function(){
+      if(!document.hidden) location.href = '../index.html';
+    }, 400);
+  } else {
+    location.href = '../index.html';
+  }
+});
+
+/* ============================= helpers ============================= */
+const $=id=>document.getElementById(id);
+const enc=new TextEncoder(), dec=new TextDecoder();
+function bytesToHex(b){return [...b].map(x=>x.toString(16).padStart(2,'0')).join('');}
+function hexToBytes(h){const a=new Uint8Array(h.length/2);for(let i=0;i<a.length;i++)a[i]=parseInt(h.substr(i*2,2),16);return a;}
+function randBytes(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return a;}
+function logLine(consoleEl,msg,cls){const d=document.createElement('div');d.className='ln '+(cls||'');d.textContent=msg;consoleEl.appendChild(d);consoleEl.scrollTop=consoleEl.scrollHeight;}
+function clearConsole(c){c.innerHTML='';}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+let isGuided=true;
+document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  isGuided = b.dataset.mode==='guided';
+  document.querySelectorAll('[data-guided]').forEach(e=>e.style.display=isGuided?'block':'none');
+}));
+
+document.querySelectorAll('.tabbtn').forEach(tb=>tb.addEventListener('click',()=>{
+  document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  tb.classList.add('active');
+  $('panel-'+tb.dataset.panel).classList.add('active');
+}));
+
+/* attack log */
+const attackLog=[];
+function addLog(module,mode,outcome,detail){
+  attackLog.push({time:new Date().toISOString(),module,mode,outcome,detail});
+  renderLog();
+}
+function renderLog(){
+  const tb=$('logBody');
+  if(!attackLog.length){tb.innerHTML='<tr><td colspan="5" style="color:var(--ink-faint);">No attacks run yet.</td></tr>';return;}
+  tb.innerHTML=attackLog.slice().reverse().map(r=>`<tr>
+    <td style="font-family:var(--font-mono);font-size:11.5px;">${new Date(r.time).toLocaleTimeString()}</td>
+    <td>${r.module}</td><td>${r.mode}</td>
+    <td><span class="pill ${r.outcome==='Success'?'ok':'bad'}">${r.outcome}</span></td>
+    <td style="color:var(--ink-soft);">${r.detail}</td></tr>`).join('');
+}
+$('logClearBtn').addEventListener('click',()=>{attackLog.length=0;renderLog();});
+$('logCsvBtn').addEventListener('click',()=>{
+  if(!attackLog.length)return;
+  const rows=[['time','module','mode','outcome','detail'],...attackLog.map(r=>[r.time,r.module,r.mode,r.outcome,r.detail])];
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  downloadBlob(csv,'attack-log.csv','text/csv');
+});
+$('logJsonBtn').addEventListener('click',()=>{
+  if(!attackLog.length)return;
+  downloadBlob(JSON.stringify(attackLog,null,2),'attack-log.json','application/json');
+});
+function downloadBlob(content,filename,type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ============================= PADDING ORACLE ============================= */
+let poState=null;
+$('poEncryptBtn').addEventListener('click', async ()=>{
+  const secretText=$('poSecret').value || 'secret';
+  const mode=$('poMode').value;
+  const data=enc.encode(secretText);
+  if(mode==='vuln'){
+    const key=await crypto.subtle.generateKey({name:'AES-CBC',length:128},true,['encrypt','decrypt']);
+    const iv=randBytes(16);
+    const ctBuf=await crypto.subtle.encrypt({name:'AES-CBC',iv},key,data);
+    poState={mode,key,iv,cipherBytes:new Uint8Array(ctBuf)};
+    $('poCipherOut').className='result-box ok';
+    $('poCipherOut').style.display='block';
+    $('poCipherOut').textContent='IV: '+bytesToHex(iv)+'\nCiphertext: '+bytesToHex(poState.cipherBytes);
+  } else {
+    const key=await crypto.subtle.generateKey({name:'AES-GCM',length:128},true,['encrypt','decrypt']);
+    const iv=randBytes(12);
+    const ctBuf=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,data);
+    poState={mode,key,iv,cipherBytes:new Uint8Array(ctBuf)};
+    $('poCipherOut').className='result-box ok';
+    $('poCipherOut').style.display='block';
+    $('poCipherOut').textContent='Nonce: '+bytesToHex(iv)+'\nCiphertext+Tag: '+bytesToHex(poState.cipherBytes);
+  }
+  $('poAttackBtn').disabled=false;
+  $('poResult').style.display='none';
+  $('poRemediation').style.display='none';
+  clearConsole($('poConsole'));
+  logLine($('poConsole'),'$ target deployed ('+(mode==='vuln'?'vulnerable CBC':'patched GCM')+')','hdr');
+  $('poProgFill').style.width='0%'; $('poProgPct').textContent='0%'; $('poProgText').textContent='Idle';
+});
+
+async function cbcOracle(ivBytes, cipherBlock, key){
+  try{
+    await crypto.subtle.decrypt({name:'AES-CBC',iv:ivBytes}, key, cipherBlock);
+    return true;
+  }catch(e){ return false; }
+}
+
+$('poAttackBtn').addEventListener('click', async ()=>{
+  if(!poState) return;
+  const c=$('poConsole');
+  clearConsole(c);
+  $('poResult').style.display='none';
+  $('poRemediation').style.display='none';
+  $('poAttackBtn').disabled=true;
+
+  if(poState.mode==='patched'){
+    logLine(c,'$ attempting padding-oracle probes against AES-GCM target...','hdr');
+    await sleep(300);
+    logLine(c,'[-] tampering with any byte invalidates the auth tag','warn');
+    logLine(c,'[-] decrypt() throws OperationError identically every time','warn');
+    logLine(c,'[-] no distinguishable padding-valid vs padding-invalid signal','bad');
+    $('poProgFill').style.width='100%'; $('poProgPct').textContent='0 bytes';$('poProgText').textContent='Attack defeated';
+    $('poResult').className='result-box bad';
+    $('poResult').style.display='block';
+    $('poResult').textContent='Attack failed: authenticated encryption gives the attacker zero usable information.';
+    $('poRemediation').style.display='block';
+    addLog('Padding Oracle','Patched','Failed','0 bytes recovered — AES-GCM rejected all tampering identically');
+    $('poAttackBtn').disabled=false;
+    return;
+  }
+
+  logLine(c,'$ attempting padding-oracle attack against AES-CBC target...','hdr');
+  await sleep(200);
+  const blockLen=16;
+  const blocks=[poState.iv, ...chunk(poState.cipherBytes, blockLen)];
+  const plainBytes=[];
+  const totalBlocks=blocks.length-1;
+
+  for(let bi=1; bi<blocks.length; bi++){
+    const prev=blocks[bi-1], target=blocks[bi];
+    const intermediate=new Uint8Array(blockLen);
+    logLine(c,'[*] attacking block '+bi+'/'+totalBlocks+' ...','info');
+    for(let padVal=1; padVal<=blockLen; padVal++){
+      const pos=blockLen-padVal;
+      let found=false;
+      for(let guess=0; guess<256; guess++){
+        const ivGuess=new Uint8Array(blockLen);
+        for(let j=pos+1;j<blockLen;j++) ivGuess[j]=intermediate[j]^padVal;
+        ivGuess[pos]=guess;
+        const valid=await cbcOracle(ivGuess, target, poState.key);
+        if(valid){
+          intermediate[pos]=guess^padVal;
+          found=true;
+          break;
+        }
+        if(guess%48===0){
+          const pct=Math.round(((bi-1)+(padVal-1)/blockLen)/totalBlocks*100);
+          $('poProgFill').style.width=pct+'%'; $('poProgPct').textContent=pct+'%';
+          $('poProgText').textContent='Block '+bi+'/'+totalBlocks+' · byte '+(padVal)+'/16';
+          await sleep(0);
+        }
+      }
+      if(!found){ logLine(c,'[!] failed to recover byte at pad '+padVal+' in block '+bi,'bad'); }
+    }
+    const plainBlock=intermediate.map((v,i)=>v^prev[i]);
+    plainBytes.push(...plainBlock);
+    const text=dec.decode(new Uint8Array(plainBlock)).replace(/[\x00-\x1f]/g,'');
+    logLine(c,'[+] block '+bi+' recovered: "'+text+'"','ok');
+  }
+
+  let full=new Uint8Array(plainBytes);
+  const padN=full[full.length-1];
+  if(padN>=1 && padN<=16) full=full.slice(0, full.length-padN);
+  const finalText=dec.decode(full);
+
+  $('poProgFill').style.width='100%'; $('poProgPct').textContent='100%'; $('poProgText').textContent='Complete';
+  logLine(c,'[✓] full plaintext recovered without the key','ok');
+  $('poResult').className='result-box ok';
+  $('poResult').style.display='block';
+  $('poResult').textContent='Recovered plaintext: "'+finalText+'"';
+  $('poRemediation').style.display='block';
+  addLog('Padding Oracle','Vulnerable','Success','Recovered: "'+finalText.slice(0,60)+'"');
+  $('poAttackBtn').disabled=false;
+});
+function chunk(bytes,size){const out=[];for(let i=0;i<bytes.length;i+=size)out.push(bytes.slice(i,i+size));return out;}
+
+/* ============================= BRUTE FORCE ============================= */
+let bfState=null;
+async function sha256hex(str){
+  const buf=await crypto.subtle.digest('SHA-256', enc.encode(str));
+  return bytesToHex(new Uint8Array(buf));
+}
+async function pbkdf2hex(str,saltBytes,iterations){
+  const keyMat=await crypto.subtle.importKey('raw', enc.encode(str), 'PBKDF2', false, ['deriveBits']);
+  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:saltBytes,iterations,hash:'SHA-256'}, keyMat, 256);
+  return bytesToHex(new Uint8Array(bits));
+}
+
+$('bfSetupBtn').addEventListener('click', async ()=>{
+  const secret=$('bfSecret').value;
+  const scheme=$('bfScheme').value;
+  const charsetSel=$('bfCharset').value;
+  const out=$('bfTargetOut');
+  out.style.display='block'; out.className='result-box ok';
+  if(scheme==='fast'){
+    const h=await sha256hex(secret);
+    bfState={scheme,hash:h,salt:null,charsetSel};
+    out.textContent='SHA-256('+secret+') = '+h;
+  } else {
+    const salt=randBytes(8);
+    out.textContent='Hashing with PBKDF2 (250,000 iterations)... this may take a moment.';
+    const h=await pbkdf2hex(secret,salt,250000);
+    bfState={scheme,hash:h,salt,charsetSel};
+    out.textContent='PBKDF2-SHA256(250k, salt='+bytesToHex(salt)+') = '+h;
+  }
+  $('bfAttackBtn').disabled=false;
+  $('bfResult').style.display='none';
+  $('bfRemediation').style.display='none';
+  clearConsole($('bfConsole'));
+  logLine($('bfConsole'),'$ target stored ('+(scheme==='fast'?'vulnerable fast hash':'patched PBKDF2')+')','hdr');
+  $('bfAttempts').textContent='0'; $('bfRate').textContent='0/s'; $('bfEta').textContent='—';
+  $('bfProgFill').style.width='0%'; $('bfProgPct').textContent='0%'; $('bfProgText').textContent='Idle';
+});
+
+function charsetGen(charsetSel){
+  let chars, len;
+  if(charsetSel==='digits'){chars='0123456789'; len=4;}
+  else if(charsetSel==='lower'){chars='abcdefghijklmnopqrstuvwxyz'; len=3;}
+  else {chars='abcdefghijklmnopqrstuvwxyz0123456789'; len=3;}
+  const n=chars.length;
+  const total=Math.pow(n,len);
+  function idxToStr(idx){
+    let s='';
+    for(let i=0;i<len;i++){ s = chars[idx%n] + s; idx=Math.floor(idx/n); }
+    return s;
+  }
+  return {total, idxToStr};
+}
+
+$('bfAttackBtn').addEventListener('click', async ()=>{
+  if(!bfState) return;
+  const c=$('bfConsole');
+  clearConsole(c);
+  $('bfResult').style.display='none';
+  $('bfRemediation').style.display='none';
+  $('bfAttackBtn').disabled=true;
+
+  const {total, idxToStr} = charsetGen(bfState.charsetSel);
+  logLine(c,'$ keyspace size: '+total.toLocaleString()+' combinations','hdr');
+
+  if(bfState.scheme==='slow'){
+    logLine(c,'[*] measuring PBKDF2 (250k iter) throughput with a 24-guess sample...','info');
+    const t0=performance.now();
+    const sampleSalt=bfState.salt;
+    for(let i=0;i<24;i++){
+      await pbkdf2hex(idxToStr(i), sampleSalt, 250000);
+    }
+    const elapsed=(performance.now()-t0)/1000;
+    const rate=24/elapsed;
+    logLine(c,'[-] measured rate: '+rate.toFixed(2)+' guesses/sec','warn');
+    const etaSec=total/rate;
+    const etaStr=formatDuration(etaSec);
+    $('bfAttempts').textContent='24 (sampled)';
+    $('bfRate').textContent=rate.toFixed(1)+'/s';
+    $('bfEta').textContent=etaStr;
+    $('bfProgFill').style.width='100%'; $('bfProgPct').textContent='sampled';$('bfProgText').textContent='Extrapolated';
+    logLine(c,'[✓] estimated time to exhaust full keyspace: '+etaStr,'ok');
+    $('bfResult').className='result-box bad';
+    $('bfResult').style.display='block';
+    $('bfResult').textContent='Attack impractical: full brute force would take approximately '+etaStr+' at this hash cost.';
+    $('bfRemediation').style.display='block';
+    addLog('Brute Force','Patched','Failed','Estimated crack time: '+etaStr+' ('+rate.toFixed(1)+' guesses/s)');
+    $('bfAttackBtn').disabled=false;
+    return;
+  }
+
+  logLine(c,'[*] trying every combination against stored SHA-256 hash...','info');
+  let attempts=0, found=null;
+  const t0=performance.now();
+  const batch=250;
+  for(let i=0;i<total && !found;i+=batch){
+    const end=Math.min(i+batch,total);
+    for(let j=i;j<end;j++){
+      const guess=idxToStr(j);
+      const h=await sha256hex(guess);
+      attempts++;
+      if(h===bfState.hash){ found=guess; break; }
+    }
+    const elapsed=(performance.now()-t0)/1000 || 0.001;
+    const rate=attempts/elapsed;
+    $('bfAttempts').textContent=attempts.toLocaleString();
+    $('bfRate').textContent=Math.round(rate).toLocaleString()+'/s';
+    const pct=Math.round(attempts/total*100);
+    $('bfProgFill').style.width=pct+'%'; $('bfProgPct').textContent=pct+'%';
+    $('bfProgText').textContent=found?'Found':'Searching...';
+    if(attempts%1000<batch) logLine(c,'[.] '+attempts.toLocaleString()+' tried — last guess "'+idxToStr(end-1)+'"','info');
+    await sleep(0);
+  }
+  const totalElapsed=(performance.now()-t0)/1000;
+  $('bfEta').textContent=formatDuration(totalElapsed)+' (actual)';
+  if(found){
+    logLine(c,'[✓] match found: "'+found+'" after '+attempts.toLocaleString()+' attempts','ok');
+    $('bfResult').className='result-box ok';
+    $('bfResult').style.display='block';
+    $('bfResult').textContent='Cracked secret: "'+found+'" in '+attempts.toLocaleString()+' attempts ('+totalElapsed.toFixed(2)+'s).';
+    addLog('Brute Force','Vulnerable','Success','Cracked "'+found+'" in '+attempts.toLocaleString()+' attempts, '+totalElapsed.toFixed(2)+'s');
+  } else {
+    logLine(c,'[!] exhausted keyspace without a match','bad');
+    $('bfResult').className='result-box bad';
+    $('bfResult').style.display='block';
+    $('bfResult').textContent='No match found in keyspace.';
+    addLog('Brute Force','Vulnerable','Failed','Exhausted keyspace, no match');
+  }
+  $('bfRemediation').style.display='block';
+  $('bfAttackBtn').disabled=false;
+});
+function formatDuration(sec){
+  if(sec<1) return (sec*1000).toFixed(0)+'ms';
+  if(sec<60) return sec.toFixed(1)+'s';
+  if(sec<3600) return (sec/60).toFixed(1)+' min';
+  if(sec<86400) return (sec/3600).toFixed(1)+' hours';
+  if(sec<31536000) return (sec/86400).toFixed(1)+' days';
+  const years=sec/31536000;
+  if(years>1e9) return years.toExponential(2)+' years';
+  return years.toFixed(1)+' years';
+}
+
+/* ============================= LENGTH EXTENSION (MD5) ============================= */
+const MD5_K=(function(){const k=new Uint32Array(64);for(let i=0;i<64;i++)k[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296);return k;})();
+const MD5_S=[7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+function rotl32(x,n){return ((x<<n)|(x>>>(32-n)))>>>0;}
+function md5Block(state, block){
+  const M=new Uint32Array(16);
+  for(let i=0;i<16;i++) M[i]=block[i*4] | (block[i*4+1]<<8) | (block[i*4+2]<<16) | (block[i*4+3]<<24);
+  let [a,b,c,d]=state;
+  for(let i=0;i<64;i++){
+    let f,g;
+    if(i<16){ f=(b&c)|((~b)&d); g=i; }
+    else if(i<32){ f=(d&b)|((~d)&c); g=(5*i+1)%16; }
+    else if(i<48){ f=b^c^d; g=(3*i+5)%16; }
+    else { f=c^(b|(~d)); g=(7*i)%16; }
+    f=(f+a+MD5_K[i]+M[g])>>>0;
+    a=d; d=c; c=b;
+    b=(b+rotl32(f,MD5_S[i]))>>>0;
+  }
+  return [(state[0]+a)>>>0, (state[1]+b)>>>0, (state[2]+c)>>>0, (state[3]+d)>>>0];
+}
+function md5Pad(totalLenBytes){
+  const bitLen=totalLenBytes*8;
+  let padLen=(totalLenBytes%64 < 56) ? (56-totalLenBytes%64) : (120-totalLenBytes%64);
+  const pad=new Uint8Array(padLen+8);
+  pad[0]=0x80;
+  for(let i=0;i<8;i++){
+    pad[padLen+i]=Number((BigInt(bitLen) >> BigInt(8*i)) & 0xFFn);
+  }
+  return pad;
+}
+function md5(bytes){
+  let state=[0x67452301,0xefcdab89,0x98badcfe,0x10325476];
+  const padded=new Uint8Array(bytes.length + md5Pad(bytes.length).length);
+  padded.set(bytes,0); padded.set(md5Pad(bytes.length), bytes.length);
+  for(let i=0;i<padded.length;i+=64) state=md5Block(state, padded.subarray(i,i+64));
+  return state;
+}
+function stateToHex(state){
+  return state.map(w=>{
+    let h='';
+    for(let i=0;i<4;i++) h += ((w>>>(8*i))&0xFF).toString(16).padStart(2,'0');
+    return h;
+  }).join('');
+}
+function hexToState(hex){
+  const state=[];
+  for(let i=0;i<4;i++){
+    const chunk=hex.substr(i*8,8);
+    let w=0;
+    for(let b=0;b<4;b++) w |= parseInt(chunk.substr(b*2,2),16) << (8*b);
+    state.push(w>>>0);
+  }
+  return state;
+}
+function md5Resume(state, processedLenBytes, extraBytes){
+  const totalAfter = processedLenBytes + extraBytes.length;
+  const pad = md5Pad(totalAfter);
+  const tail = new Uint8Array(extraBytes.length + pad.length);
+  tail.set(extraBytes,0); tail.set(pad, extraBytes.length);
+  let s=state.slice();
+  for(let i=0;i<tail.length;i+=64) s=md5Block(s, tail.subarray(i,i+64));
+  return s;
+}
+
+let leState=null;
+$('leSetupBtn').addEventListener('click', ()=>{
+  const secretLen=parseInt($('leSecretLen').value)||8;
+  const message=$('leMessage').value;
+  const secret=randBytes(secretLen);
+  const msgBytes=enc.encode(message);
+  const combined=new Uint8Array(secret.length+msgBytes.length);
+  combined.set(secret,0); combined.set(msgBytes, secret.length);
+  const macState=md5(combined);
+  const mac=stateToHex(macState);
+  leState={secretLen, message, mac, secret};
+  const out=$('leTargetOut');
+  out.className='result-box ok'; out.style.display='block';
+  out.textContent='Message: "'+message+'"\nMAC = MD5(secret‖message) = '+mac;
+  $('leAttackBtn').disabled=false;
+  $('leResult').style.display='none';
+  $('leRemediation').style.display='none';
+  clearConsole($('leConsole'));
+  logLine($('leConsole'),'$ server published message + MAC','hdr');
+});
+
+$('leAttackBtn').addEventListener('click', async ()=>{
+  if(!leState) return;
+  const c=$('leConsole');
+  clearConsole(c);
+  $('leResult').style.display='none';
+  $('leRemediation').style.display='none';
+
+  const {secretLen, message, mac} = leState;
+  const appendStr=$('leAppend').value;
+  logLine(c,'$ known: message="'+message+'", MAC='+mac+', assumed secret length='+secretLen,'hdr');
+  await sleep(150);
+
+  const origLenBytes = secretLen + enc.encode(message).length;
+  const glue = md5Pad(origLenBytes);
+  logLine(c,'[*] computed glue padding for secret‖message ('+glue.length+' bytes)','info');
+
+  const resumeState = hexToState(mac);
+  const extraBytes = enc.encode(appendStr);
+  const processedLen = origLenBytes + glue.length;
+  const forgedState = md5Resume(resumeState, processedLen, extraBytes);
+  const forgedMac = stateToHex(forgedState);
+  logLine(c,'[*] resumed MD5 compression from leaked state, processed appended data','info');
+  logLine(c,'[+] forged MAC = '+forgedMac,'ok');
+
+  const glueDisplay='[glue-padding:'+glue.length+'B]';
+  const forgedMessageDisplay = message + glueDisplay + appendStr;
+
+  logLine(c,'[*] verifying against server (server-side check)...','info');
+  await sleep(200);
+
+  const verifyOk = verifyForgedMac(leState.secret, message, glue, extraBytes, forgedMac);
+  if(verifyOk){
+    logLine(c,'[✓] server accepts forged message as validly signed','ok');
+    $('leResult').className='result-box ok';
+    $('leResult').style.display='block';
+    $('leResult').textContent='Forged message accepted!\n\nForged payload: "'+forgedMessageDisplay+'"\nForged MAC: '+forgedMac;
+    addLog('Length Extension','Vulnerable','Success','Forged valid MAC for appended data "'+appendStr+'"');
+  } else {
+    logLine(c,'[!] verification mismatch','bad');
+    $('leResult').className='result-box bad';
+    $('leResult').style.display='block';
+    $('leResult').textContent='Forgery failed verification (unexpected — check secret length assumption).';
+    addLog('Length Extension','Vulnerable','Failed','MAC mismatch — secret length assumption likely wrong');
+  }
+  $('leRemediation').style.display='block';
+});
+function verifyForgedMac(secret, message, glue, extraBytes, forgedMac){
+  const msgBytes=enc.encode(message);
+  const forgedPayload=new Uint8Array(secret.length+msgBytes.length+glue.length+extraBytes.length);
+  let off=0;
+  forgedPayload.set(secret,off); off+=secret.length;
+  forgedPayload.set(msgBytes,off); off+=msgBytes.length;
+  forgedPayload.set(glue,off); off+=glue.length;
+  forgedPayload.set(extraBytes,off);
+  const serverMac=stateToHex(md5(forgedPayload));
+  return serverMac===forgedMac;
+}
+
+/* ============================= BIT-FLIPPING (CTR vs GCM) ============================= */
+let bfpState=null;
+$('bfpEncryptBtn').addEventListener('click', async ()=>{
+  const plainText=$('bfpPlain').value || 'secret';
+  const mode=$('bfpMode').value;
+  const data=enc.encode(plainText);
+  const c=$('bfpConsole');
+  clearConsole(c);
+  $('bfpResult').style.display='none';
+  $('bfpRemediation').style.display='none';
+
+  if(mode==='ctr'){
+    const key=await crypto.subtle.generateKey({name:'AES-CTR',length:128},true,['encrypt','decrypt']);
+    const counter=randBytes(16);
+    const ctBuf=await crypto.subtle.encrypt({name:'AES-CTR',counter,length:64}, key, data);
+    bfpState={mode,key,counter,cipherBytes:new Uint8Array(ctBuf),flips:{}};
+    $('bfpCipherOut').className='result-box ok'; $('bfpCipherOut').style.display='block';
+    $('bfpCipherOut').textContent='Counter: '+bytesToHex(counter)+'\nCiphertext: '+bytesToHex(bfpState.cipherBytes);
+    logLine(c,'$ target deployed (vulnerable AES-CTR, no integrity check)','hdr');
+  } else {
+    const key=await crypto.subtle.generateKey({name:'AES-GCM',length:128},true,['encrypt','decrypt']);
+    const iv=randBytes(12);
+    const ctBuf=await crypto.subtle.encrypt({name:'AES-GCM',iv}, key, data);
+    bfpState={mode,key,iv,cipherBytes:new Uint8Array(ctBuf),flips:{}};
+    $('bfpCipherOut').className='result-box ok'; $('bfpCipherOut').style.display='block';
+    $('bfpCipherOut').textContent='Nonce: '+bytesToHex(iv)+'\nCiphertext+Tag: '+bytesToHex(bfpState.cipherBytes);
+    logLine(c,'$ target deployed (patched AES-GCM, authenticated)','hdr');
+  }
+
+  renderByteGrid();
+  $('bfpByteGridWrap').style.display='block';
+  $('bfpDecryptBtn').disabled=false;
+  $('bfpResetBtn').disabled=false;
+});
+
+function renderByteGrid(){
+  const wrap=$('bfpByteGrid');
+  wrap.innerHTML='';
+  bfpState.cipherBytes.forEach((b,i)=>{
+    const el=document.createElement('div');
+    el.className='byte'+(bfpState.flips[i]?' sel':'');
+    el.textContent=b.toString(16).padStart(2,'0');
+    el.title='byte '+i;
+    el.addEventListener('click',()=>{
+      bfpState.flips[i] = !bfpState.flips[i];
+      renderByteGrid();
+    });
+    wrap.appendChild(el);
+  });
+}
+
+$('bfpResetBtn').addEventListener('click', ()=>{
+  if(!bfpState) return;
+  bfpState.flips={};
+  renderByteGrid();
+  $('bfpResult').style.display='none';
+  logLine($('bfpConsole'),'[*] flips reset','info');
+});
+
+$('bfpDecryptBtn').addEventListener('click', async ()=>{
+  if(!bfpState) return;
+  const c=$('bfpConsole');
+  $('bfpResult').style.display='none';
+  $('bfpRemediation').style.display='none';
+
+  const tampered=new Uint8Array(bfpState.cipherBytes);
+  const flippedIdx=Object.keys(bfpState.flips).filter(k=>bfpState.flips[k]).map(Number);
+  flippedIdx.forEach(i=>{ tampered[i] = tampered[i] ^ 0x01; });
+  logLine(c,'$ attacker flips bit 0 on byte(s): ['+flippedIdx.join(', ')+']','hdr');
+  await sleep(150);
+
+  if(bfpState.mode==='ctr'){
+    try{
+      const ptBuf=await crypto.subtle.decrypt({name:'AES-CTR',counter:bfpState.counter,length:64}, bfpState.key, tampered);
+      const text=dec.decode(ptBuf);
+      logLine(c,'[+] decryption succeeded — server accepted tampered ciphertext silently','ok');
+      $('bfpResult').className='result-box ok';
+      $('bfpResult').style.display='block';
+      $('bfpResult').textContent='Decrypted (tampered) plaintext: "'+text.replace(/[\x00-\x1f\x7f-\xff]/g,'')+'"\nNote the corresponding bytes changed — no error was raised.';
+      addLog('Bit-Flipping','Vulnerable','Success','Tampered '+flippedIdx.length+' byte(s), decryption silently altered plaintext');
+    }catch(e){
+      logLine(c,'[!] decrypt error: '+e.message,'bad');
+      $('bfpResult').className='result-box bad';
+      $('bfpResult').style.display='block';
+      $('bfpResult').textContent='Unexpected decrypt error.';
+    }
+  } else {
+    try{
+      await crypto.subtle.decrypt({name:'AES-GCM',iv:bfpState.iv}, bfpState.key, tampered);
+      logLine(c,'[!] unexpected: GCM accepted tampered data','bad');
+    }catch(e){
+      logLine(c,'[-] AES-GCM rejected tampered ciphertext: auth tag mismatch','warn');
+      $('bfpResult').className='result-box bad';
+      $('bfpResult').style.display='block';
+      $('bfpResult').textContent='Attack failed: authenticated decryption threw an error — tampering was detected and the plaintext was never released.';
+      addLog('Bit-Flipping','Patched','Failed','GCM rejected tampered ciphertext, auth tag mismatch');
+    }
+  }
+  $('bfpRemediation').style.display='block';
+});
+</script>
+</body>
+</html>
