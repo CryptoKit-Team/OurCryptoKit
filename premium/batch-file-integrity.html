@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch File Integrity Checker — CryptoKit Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  /* ---------------- NORMAL THEME ---------------- */
+  [data-theme="normal"] {
+    --bg-0:#eef0fc;
+    --surface:#ffffff;
+    --surface-soft:#f4f5fd;
+    --border:#e1e3f5;
+    --ink:#1c1f37;
+    --ink-soft:#5b5f7e;
+    --ink-faint:#9599b8;
+    --accent-1:#d97706;
+    --accent-2:#f59e0b;
+    --accent-soft:#fef3e2;
+    --gold-1:#d97706;
+    --gold-2:#f59e0b;
+    --gold-bg:#fef3e2;
+    --gold-border:#fbd999;
+    --good:#1f9d68; --good-bg:#eafaf2;
+    --warn:#b4700a; --warn-bg:#fff6e6;
+    --bad:#d0483f; --bad-bg:#fdeceb;
+    --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+    --font-display: 'Arial Rounded MT Bold', 'Arial Rounded MT', ui-rounded, 'SF Pro Rounded', 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+
+  /* ---------------- HACKER THEME ---------------- */
+  [data-theme="hacker"] {
+    --bg-0:#000000;
+    --surface:#050505;
+    --surface-soft:#0a0a0a;
+    --border:rgba(0, 255, 65, 0.25);
+    --ink:#00FF41;
+    --ink-soft:#00CC33;
+    --ink-faint:#006611;
+    --accent-1:#00FF41;
+    --accent-2:#39FF14;
+    --accent-soft:rgba(0, 255, 65, 0.08);
+    --gold-1:#00FF41;
+    --gold-2:#39FF14;
+    --gold-bg:rgba(0, 255, 65, 0.05);
+    --gold-border:rgba(0, 255, 65, 0.3);
+    --good:#00FF41; --good-bg:rgba(0, 255, 65, 0.08);
+    --warn:#FFD700; --warn-bg:rgba(255, 215, 0, 0.1);
+    --bad:#FF0040; --bad-bg:rgba(255, 0, 64, 0.12);
+    --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+    --font-display: 'Share Tech Mono', monospace;
+    --font-body: 'Share Tech Mono', monospace;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg-0);
+    color:var(--ink); font-family:var(--font-body); -webkit-font-smoothing:antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  [data-theme="normal"] body {
+    background:
+      radial-gradient(1100px 500px at 12% -8%, #f8ecd8 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #e7f1fb 0%, transparent 55%),
+      var(--bg-0);
+  }
+
+  [data-theme="hacker"] body {
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(0,255,65,0.06), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(57,255,20,0.04), transparent 60%);
+  }
+
+  [data-theme="hacker"] body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px; z-index: -1; pointer-events: none;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove {
+    0%   { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+  }
+
+  .wrap{ max-width:1080px; margin:0 auto; padding:36px 24px 80px; position:relative; z-index:2; }
+
+  .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:34px; flex-wrap:wrap; gap:12px;}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+    background:var(--surface); border:1px solid var(--border);
+    padding:9px 16px; border-radius:999px; font-size:13.5px; color:var(--ink-soft); font-weight:500;
+    transition: all 0.3s ease;
+  }
+  .back-pill{ color:var(--ink); cursor:pointer; }
+  .back-pill:hover { border-color: var(--accent-1); color: var(--accent-1); transform: translateX(-2px); }
+  
+  [data-theme="hacker"] .pill { text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; background: rgba(0,255,65,0.03); box-shadow: 0 0 10px rgba(0,255,65,0.03); }
+  [data-theme="hacker"] .back-pill:hover { box-shadow: 0 0 16px rgba(0,255,65,0.2); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .lock-pill{ color:var(--accent-1); font-weight:600; }
+  .lock-pill svg{ color:var(--accent-1); }
+  [data-theme="hacker"] .lock-pill { text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .toggle-pill{ gap:10px; cursor:pointer; user-select:none; }
+  .switch{ width:34px; height:19px; border-radius:999px; background:#d5d8ee; position:relative; flex-shrink:0; transition: background 0.3s; }
+  .switch::after{ 
+    content:''; position:absolute; top:2px; left:2px; width:15px; height:15px; 
+    border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25); 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+  }
+  
+  [data-theme="hacker"] .switch { background: rgba(0,255,65,0.3); }
+  [data-theme="hacker"] .switch::after { left: 17px; background: var(--accent-1); box-shadow: 0 0 8px var(--accent-1); }
+  [data-theme="hacker"] #themeLabel { text-shadow: 0 0 6px rgba(0,255,65,0.4); }
+
+  .kicker{
+    display:inline-flex; align-items:center; gap:7px;
+    background:var(--gold-bg); border:1px solid var(--gold-border);
+    padding:7px 14px; border-radius:999px;
+    font-size:11.5px; letter-spacing:.08em; color:var(--gold-1); font-weight:800;
+    margin-bottom:18px; transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .kicker { box-shadow: 0 0 12px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .hero{ display:flex; gap:20px; align-items:flex-start; margin-bottom:16px; }
+  .hero-icon{
+    width:58px; height:58px; border-radius:16px; flex-shrink:0;
+    background:linear-gradient(135deg, var(--gold-1), var(--gold-2));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px -8px rgba(217,119,6,.5);
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .hero-icon { background: transparent; border: 2px solid var(--accent-1); box-shadow: 0 0 20px rgba(0,255,65,0.25); animation: pulseHacker 2s infinite; }
+  [data-theme="hacker"] .hero-icon svg { stroke: var(--accent-1); }
+  @keyframes pulseHacker { 0%, 100% { box-shadow: 0 0 20px rgba(0,255,65,0.25); } 50% { box-shadow: 0 0 35px rgba(0,255,65,0.5); } }
+
+  .hero h1{
+    font-family:var(--font-display); font-weight:800; font-size:34px; line-height:1.15;
+    margin:0 0 10px 0; letter-spacing:-.01em;
+    background:linear-gradient(90deg, var(--gold-1), var(--gold-2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .hero h1 { background:none; color: var(--accent-1); -webkit-text-fill-color: var(--accent-1); text-shadow: 0 0 15px rgba(0,255,65,0.4); letter-spacing: 2px; }
+
+  .hero p{ margin:0; color:var(--ink-soft); font-size:15.5px; line-height:1.55; max-width:660px; }
+
+  .tag-row{ display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 30px 78px; }
+  .tag{
+    font-family:var(--font-mono); font-size:13px; color:var(--ink-faint);
+    background:var(--surface); border:1px solid var(--border);
+    padding:8px 18px; border-radius:999px; transition: all 0.3s ease;
+  }
+  .tag.tag-gold{ color:var(--gold-1); border-color:var(--gold-border); background:var(--gold-bg); font-family:var(--font-body); font-weight:700; }
+  [data-theme="hacker"] .tag.tag-gold { box-shadow: 0 0 10px rgba(0,255,65,0.15); text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .premium-strip{
+    display:flex; align-items:center; gap:8px;
+    background:var(--gold-bg); border:1px solid var(--gold-border); border-radius:var(--radius-md);
+    padding:12px 18px; margin-bottom:20px; font-size:13.5px; color:var(--gold-1); font-weight:700;
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .premium-strip { box-shadow: 0 0 15px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .tabs{
+    display:flex; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:6px; gap:4px; margin-bottom:22px; flex-wrap:wrap;
+    box-shadow:0 2px 10px -6px rgba(30,35,80,.08);
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .tabs { box-shadow: 0 0 20px rgba(0,255,65,0.05); }
+
+  .tab{
+    flex:1; min-width:140px; display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:12px 14px; border-radius:11px; cursor:pointer;
+    font-size:13.5px; font-weight:600; color:var(--ink-faint);
+    border:none; background:transparent; font-family:var(--font-body);
+    transition:background .15s ease, color .15s ease;
+  }
+  .tab svg{ opacity:.75; }
+  .tab.active{ background:linear-gradient(90deg, var(--accent-soft), #fff3e0); color:var(--accent-1); }
+  [data-theme="hacker"] .tab.active{ background: rgba(0,255,65,0.1); color: var(--accent-1); text-shadow: 0 0 8px rgba(0,255,65,0.4); box-shadow: inset 0 0 10px rgba(0,255,65,0.1); }
+  .tab.active svg{ opacity:1; }
+  .tab:not(.active):hover{ color:var(--ink-soft); background:var(--surface-soft); }
+  [data-theme="hacker"] .tab { text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:32px;
+    box-shadow:0 4px 24px -12px rgba(30,35,80,.10);
+    transition: all 0.4s ease;
+  }
+  [data-theme="hacker"] .panel { box-shadow: 0 0 25px rgba(0,255,65,0.02); }
+  [data-theme="hacker"] .panel:hover { border-color: rgba(0,255,65,0.35); box-shadow: 0 0 30px rgba(0,255,65,0.06); }
+
+  .panel + .panel{ margin-top:20px; }
+  .panel-head{ display:flex; align-items:center; gap:9px; margin-bottom:6px; }
+  .panel-head svg{ color:var(--accent-1); flex-shrink:0; }
+  .panel-head h2{ font-size:18px; margin:0; font-weight:700; }
+  [data-theme="hacker"] .panel-head h2 { text-shadow: 0 0 10px rgba(0,255,65,0.3); letter-spacing: 1px; }
+
+  .panel-sub{ color:var(--ink-soft); font-size:14px; margin:0 0 20px 0; line-height:1.5; }
+
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:8px; }
+  [data-theme="hacker"] .field label { color: rgba(0,255,65,0.6); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  select{
+    width:100%; padding:11px 13px; border-radius:var(--radius-sm);
+    border:1px solid var(--border); background:var(--surface-soft);
+    font-size:14px; font-family:var(--font-body); color:var(--ink); outline:none;
+    transition: all 0.3s ease;
+  }
+  select:focus{ border-color:var(--accent-1); background:var(--surface); box-shadow: 0 0 0 3px var(--gold-bg); }
+  [data-theme="hacker"] select { font-family: var(--font-mono); }
+  [data-theme="hacker"] select:focus { box-shadow: 0 0 0 3px rgba(0,255,65,0.1), 0 0 15px rgba(0,255,65,0.1); }
+
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media(max-width:640px){ .field-row{ grid-template-columns:1fr; } }
+
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 18px; border-radius:var(--radius-sm);
+    font-size:14px; font-weight:600; font-family:var(--font-body);
+    cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--ink);
+    transition:all .15s ease;
+  }
+  .btn:hover{ background:var(--surface-soft); border-color:var(--ink-soft); }
+  .btn:active{ transform:scale(.98); }
+  [data-theme="hacker"] .btn { text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+
+  .btn-primary{
+    background:linear-gradient(90deg, var(--gold-1), var(--gold-2));
+    border:none; color:#fff; box-shadow:0 8px 20px -8px rgba(217,119,6,.5);
+  }
+  [data-theme="hacker"] .btn-primary { background: var(--accent-1); color: #000; box-shadow: 0 0 15px rgba(0,255,65,0.3); font-weight: 800; }
+  .btn-primary:hover{ filter:brightness(1.05); transform: translateY(-1px); }
+  [data-theme="hacker"] .btn-primary:hover { box-shadow: 0 0 25px rgba(0,255,65,0.6); }
+  .btn-primary:disabled{ opacity:.5; cursor:not-allowed; box-shadow:none; }
+  .btn-ghost{ background:transparent; border:1px dashed var(--border); color:var(--ink-soft); }
+  [data-theme="hacker"] .btn-ghost:hover { border-color: var(--accent-1); color: var(--accent-1); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+  .btn-sm{ padding:7px 12px; font-size:12.5px; }
+  [data-theme="hacker"] .btn-sm { font-size: 11px; }
+
+  .dropzone{
+    border:2px dashed var(--border); border-radius:var(--radius-md);
+    padding:36px 24px; text-align:center; background:var(--surface-soft);
+    margin-top:6px; transition:border-color .15s ease, background .15s ease;
+  }
+  .dropzone.drag{ border-color:var(--accent-1); background:var(--accent-soft); }
+  [data-theme="hacker"] .dropzone.drag{ box-shadow: 0 0 20px rgba(0,255,65,0.2); }
+  .dropzone svg{ color:var(--ink-faint); margin-bottom:8px; }
+  [data-theme="hacker"] .dropzone.drag svg{ color: var(--accent-1); }
+  .dropzone h3{ margin:0 0 4px 0; font-size:14.5px; }
+  .dropzone p{ margin:0 0 14px 0; color:var(--ink-faint); font-size:12.5px; }
+
+  .summary-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:18px; }
+  @media(max-width:760px){ .summary-grid{ grid-template-columns:repeat(2,1fr); } }
+  .summary-stat{ border:1px solid var(--border); border-radius:var(--radius-md); padding:14px; background:var(--surface-soft); text-align:center; transition: all 0.3s ease; }
+  [data-theme="hacker"] .summary-stat:hover { border-color: var(--accent-1); box-shadow: 0 0 15px rgba(0,255,65,0.1); }
+  .summary-stat .num{ font-size:22px; font-weight:800; font-family:var(--font-display); color:var(--accent-1); }
+  [data-theme="hacker"] .summary-stat .num { text-shadow: 0 0 10px rgba(0,255,65,0.4); }
+  .summary-stat .lbl{ font-size:11.5px; color:var(--ink-faint); margin-top:2px; }
+  [data-theme="hacker"] .summary-stat .lbl { text-transform: uppercase; letter-spacing: 0.05em; }
+  .summary-stat.bad .num{ color:var(--bad); }
+  [data-theme="hacker"] .summary-stat.bad .num { text-shadow: 0 0 10px rgba(255,0,64,0.4); }
+  .summary-stat.good .num{ color:var(--good); }
+
+  .progress-wrap{ margin-top:16px; }
+  .progress-bar-bg{ height:8px; border-radius:999px; background:var(--surface-soft); overflow:hidden; border:1px solid var(--border); }
+  .progress-bar-fill{ height:100%; border-radius:999px; background:linear-gradient(90deg, var(--gold-1), var(--gold-2)); transition:width .15s ease; }
+  [data-theme="hacker"] .progress-bar-fill { background: var(--accent-1); box-shadow: 0 0 10px var(--accent-1); }
+  .progress-label{ font-size:12.5px; color:var(--ink-faint); margin-top:6px; }
+
+  table.results{ width:100%; border-collapse:collapse; margin-top:16px; font-size:13px; }
+  table.results th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); padding:9px 10px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--surface); }
+  table.results td{ padding:9px 10px; border-bottom:1px solid var(--border); color:var(--ink-soft); vertical-align:middle; }
+  table.results tr:hover td{ background:var(--surface-soft); }
+  [data-theme="hacker"] table.results tr:hover td{ background: rgba(0,255,65,0.03); }
+  table.results td.name{ color:var(--ink); font-weight:600; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  table.results td.hash{ font-family:var(--font-mono); font-size:11.5px; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .table-scroll{ max-height:420px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-md); margin-top:6px; }
+  table.results{ margin-top:0; }
+  table.results thead th{ position:sticky; top:0; z-index:1; }
+
+  .chip{ display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; }
+  .chip.dup{ background:var(--warn-bg); color:var(--warn); }
+  .chip.unique{ background:var(--good-bg); color:var(--good); }
+  .chip.added{ background:var(--good-bg); color:var(--good); }
+  .chip.removed{ background:var(--bad-bg); color:var(--bad); }
+  .chip.modified{ background:var(--warn-bg); color:var(--warn); }
+  .chip.same{ background:var(--accent-soft); color:var(--accent-1); }
+  [data-theme="hacker"] .chip.dup { box-shadow: 0 0 8px rgba(255,215,0,0.2); border: 1px solid var(--warn); }
+  [data-theme="hacker"] .chip.added { box-shadow: 0 0 8px rgba(0,255,65,0.2); border: 1px solid var(--good); }
+  [data-theme="hacker"] .chip.removed { box-shadow: 0 0 8px rgba(255,0,64,0.3); border: 1px solid var(--bad); }
+  [data-theme="hacker"] .chip.modified { box-shadow: 0 0 8px rgba(255,215,0,0.2); border: 1px solid var(--warn); }
+
+  .status{ display:flex; align-items:flex-start; gap:10px; border-radius:var(--radius-md); padding:14px 16px; margin-top:18px; font-size:14px; line-height:1.5; border: 1px solid transparent; }
+  .status svg{ flex-shrink:0; margin-top:1px; }
+  .status-good{ background:var(--good-bg); color:var(--good); }
+  .status-bad{ background:var(--bad-bg); color:var(--bad); }
+  .status-warn{ background:var(--warn-bg); color:var(--warn); }
+  [data-theme="hacker"] .status-good { border-color: var(--good); box-shadow: 0 0 15px rgba(0,255,65,0.1); text-shadow: 0 0 5px rgba(0,255,65,0.4); }
+  [data-theme="hacker"] .status-bad { border-color: var(--bad); box-shadow: 0 0 15px rgba(255,0,64,0.1); }
+  [data-theme="hacker"] .status-warn { border-color: var(--warn); box-shadow: 0 0 15px rgba(255,215,0,0.1); }
+  .status strong{ display:block; margin-bottom:2px; }
+
+  .dup-group{ border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 16px; margin-top:12px; background:var(--surface-soft); transition: all 0.3s ease; }
+  [data-theme="hacker"] .dup-group:hover { border-color: var(--accent-1); box-shadow: 0 0 15px rgba(0,255,65,0.08); }
+  .dup-group .gh{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); margin-bottom:8px; display:flex; justify-content:space-between; }
+  .dup-group ul{ margin:0; padding-left:18px; font-size:13px; color:var(--ink); }
+  .dup-group li{ margin-bottom:3px; }
+
+  .divider{ height:1px; background:var(--border); margin:26px 0; }
+  .footnote{ text-align:center; color:var(--ink-faint); font-size:12.5px; margin-top:26px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  [data-theme="hacker"] .footnote { letter-spacing: 1px; text-shadow: 0 0 5px rgba(0,255,65,0.2); }
+  input[type=file]{ display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="../index.html" class="pill back-pill" id="homeBtn" style="text-decoration:none;" title="Go back to Home">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to CryptoKit
+    </a>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="pill lock-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+        100% Client-Side — Nothing Ever Leaves Your Browser
+      </div>
+      <div class="pill toggle-pill" id="themeToggle" title="Toggle Theme">
+        <span id="themeLabel">Normal</span>
+        <span class="switch"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="kicker">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-7.4L2.5 8l6.5-1z"/></svg>
+    Premium Tool
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7h4l2-2h4l2 2h4v11a1 1 0 01-1 1H5a1 1 0 01-1-1V7z"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Batch File Integrity Checker</h1>
+      <p>Hash hundreds of files at once, find duplicates by content, and diff two entire folders — all locally in your browser using the Web Crypto API.</p>
+    </div>
+  </div>
+
+  <div class="tag-row">
+    <span class="tag">Bulk Hashing</span>
+    <span class="tag">Duplicate Detection</span>
+    <span class="tag tag-gold">★ Premium</span>
+  </div>
+
+  <div class="premium-strip">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-7.4L2.5 8l6.5-1z"/></svg>
+    Premium unlocked — unlimited batches, unlimited folder comparisons
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="batch">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h4l2-2h4l2 2h4v11a1 1 0 01-1 1H5a1 1 0 01-1-1V7z"/></svg>
+      Batch Hash
+    </button>
+    <button class="tab" data-tab="dup">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="12" height="12" rx="2"/><rect x="8" y="8" width="12" height="12" rx="2"/></svg>
+      Duplicate Finder
+    </button>
+    <button class="tab" data-tab="compare">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v18M16 3v18M4 8l4-5 4 5M20 16l-4 5-4-5"/></svg>
+      Compare Sets
+    </button>
+  </div>
+
+  <!-- ============ BATCH HASH ============ -->
+  <div class="tab-panel" id="panel-batch">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 7l10 5 10-5-10-5-10 5z"/></svg>
+        <h2>Stage files</h2>
+      </div>
+      <p class="panel-sub">Add any number of files or an entire folder. Nothing leaves this page.</p>
+
+      <div class="dropzone" id="batchDropzone">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 18a4 4 0 01-1-7.9A5 5 0 0116 8a4.5 4.5 0 011 8.9"/><path d="M12 11v7m0-7l-3 3m3-3l3 3"/></svg>
+        <h3>Drag &amp; drop files or a folder here</h3>
+        <p>or use the buttons below</p>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn" id="chooseFilesBtn">Choose Files</button>
+          <button class="btn" id="chooseFolderBtn">Choose Folder</button>
+        </div>
+        <input type="file" id="fileInput" multiple>
+        <input type="file" id="folderInput" webkitdirectory directory multiple>
+      </div>
+
+      <div class="field-row" style="margin-top:20px;">
+        <div class="field">
+          <label for="hashAlgo">Hash algorithm</label>
+          <select id="hashAlgo">
+            <option value="SHA-256" selected>SHA-256</option>
+            <option value="SHA-384">SHA-384</option>
+            <option value="SHA-512">SHA-512</option>
+            <option value="SHA-1">SHA-1 (legacy)</option>
+          </select>
+        </div>
+        <div class="field" style="display:flex; align-items:flex-end;">
+          <div class="btn-row" style="margin:0;">
+            <button class="btn btn-primary" id="hashAllBtn">Hash All Files</button>
+            <button class="btn btn-ghost" id="clearBatchBtn">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-grid" id="batchSummary" style="display:none;"></div>
+
+      <div class="progress-wrap" id="progressWrap" style="display:none;">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%;"></div></div>
+        <div class="progress-label" id="progressLabel"></div>
+      </div>
+
+      <div id="batchStatus"></div>
+
+      <div class="table-scroll" id="batchTableWrap" style="display:none;">
+        <table class="results">
+          <thead><tr><th>File</th><th>Size</th><th>Hash</th><th></th></tr></thead>
+          <tbody id="batchTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="btn-row" id="exportRow" style="display:none; margin-top:14px;">
+        <button class="btn" id="exportCsvBtn">Export CSV</button>
+        <button class="btn" id="exportJsonBtn">Export JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DUPLICATE FINDER ============ -->
+  <div class="tab-panel" id="panel-dup" style="display:none;">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="12" height="12" rx="2"/><rect x="8" y="8" width="12" height="12" rx="2"/></svg>
+        <h2>Find duplicate files</h2>
+      </div>
+      <p class="panel-sub">Groups the files staged and hashed in the "Batch Hash" tab by identical content — regardless of filename.</p>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="findDupBtn">Find Duplicates</button>
+      </div>
+
+      <div id="dupStatus"></div>
+      <div class="summary-grid" id="dupSummary" style="display:none;"></div>
+      <div id="dupGroups"></div>
+    </div>
+  </div>
+
+  <!-- ============ COMPARE SETS ============ -->
+  <div class="tab-panel" id="panel-compare" style="display:none;">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v18M16 3v18M4 8l4-5 4 5M20 16l-4 5-4-5"/></svg>
+        <h2>Compare two sets of files</h2>
+      </div>
+      <p class="panel-sub">Stage two folders/sets (e.g. an old backup and a new one) to see what was added, removed, or modified — matched by file name and compared by content hash.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Set A</label>
+          <div class="dropzone" id="dropzoneA" style="padding:22px;">
+            <p style="margin:0 0 10px 0; font-size:13px;">Drop files/folder here</p>
+            <div class="btn-row" style="justify-content:center;">
+              <button class="btn btn-sm" id="chooseAFilesBtn">Choose Files</button>
+              <button class="btn btn-sm" id="chooseAFolderBtn">Choose Folder</button>
+            </div>
+            <input type="file" id="aFileInput" multiple>
+            <input type="file" id="aFolderInput" webkitdirectory directory multiple>
+          </div>
+          <div class="progress-label" id="countA">0 files staged</div>
+        </div>
+        <div class="field">
+          <label>Set B</label>
+          <div class="dropzone" id="dropzoneB" style="padding:22px;">
+            <p style="margin:0 0 10px 0; font-size:13px;">Drop files/folder here</p>
+            <div class="btn-row" style="justify-content:center;">
+              <button class="btn btn-sm" id="chooseBFilesBtn">Choose Files</button>
+              <button class="btn btn-sm" id="chooseBFolderBtn">Choose Folder</button>
+            </div>
+            <input type="file" id="bFileInput" multiple>
+            <input type="file" id="bFolderInput" webkitdirectory directory multiple>
+          </div>
+          <div class="progress-label" id="countB">0 files staged</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="compareBtn">Compare Sets</button>
+        <button class="btn btn-ghost" id="clearCompareBtn">Clear both</button>
+      </div>
+
+      <div class="progress-wrap" id="compareProgressWrap" style="display:none;">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="compareProgressFill" style="width:0%;"></div></div>
+        <div class="progress-label" id="compareProgressLabel"></div>
+      </div>
+
+      <div id="compareStatus"></div>
+      <div class="summary-grid" id="compareSummary" style="display:none;"></div>
+      <div class="table-scroll" id="compareTableWrap" style="display:none;">
+        <table class="results">
+          <thead><tr><th>File</th><th>Status</th><th>Set A hash</th><th>Set B hash</th></tr></thead>
+          <tbody id="compareTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+    Everything runs locally via the Web Crypto API. No file is ever transmitted.
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+  // ════════════════════════════════════════════════════════════
+  //  THEME SYNC KEY — must match the main index.html exactly
+  // ════════════════════════════════════════════════════════════
+  const THEME_KEY = 'cryptokit-theme';
+
+  // ---------------- Back Button Smart Navigation ----------------
+  document.getElementById('homeBtn').addEventListener('click', function(e) {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    let sameSite = false;
+    try {
+      sameSite = !!document.referrer && new URL(document.referrer).origin === location.origin;
+    } catch (_) {}
+    if (sameSite && history.length > 1) {
+      history.back();
+      setTimeout(function() {
+        if (!document.hidden) location.href = '../index.html';
+      }, 400);
+    } else {
+      location.href = '../index.html';
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════
+  //  THEME MANAGEMENT
+  // ════════════════════════════════════════════════════════════
+  const themeToggle = document.getElementById('themeToggle');
+  const themeLabel  = document.getElementById('themeLabel');
+
+  function applyTheme(theme, saveToStorage) {
+    if (theme !== 'hacker') theme = 'normal';
+    document.documentElement.setAttribute('data-theme', theme);
+    themeLabel.textContent = (theme === 'hacker') ? 'HACKER' : 'Normal';
+    if (saveToStorage) {
+      try { localStorage.setItem(THEME_KEY, theme); } catch(_){}
+    }
+  }
+
+  let savedTheme = 'normal';
+  try { savedTheme = localStorage.getItem(THEME_KEY) || 'normal'; } catch(_){}
+  if (savedTheme !== 'hacker') savedTheme = 'normal';
+  applyTheme(savedTheme, false);
+
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = (current === 'hacker' ? 'normal' : 'hacker');
+    applyTheme(next, true);
+  });
+
+  window.addEventListener('storage', function(e) {
+    if (e.key === THEME_KEY && e.newValue) {
+      applyTheme(e.newValue, false);
+    }
+  });
+
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+      let current = 'normal';
+      try { current = localStorage.getItem(THEME_KEY) || 'normal'; } catch(_){}
+      if (current !== 'hacker') current = 'normal';
+      if (current !== document.documentElement.getAttribute('data-theme')) {
+        applyTheme(current, false);
+      }
+    }
+  });
+
+  // ---------------- Tabs ----------------
+  const tabs = document.querySelectorAll('.tab');
+  const panels = { batch:'panel-batch', dup:'panel-dup', compare:'panel-compare' };
+  tabs.forEach(t=>{
+    t.addEventListener('click', ()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      Object.values(panels).forEach(id=>document.getElementById(id).style.display='none');
+      document.getElementById(panels[t.dataset.tab]).style.display='block';
+    });
+  });
+
+  // ---------------- Helpers ----------------
+  function statusHTML(kind, title, msg){
+    const icons = {
+      good: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3L16 10"/></svg>',
+      bad: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+      warn: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>'
+    };
+    return `<div class="status status-${kind}">${icons[kind]}<div><strong>${title}</strong>${msg}</div></div>`;
+  }
+  function fmtBytes(n){
+    if(n < 1024) return n + ' B';
+    if(n < 1024*1024) return (n/1024).toFixed(1) + ' KB';
+    if(n < 1024*1024*1024) return (n/1024/1024).toFixed(1) + ' MB';
+    return (n/1024/1024/1024).toFixed(2) + ' GB';
+  }
+  function abToHex(buf){
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  async function hashFile(file, algo){
+    const buf = await file.arrayBuffer();
+    const digest = await crypto.subtle.digest(algo, buf);
+    return abToHex(digest);
+  }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function download(filename, content, type){
+    const blob = new Blob([content], {type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ================= BATCH HASH =================
+  let batchFiles = [];
+
+  function addBatchFiles(fileListLike){
+    Array.from(fileListLike).forEach(file=>{
+      const name = file.webkitRelativePath || file.name;
+      if(!batchFiles.some(f=>f.name===name && f.size===file.size)){
+        batchFiles.push({ name, size:file.size, file, hash:null });
+      }
+    });
+    renderBatchSummary();
+  }
+
+  document.getElementById('chooseFilesBtn').addEventListener('click', ()=> document.getElementById('fileInput').click());
+  document.getElementById('chooseFolderBtn').addEventListener('click', ()=> document.getElementById('folderInput').click());
+  document.getElementById('fileInput').addEventListener('change', e=> addBatchFiles(e.target.files));
+  document.getElementById('folderInput').addEventListener('change', e=> addBatchFiles(e.target.files));
+  const batchDropzone = document.getElementById('batchDropzone');
+  ['dragenter','dragover'].forEach(evt=> batchDropzone.addEventListener(evt, e=>{ e.preventDefault(); batchDropzone.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(evt=> batchDropzone.addEventListener(evt, e=>{ e.preventDefault(); batchDropzone.classList.remove('drag'); }));
+  batchDropzone.addEventListener('drop', e=>{ if(e.dataTransfer.files.length) addBatchFiles(e.dataTransfer.files); });
+
+  function renderBatchSummary(){
+    const summary = document.getElementById('batchSummary');
+    if(batchFiles.length === 0){ summary.style.display='none'; return; }
+    const totalSize = batchFiles.reduce((s,f)=>s+f.size,0);
+    const hashedCount = batchFiles.filter(f=>f.hash).length;
+    summary.style.display = 'grid';
+    summary.innerHTML = `
+      <div class="summary-stat"><div class="num">${batchFiles.length}</div><div class="lbl">Files staged</div></div>
+      <div class="summary-stat"><div class="num">${fmtBytes(totalSize)}</div><div class="lbl">Total size</div></div>
+      <div class="summary-stat good"><div class="num">${hashedCount}</div><div class="lbl">Hashed</div></div>
+      <div class="summary-stat"><div class="num">${batchFiles.length-hashedCount}</div><div class="lbl">Pending</div></div>`;
+  }
+
+  document.getElementById('clearBatchBtn').addEventListener('click', ()=>{
+    batchFiles = [];
+    document.getElementById('batchSummary').style.display='none';
+    document.getElementById('batchTableWrap').style.display='none';
+    document.getElementById('exportRow').style.display='none';
+    document.getElementById('batchStatus').innerHTML = '';
+    document.getElementById('progressWrap').style.display='none';
+  });
+
+  function renderBatchTable(){
+    const body = document.getElementById('batchTableBody');
+    body.innerHTML = batchFiles.map((f,i)=>`
+      <tr>
+        <td class="name" title="${esc(f.name)}">${esc(f.name)}</td>
+        <td>${fmtBytes(f.size)}</td>
+        <td class="hash" title="${f.hash||''}">${f.hash ? f.hash.slice(0,24)+'…' : '—'}</td>
+        <td>${f.hash ? `<button class="btn btn-sm copy-hash" data-hash="${f.hash}">Copy</button>` : ''}</td>
+      </tr>`).join('');
+    document.getElementById('batchTableWrap').style.display = 'block';
+    body.querySelectorAll('.copy-hash').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        navigator.clipboard.writeText(btn.dataset.hash);
+        const old = btn.textContent; btn.textContent='Copied!';
+        setTimeout(()=>{ btn.textContent = old; }, 1000);
+      });
+    });
+  }
+
+  document.getElementById('hashAllBtn').addEventListener('click', async ()=>{
+    const status = document.getElementById('batchStatus');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressFill = document.getElementById('progressFill');
+    const progressLabel = document.getElementById('progressLabel');
+    if(batchFiles.length === 0){
+      status.innerHTML = statusHTML('warn','No files staged', 'Add files above first.');
+      return;
+    }
+    const algo = document.getElementById('hashAlgo').value;
+    progressWrap.style.display = 'block';
+    status.innerHTML = '';
+    for(let i=0;i<batchFiles.length;i++){
+      batchFiles[i].hash = await hashFile(batchFiles[i].file, algo);
+      batchFiles[i].algorithm = algo;
+      const pct = Math.round(((i+1)/batchFiles.length)*100);
+      progressFill.style.width = pct+'%';
+      progressLabel.textContent = `Hashing ${i+1} of ${batchFiles.length} — ${batchFiles[i].name}`;
+      if(i % 5 === 0) { renderBatchSummary(); await new Promise(r=>setTimeout(r,0)); }
+    }
+    renderBatchSummary();
+    renderBatchTable();
+    document.getElementById('exportRow').style.display = 'flex';
+    progressLabel.textContent = `Done — ${batchFiles.length} file(s) hashed with ${algo}.`;
+    status.innerHTML = statusHTML('good','Batch hashing complete', `${batchFiles.length} file(s) fingerprinted with ${algo}. Export as CSV/JSON, or head to the Duplicate Finder tab.`);
+  });
+
+  document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
+    const rows = [['file','size_bytes','algorithm','hash']];
+    batchFiles.forEach(f=> rows.push([f.name, f.size, f.algorithm||'', f.hash||'']));
+    const csv = rows.map(r=> r.map(v=> `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    download('batch-hashes.csv', csv, 'text/csv');
+  });
+  document.getElementById('exportJsonBtn').addEventListener('click', ()=>{
+    const out = batchFiles.map(f=>({ file:f.name, size:f.size, algorithm:f.algorithm, hash:f.hash }));
+    download('batch-hashes.json', JSON.stringify(out, null, 2), 'application/json');
+  });
+
+  // ================= DUPLICATE FINDER =================
+  document.getElementById('findDupBtn').addEventListener('click', ()=>{
+    const status = document.getElementById('dupStatus');
+    const summary = document.getElementById('dupSummary');
+    const groupsEl = document.getElementById('dupGroups');
+    const hashed = batchFiles.filter(f=>f.hash);
+    if(hashed.length === 0){
+      status.innerHTML = statusHTML('warn','No hashed files', 'Go to the Batch Hash tab, stage files, and click "Hash All Files" first.');
+      summary.style.display='none'; groupsEl.innerHTML=''; return;
+    }
+    const byHash = {};
+    hashed.forEach(f=>{ (byHash[f.hash] = byHash[f.hash] || []).push(f); });
+    const dupGroups = Object.entries(byHash).filter(([h,files])=> files.length > 1);
+    const uniqueCount = Object.keys(byHash).length - dupGroups.length;
+    const dupFileCount = dupGroups.reduce((s,[h,files])=>s+files.length,0);
+    const wastedBytes = dupGroups.reduce((s,[h,files])=> s + files[0].size*(files.length-1), 0);
+
+    summary.style.display = 'grid';
+    summary.innerHTML = `
+      <div class="summary-stat"><div class="num">${hashed.length}</div><div class="lbl">Files checked</div></div>
+      <div class="summary-stat ${dupGroups.length?'bad':'good'}"><div class="num">${dupGroups.length}</div><div class="lbl">Duplicate groups</div></div>
+      <div class="summary-stat good"><div class="num">${uniqueCount}</div><div class="lbl">Unique files</div></div>
+      <div class="summary-stat"><div class="num">${fmtBytes(wastedBytes)}</div><div class="lbl">Reclaimable space</div></div>`;
+
+    if(dupGroups.length === 0){
+      status.innerHTML = statusHTML('good','No duplicates found', 'Every staged file has unique content.');
+      groupsEl.innerHTML = '';
+      return;
+    }
+    status.innerHTML = statusHTML('warn', `${dupGroups.length} duplicate group(s) found`, `${dupFileCount} files share content with at least one other file.`);
+    groupsEl.innerHTML = dupGroups.map(([hash, files])=>`
+      <div class="dup-group">
+        <div class="gh"><span>${hash.slice(0,32)}…</span><span class="chip dup">${files.length} copies</span></div>
+        <ul>${files.map(f=>`<li>${esc(f.name)} <span style="color:var(--ink-faint)">(${fmtBytes(f.size)})</span></li>`).join('')}</ul>
+      </div>`).join('');
+  });
+
+  // ================= COMPARE SETS =================
+  let setA = [], setB = [];
+
+  function addToSet(setArr, fileListLike){
+    Array.from(fileListLike).forEach(file=>{
+      const name = file.webkitRelativePath || file.name;
+      if(!setArr.some(f=>f.name===name && f.size===file.size)){
+        setArr.push({ name, size:file.size, file });
+      }
+    });
+  }
+  document.getElementById('chooseAFilesBtn').addEventListener('click', ()=> document.getElementById('aFileInput').click());
+  document.getElementById('chooseAFolderBtn').addEventListener('click', ()=> document.getElementById('aFolderInput').click());
+  document.getElementById('aFileInput').addEventListener('change', e=>{ addToSet(setA, e.target.files); document.getElementById('countA').textContent = `${setA.length} files staged`; });
+  document.getElementById('aFolderInput').addEventListener('change', e=>{ addToSet(setA, e.target.files); document.getElementById('countA').textContent = `${setA.length} files staged`; });
+
+  document.getElementById('chooseBFilesBtn').addEventListener('click', ()=> document.getElementById('bFileInput').click());
+  document.getElementById('chooseBFolderBtn').addEventListener('click', ()=> document.getElementById('bFolderInput').click());
+  document.getElementById('bFileInput').addEventListener('change', e=>{ addToSet(setB, e.target.files); document.getElementById('countB').textContent = `${setB.length} files staged`; });
+  document.getElementById('bFolderInput').addEventListener('change', e=>{ addToSet(setB, e.target.files); document.getElementById('countB').textContent = `${setB.length} files staged`; });
+
+  const dzA = document.getElementById('dropzoneA'), dzB = document.getElementById('dropzoneB');
+  [[dzA,setA,'countA'],[dzB,setB,'countB']].forEach(([dz, arr, countId])=>{
+    ['dragenter','dragover'].forEach(evt=> dz.addEventListener(evt, e=>{ e.preventDefault(); dz.classList.add('drag'); }));
+    ['dragleave','drop'].forEach(evt=> dz.addEventListener(evt, e=>{ e.preventDefault(); dz.classList.remove('drag'); }));
+    dz.addEventListener('drop', e=>{
+      if(e.dataTransfer.files.length){ addToSet(arr, e.dataTransfer.files); document.getElementById(countId).textContent = `${arr.length} files staged`; }
+    });
+  });
+
+  document.getElementById('clearCompareBtn').addEventListener('click', ()=>{
+    setA = []; setB = [];
+    document.getElementById('countA').textContent = '0 files staged';
+    document.getElementById('countB').textContent = '0 files staged';
+    document.getElementById('compareStatus').innerHTML = '';
+    document.getElementById('compareSummary').style.display = 'none';
+    document.getElementById('compareTableWrap').style.display = 'none';
+  });
+
+  document.getElementById('compareBtn').addEventListener('click', async ()=>{
+    const status = document.getElementById('compareStatus');
+    const progressWrap = document.getElementById('compareProgressWrap');
+    const progressFill = document.getElementById('compareProgressFill');
+    const progressLabel = document.getElementById('compareProgressLabel');
+    if(setA.length === 0 && setB.length === 0){
+      status.innerHTML = statusHTML('warn','Nothing staged', 'Add files to Set A and/or Set B first.');
+      return;
+    }
+    const algo = 'SHA-256';
+    const all = [...setA.map(f=>({...f,__set:'A'})), ...setB.map(f=>({...f,__set:'B'}))];
+    progressWrap.style.display = 'block';
+    status.innerHTML = '';
+    for(let i=0;i<all.length;i++){
+      all[i].hash = await hashFile(all[i].file, algo);
+      const pct = Math.round(((i+1)/all.length)*100);
+      progressFill.style.width = pct+'%';
+      progressLabel.textContent = `Hashing ${i+1} of ${all.length}`;
+      if(i % 5 === 0) await new Promise(r=>setTimeout(r,0));
+    }
+    const mapA = new Map(all.filter(f=>f.__set==='A').map(f=>[f.name, f]));
+    const mapB = new Map(all.filter(f=>f.__set==='B').map(f=>[f.name, f]));
+    const allNames = new Set([...mapA.keys(), ...mapB.keys()]);
+
+    let added=0, removed=0, modified=0, same=0;
+    const rows = [];
+    allNames.forEach(name=>{
+      const a = mapA.get(name), b = mapB.get(name);
+      if(a && !b){ removed++; rows.push({name, status:'removed', ha:a.hash, hb:''}); }
+      else if(!a && b){ added++; rows.push({name, status:'added', ha:'', hb:b.hash}); }
+      else if(a.hash === b.hash){ same++; rows.push({name, status:'same', ha:a.hash, hb:b.hash}); }
+      else { modified++; rows.push({name, status:'modified', ha:a.hash, hb:b.hash}); }
+    });
+    rows.sort((x,y)=>{
+      const order = {modified:0, added:1, removed:2, same:3};
+      return order[x.status]-order[y.status] || x.name.localeCompare(y.name);
+    });
+
+    document.getElementById('compareSummary').style.display = 'grid';
+    document.getElementById('compareSummary').innerHTML = `
+      <div class="summary-stat good"><div class="num">${added}</div><div class="lbl">Added (B only)</div></div>
+      <div class="summary-stat bad"><div class="num">${removed}</div><div class="lbl">Removed (A only)</div></div>
+      <div class="summary-stat" style="color:var(--warn)"><div class="num">${modified}</div><div class="lbl">Modified</div></div>
+      <div class="summary-stat"><div class="num">${same}</div><div class="lbl">Identical</div></div>`;
+
+    const body = document.getElementById('compareTableBody');
+    body.innerHTML = rows.map(r=>`
+      <tr>
+        <td class="name" title="${esc(r.name)}">${esc(r.name)}</td>
+        <td><span class="chip ${r.status}">${r.status}</span></td>
+        <td class="hash" title="${r.ha}">${r.ha ? r.ha.slice(0,16)+'…' : '—'}</td>
+        <td class="hash" title="${r.hb}">${r.hb ? r.hb.slice(0,16)+'…' : '—'}</td>
+      </tr>`).join('');
+    document.getElementById('compareTableWrap').style.display = 'block';
+    progressLabel.textContent = 'Comparison complete.';
+    status.innerHTML = statusHTML('good','Sets compared', `${allNames.size} unique filename(s) across both sets — ${modified} modified, ${added} added, ${removed} removed, ${same} identical.`);
+  });
+
+})();
+</script>
+</body>
+</html>
