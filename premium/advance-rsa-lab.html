@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced RSA Lab — CryptoKit Premium</title>
+<!-- Share Tech Mono for Hacker Mode -->
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  /* ---------------- NORMAL THEME ---------------- */
+  [data-theme="normal"] {
+    --bg-0:#eef0fc;
+    --surface:#ffffff;
+    --surface-soft:#f4f5fd;
+    --border:#e1e3f5;
+    --ink:#1c1f37;
+    --ink-soft:#5b5f7e;
+    --ink-faint:#9599b8;
+    --accent-1:#6366f1;
+    --accent-2:#38bdf8;
+    --accent-soft:#eef0fe;
+    --gold-1:#d97706;
+    --gold-2:#f59e0b;
+    --gold-bg:#fef3e2;
+    --gold-border:#fbd999;
+    --good:#1f9d68; --good-bg:#eafaf2;
+    --warn:#b4700a; --warn-bg:#fff6e6;
+    --bad:#d0483f; --bad-bg:#fdeceb;
+    --crit:#b91c1c; --crit-bg:#fde3e2;
+    --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+    --font-display: 'Arial Rounded MT Bold', 'Arial Rounded MT', ui-rounded, 'SF Pro Rounded', 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+
+  /* ---------------- HACKER THEME ---------------- */
+  [data-theme="hacker"] {
+    --bg-0:#000000;
+    --surface:#050505;
+    --surface-soft:#0a0a0a;
+    --border:rgba(0, 255, 65, 0.25);
+    --ink:#00FF41;
+    --ink-soft:#00CC33;
+    --ink-faint:#006611;
+    --accent-1:#00FF41;
+    --accent-2:#39FF14;
+    --accent-soft:rgba(0, 255, 65, 0.08);
+    --gold-1:#00FF41;
+    --gold-2:#39FF14;
+    --gold-bg:rgba(0, 255, 65, 0.05);
+    --gold-border:rgba(0, 255, 65, 0.3);
+    --good:#00FF41; --good-bg:rgba(0, 255, 65, 0.08);
+    --warn:#FFD700; --warn-bg:rgba(255, 215, 0, 0.1);
+    --bad:#FF0040; --bad-bg:rgba(255, 0, 64, 0.12);
+    --crit:#FF0040; --crit-bg:rgba(255, 0, 64, 0.15);
+    --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+    --font-display: 'Share Tech Mono', monospace;
+    --font-body: 'Share Tech Mono', monospace;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg-0);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Normal background details */
+  [data-theme="normal"] body {
+    background:
+      radial-gradient(1100px 500px at 12% -8%, #f8ecd8 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #e7f1fb 0%, transparent 55%),
+      var(--bg-0);
+  }
+
+  /* Hacker background details */
+  [data-theme="hacker"] body {
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(0,255,65,0.06), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(57,255,20,0.04), transparent 60%);
+  }
+
+  /* Hacker CRT grid */
+  [data-theme="hacker"] body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px; z-index: -1; pointer-events: none;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove {
+    0%   { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+  }
+
+  .wrap{ max-width:1080px; margin:0 auto; padding:36px 24px 80px; position:relative; z-index:2; }
+
+  .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:34px; flex-wrap:wrap; gap:12px;}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+    background:var(--surface); border:1px solid var(--border);
+    padding:9px 16px; border-radius:999px; font-size:13.5px; color:var(--ink-soft); font-weight:500;
+    transition: all 0.3s ease;
+  }
+  .back-pill{ color:var(--ink); cursor:pointer; }
+  .back-pill:hover { border-color: var(--accent-1); color: var(--accent-1); transform: translateX(-2px); }
+
+  [data-theme="hacker"] .pill { text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; background: rgba(0,255,65,0.03); box-shadow: 0 0 10px rgba(0,255,65,0.03); }
+  [data-theme="hacker"] .back-pill:hover { box-shadow: 0 0 16px rgba(0,255,65,0.2); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .lock-pill{ color:var(--accent-1); font-weight:600; }
+  .lock-pill svg{ color:var(--accent-1); }
+  [data-theme="hacker"] .lock-pill { text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .toggle-pill{ gap:10px; cursor:pointer; user-select:none; }
+  .switch{ width:34px; height:19px; border-radius:999px; background:#d5d8ee; position:relative; flex-shrink:0; transition: background 0.3s; }
+  .switch::after{
+    content:''; position:absolute; top:2px; left:2px; width:15px; height:15px;
+    border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Hacker Theme Switch Styling */
+  [data-theme="hacker"] .switch { background: rgba(0,255,65,0.3); }
+  [data-theme="hacker"] .switch::after { left: 17px; background: var(--accent-1); box-shadow: 0 0 8px var(--accent-1); }
+  [data-theme="hacker"] #themeLabel { text-shadow: 0 0 6px rgba(0,255,65,0.4); }
+
+  .kicker{
+    display:inline-flex; align-items:center; gap:7px;
+    background:var(--gold-bg); border:1px solid var(--gold-border);
+    padding:7px 14px; border-radius:999px;
+    font-size:11.5px; letter-spacing:.08em; color:var(--gold-1); font-weight:800;
+    margin-bottom:18px; transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .kicker { box-shadow: 0 0 12px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .hero{ display:flex; gap:20px; align-items:flex-start; margin-bottom:16px; }
+  .hero-icon{
+    width:58px; height:58px; border-radius:16px; flex-shrink:0;
+    background:linear-gradient(135deg, var(--gold-1), var(--gold-2));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px -8px rgba(217,119,6,.5);
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .hero-icon { background: transparent; border: 2px solid var(--accent-1); box-shadow: 0 0 20px rgba(0,255,65,0.25); animation: pulseHacker 2s infinite; }
+  [data-theme="hacker"] .hero-icon svg { stroke: var(--accent-1); }
+  @keyframes pulseHacker { 0%, 100% { box-shadow: 0 0 20px rgba(0,255,65,0.25); } 50% { box-shadow: 0 0 35px rgba(0,255,65,0.5); } }
+
+  .hero h1{
+    font-family:var(--font-display); font-weight:800; font-size:34px; line-height:1.15;
+    margin:0 0 10px 0; letter-spacing:-.01em;
+    background:linear-gradient(90deg, var(--gold-1), #ef8f1e);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .hero h1 { background:none; color: var(--accent-1); -webkit-text-fill-color: var(--accent-1); text-shadow: 0 0 15px rgba(0,255,65,0.4); letter-spacing: 2px; }
+
+  .hero p{ margin:0; color:var(--ink-soft); font-size:15.5px; line-height:1.55; max-width:660px; }
+
+  .tag-row{ display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 30px 78px; }
+  .tag{
+    font-family:var(--font-mono); font-size:13px; color:var(--ink-faint);
+    background:var(--surface); border:1px solid var(--border);
+    padding:8px 18px; border-radius:999px; transition: all 0.3s ease;
+  }
+  .tag.tag-gold{ color:var(--gold-1); border-color:var(--gold-border); background:var(--gold-bg); font-family:var(--font-body); font-weight:700; }
+  [data-theme="hacker"] .tag.tag-gold { box-shadow: 0 0 10px rgba(0,255,65,0.15); text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .premium-strip{
+    display:flex; align-items:center; gap:8px;
+    background:var(--gold-bg); border:1px solid var(--gold-border); border-radius:var(--radius-md);
+    padding:12px 18px; margin-bottom:20px; font-size:13.5px; color:var(--gold-1); font-weight:700;
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .premium-strip { box-shadow: 0 0 15px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  /* ---------------- Tabs ---------------- */
+  .tabs{
+    display:flex; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:6px; gap:4px; margin-bottom:22px; flex-wrap:wrap;
+    box-shadow:0 2px 10px -6px rgba(30,35,80,.08);
+    transition: all 0.4s ease;
+  }
+  [data-theme="hacker"] .tabs { box-shadow: 0 0 20px rgba(0,255,65,0.03); }
+
+  .tab{
+    flex:1; min-width:140px; display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:12px 14px; border-radius:11px; cursor:pointer;
+    font-size:13.5px; font-weight:600; color:var(--ink-faint);
+    border:none; background:transparent; font-family:var(--font-body);
+    transition:background .15s ease, color .15s ease, box-shadow .2s ease;
+  }
+  .tab svg{ opacity:.75; }
+  .tab.active{ background:linear-gradient(90deg, var(--gold-bg), #fff3e0); color:var(--gold-1); }
+  .tab.active svg{ opacity:1; }
+  .tab:not(.active):hover{ color:var(--ink-soft); background:var(--surface-soft); }
+
+  [data-theme="hacker"] .tab { text-transform: uppercase; letter-spacing: 1px; font-size: 11.5px; }
+  [data-theme="hacker"] .tab.active { background: rgba(0,255,65,0.08); color: var(--accent-1); border:1px solid rgba(0,255,65,0.3); box-shadow: 0 0 14px rgba(0,255,65,0.12); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+  [data-theme="hacker"] .tab:not(.active):hover { background: rgba(0,255,65,0.04); color: var(--ink-soft); }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:32px;
+    box-shadow:0 4px 24px -12px rgba(30,35,80,.10);
+    transition: all 0.4s ease;
+  }
+  [data-theme="hacker"] .panel { box-shadow: 0 0 25px rgba(0,255,65,0.02); }
+  [data-theme="hacker"] .panel:hover { border-color: rgba(0,255,65,0.35); box-shadow: 0 0 30px rgba(0,255,65,0.06); }
+
+  .panel + .panel{ margin-top:20px; }
+  .panel-head{ display:flex; align-items:center; gap:9px; margin-bottom:6px; }
+  .panel-head svg{ color:var(--gold-1); flex-shrink:0; }
+  .panel-head h2{ font-size:18px; margin:0; font-weight:700; }
+  [data-theme="hacker"] .panel-head h2 { text-shadow: 0 0 10px rgba(0,255,65,0.3); letter-spacing: 1px; }
+
+  .panel-sub{ color:var(--ink-soft); font-size:14px; margin:0 0 20px 0; line-height:1.5; }
+  .panel-sub code{ font-family:var(--font-mono); background:var(--surface-soft); padding:1px 5px; border-radius:4px; }
+
+  .field{ margin-bottom:18px; }
+  .field label{ display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:8px; text-transform:uppercase; letter-spacing:.05em; }
+  [data-theme="hacker"] .field label { color: rgba(0,255,65,0.6); }
+  .hint{ font-size:12.5px; color:var(--ink-faint); margin-top:6px; }
+
+  select, input[type=text], input[type=number], textarea{
+    width:100%; padding:11px 13px; border-radius:var(--radius-sm);
+    border:1px solid var(--border); background:var(--surface-soft);
+    font-size:14px; font-family:var(--font-mono); color:var(--ink); outline:none;
+    transition: all 0.3s ease;
+  }
+  select:focus, input:focus, textarea:focus{ border-color:var(--gold-2); background:var(--surface); box-shadow: 0 0 0 3px var(--gold-bg); }
+  [data-theme="hacker"] select:focus, [data-theme="hacker"] input:focus, [data-theme="hacker"] textarea:focus { box-shadow: 0 0 0 3px rgba(0,255,65,0.1), 0 0 15px rgba(0,255,65,0.1); }
+  [data-theme="hacker"] select option { background:#050505; color:var(--ink); }
+  textarea{ font-size:12px; min-height:120px; resize:vertical; line-height:1.6; }
+
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .field-row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
+  @media(max-width:640px){ .field-row, .field-row3{ grid-template-columns:1fr; } }
+
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 18px; border-radius:var(--radius-sm);
+    font-size:14px; font-weight:600; font-family:var(--font-body);
+    cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--ink);
+    transition:all .15s ease;
+  }
+  .btn:hover{ background:var(--surface-soft); border-color:var(--ink-soft); }
+  .btn:active{ transform:scale(.98); }
+  [data-theme="hacker"] .btn { text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+
+  .btn-primary{
+    background:linear-gradient(90deg, var(--gold-1), var(--gold-2));
+    border:none; color:#fff; box-shadow:0 8px 20px -8px rgba(217,119,6,.5);
+  }
+  [data-theme="hacker"] .btn-primary { background: var(--accent-1); color: #000; box-shadow: 0 0 15px rgba(0,255,65,0.3); font-weight: 800; }
+  .btn-primary:hover{ filter:brightness(1.05); transform: translateY(-1px); }
+  [data-theme="hacker"] .btn-primary:hover { box-shadow: 0 0 25px rgba(0,255,65,0.6); }
+  .btn-primary:disabled{ opacity:.5; cursor:not-allowed; box-shadow:none; }
+
+  .btn-ghost{ background:transparent; border:1px dashed var(--border); color:var(--ink-soft); }
+  [data-theme="hacker"] .btn-ghost:hover { border-color: var(--accent-1); color: var(--accent-1); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .kv-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:16px; }
+  @media(max-width:640px){ .kv-grid{ grid-template-columns:1fr; } }
+  .kv-card{ border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 16px; background:var(--surface-soft); transition: all 0.3s ease; }
+  .kv-card:hover{ border-color:var(--ink-faint); }
+  [data-theme="hacker"] .kv-card:hover { border-color: var(--accent-1); box-shadow: 0 0 15px rgba(0,255,65,0.08); }
+  .kv-card .k{ font-size:11.5px; color:var(--ink-faint); font-weight:700; letter-spacing:.04em; text-transform:uppercase; margin-bottom:6px; }
+  .kv-card .v{ font-family:var(--font-mono); font-size:13px; color:var(--ink); word-break:break-all; line-height:1.5; }
+  .kv-card .v.big{ font-family:var(--font-display); font-size:20px; font-weight:800; color:var(--gold-1); word-break:normal; }
+  [data-theme="hacker"] .kv-card .v.big { text-shadow: 0 0 10px rgba(0,255,65,0.4); }
+
+  .copy-btn{ font-size:11.5px; font-weight:600; color:var(--gold-1); background:none; border:none; cursor:pointer; padding:2px 6px; border-radius:5px; float:right; font-family:var(--font-body);}
+  .copy-btn:hover{ background:var(--gold-bg); }
+  [data-theme="hacker"] .copy-btn:hover { text-shadow: 0 0 8px rgba(0,255,65,0.5); }
+
+  .status{ display:flex; align-items:flex-start; gap:10px; border-radius:var(--radius-md); padding:14px 16px; margin-top:18px; font-size:14px; line-height:1.5; border:1px solid transparent; transition: all 0.3s ease; }
+  .status svg{ flex-shrink:0; margin-top:1px; }
+  .status-good{ background:var(--good-bg); color:var(--good); }
+  .status-bad{ background:var(--bad-bg); color:var(--bad); }
+  .status-warn{ background:var(--warn-bg); color:var(--warn); }
+  .status strong{ display:block; margin-bottom:2px; }
+  [data-theme="hacker"] .status-good{ border-color:var(--good); box-shadow:0 0 15px rgba(0,255,65,0.1); text-shadow:0 0 5px rgba(0,255,65,0.4); }
+  [data-theme="hacker"] .status-bad{ border-color:var(--bad); box-shadow:0 0 15px rgba(255,0,64,0.12); }
+  [data-theme="hacker"] .status-warn{ border-color:var(--warn); box-shadow:0 0 15px rgba(255,215,0,0.1); }
+
+  .strength-bar-bg{ height:8px; border-radius:999px; background:var(--surface-soft); overflow:hidden; border:1px solid var(--border); margin-top:6px; }
+  .strength-bar-fill{ height:100%; border-radius:999px; transition: width .5s ease; }
+  [data-theme="hacker"] .strength-bar-fill { box-shadow: 0 0 10px currentColor; }
+
+  .output-box{
+    display:flex; align-items:flex-start; gap:10px; margin-top:18px;
+    background:var(--surface-soft); border:1px solid var(--border);
+    border-radius:var(--radius-md); padding:16px; transition: all .3s ease;
+  }
+  [data-theme="hacker"] .output-box { box-shadow: inset 0 0 20px rgba(0,255,65,0.03); }
+  .output-box .txt{ flex:1; font-family:var(--font-mono); font-size:12.5px; line-height:1.6; color:var(--ink); word-break:break-all; white-space:pre-wrap; max-height:200px; overflow-y:auto; }
+
+  .info-box{ display:flex; gap:10px; align-items:flex-start; background:var(--accent-soft); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 16px; font-size:13px; color:var(--ink-soft); line-height:1.55; margin-top:16px; transition: all .3s ease;}
+  .info-box svg{ flex-shrink:0; color:var(--accent-1); margin-top:1px; }
+  .info-box.gold{ background:var(--gold-bg); border-color:var(--gold-border); }
+  .info-box.gold svg{ color:var(--gold-1); }
+  [data-theme="hacker"] .info-box { box-shadow: 0 0 12px rgba(0,255,65,0.04); }
+
+  table.records{ width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
+  table.records th{ text-align:left; font-size:11.5px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; padding:8px 10px; border-bottom:1px solid var(--border); }
+  table.records td{ padding:9px 10px; border-bottom:1px solid var(--border); color:var(--ink-soft); }
+  table.records tr:last-child td{ border-bottom:none; }
+  table.records td.strong{ color:var(--ink); font-weight:600; }
+  [data-theme="hacker"] table.records tr:hover td { background: rgba(0,255,65,0.04); }
+
+  .divider{ height:1px; background:var(--border); margin:26px 0; transition: background 0.3s; }
+  .footnote{ text-align:center; color:var(--ink-faint); font-size:12.5px; margin-top:26px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  [data-theme="hacker"] .footnote { letter-spacing: 1px; text-shadow: 0 0 5px rgba(0,255,65,0.2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="../index.html" class="pill back-pill" id="homeBtn" title="Go back to Home">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to CryptoKit
+    </a>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="pill lock-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+        100% Client-Side — Nothing Ever Leaves Your Browser
+      </div>
+      <div class="pill toggle-pill" id="themeToggle" title="Toggle Theme">
+        <span id="themeLabel">Normal</span>
+        <span class="switch"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="kicker">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-7.4L2.5 8l6.5-1z"/></svg>
+    Premium Tool
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 006.2 21h11.6a2 2 0 001.7-3.5L14 8V3"/>
+        <path d="M7.5 15h9"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Advanced RSA Lab</h1>
+      <p>Inspect real RSA keys down to their prime factors and CRT parameters, compare padding schemes side by side, and see live why key size matters with a factorization demo — all locally in your browser.</p>
+    </div>
+  </div>
+
+  <div class="tag-row">
+    <span class="tag">CRT Parameters</span>
+    <span class="tag">OAEP / PSS</span>
+    <span class="tag tag-gold">★ Premium</span>
+  </div>
+
+  <div class="premium-strip">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-7.4L2.5 8l6.5-1z"/></svg>
+    Premium unlocked — full lab access
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="inspect">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      Key Inspector
+    </button>
+    <button class="tab" data-tab="encrypt">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+      Padding Lab
+    </button>
+    <button class="tab" data-tab="sign">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+      Sign Schemes
+    </button>
+    <button class="tab" data-tab="factor">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+      Factorization Demo
+    </button>
+  </div>
+
+  <!-- ============ KEY INSPECTOR ============ -->
+  <div class="tab-panel" id="panel-inspect">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <h2>Inspect a key</h2>
+      </div>
+      <p class="panel-sub">Paste a PEM public or private RSA key. For private keys, this reveals the raw prime factors (p, q) and CRT parameters — never share a private key with anyone else.</p>
+
+      <div class="field">
+        <label for="inspectKey">RSA key (PEM)</label>
+        <textarea id="inspectKey" placeholder="-----BEGIN PUBLIC KEY----- or -----BEGIN PRIVATE KEY-----&#10;...&#10;-----END KEY-----"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="inspectBtn">Inspect Key</button>
+        <button class="btn btn-ghost" id="genLabKeyBtn">Generate a lab key pair</button>
+      </div>
+
+      <div id="inspectStatus"></div>
+      <div id="inspectResults"></div>
+    </div>
+  </div>
+
+  <!-- ============ PADDING LAB ============ -->
+  <div class="tab-panel" id="panel-encrypt" style="display:none;">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+        <h2>OAEP padding lab</h2>
+      </div>
+      <p class="panel-sub">RSA-OAEP is the modern, secure padding scheme for encryption. Choose a hash and see exactly how much it eats into your usable message size.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="oaepPub">Public key (PEM)</label>
+          <textarea id="oaepPub" style="min-height:100px;" placeholder="-----BEGIN PUBLIC KEY-----"></textarea>
+        </div>
+        <div class="field">
+          <label for="oaepPriv">Private key (PEM, for decrypt)</label>
+          <textarea id="oaepPriv" style="min-height:100px;" placeholder="-----BEGIN PRIVATE KEY-----"></textarea>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="oaepHash">OAEP hash function</label>
+        <select id="oaepHash">
+          <option value="SHA-1">SHA-1 (legacy default, smaller overhead)</option>
+          <option value="SHA-256" selected>SHA-256 (recommended)</option>
+          <option value="SHA-384">SHA-384</option>
+          <option value="SHA-512">SHA-512</option>
+        </select>
+      </div>
+
+      <div class="kv-grid" id="capacityGrid" style="display:none;"></div>
+
+      <div class="field" style="margin-top:18px;">
+        <label for="oaepPlain">Message to encrypt</label>
+        <textarea id="oaepPlain" style="min-height:80px;" placeholder="Short message..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="oaepEncryptBtn">Encrypt</button>
+        <button class="btn" id="oaepDecryptBtn">Decrypt result below</button>
+      </div>
+
+      <div id="oaepStatus"></div>
+      <div class="output-box" id="oaepOutputBox" style="display:none;">
+        <div class="txt" id="oaepOutput"></div>
+      </div>
+
+      <div class="info-box gold">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+        <div><strong>Why not PKCS#1 v1.5 for encryption?</strong> It's vulnerable to padding-oracle attacks (the Bleichenbacher attack, 1998) where an attacker who can observe padding-valid/invalid errors can decrypt ciphertexts without the private key. OAEP is provably secure against this class of attack, so browsers only expose it for RSA encryption.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SIGN SCHEMES ============ -->
+  <div class="tab-panel" id="panel-sign" style="display:none;">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+        <h2>Compare signature schemes</h2>
+      </div>
+      <p class="panel-sub">RSASSA-PKCS1-v1_5 is deterministic and simple; RSA-PSS adds randomized salting and is the scheme recommended for new systems. Sign the same message with both and compare.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="signPrivKey">Private key (PEM)</label>
+          <textarea id="signPrivKey" style="min-height:100px;" placeholder="-----BEGIN PRIVATE KEY-----"></textarea>
+        </div>
+        <div class="field">
+          <label for="signPubKey">Public key (PEM, for verify)</label>
+          <textarea id="signPubKey" style="min-height:100px;" placeholder="-----BEGIN PUBLIC KEY-----"></textarea>
+        </div>
+      </div>
+
+      <div class="field-row3">
+        <div class="field">
+          <label for="signScheme">Scheme</label>
+          <select id="signScheme">
+            <option value="RSASSA-PKCS1-v1_5">RSASSA-PKCS1-v1_5</option>
+            <option value="RSA-PSS" selected>RSA-PSS</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="signHash">Hash</label>
+          <select id="signHash">
+            <option value="SHA-256" selected>SHA-256</option>
+            <option value="SHA-384">SHA-384</option>
+            <option value="SHA-512">SHA-512</option>
+          </select>
+        </div>
+        <div class="field" id="saltLenField">
+          <label for="saltLen">PSS salt length (bytes)</label>
+          <input type="number" id="saltLen" value="32" min="0" max="64">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="signMsg2">Message</label>
+        <textarea id="signMsg2" style="min-height:80px;" placeholder="Message to sign..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="signRunBtn">Sign &amp; Verify</button>
+      </div>
+
+      <div id="signStatus2"></div>
+      <div class="output-box" id="sigOutputBox" style="display:none;">
+        <div class="txt" id="sigOutput2"></div>
+      </div>
+
+      <div class="info-box gold">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+        <div><strong>Notice:</strong> sign the same message twice with PSS and you'll get a <em>different</em> signature each time (random salt) — but both still verify. PKCS1-v1_5 always produces the exact same signature for the same message and key.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FACTORIZATION DEMO ============ -->
+  <div class="tab-panel" id="panel-factor" style="display:none;">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+        <h2>Why key size matters: factor a small N yourself</h2>
+      </div>
+      <p class="panel-sub">RSA's security rests entirely on how hard it is to factor <code>n = p × q</code> back into its two primes. This demo factors <em>tiny</em> numbers in your browser (Pollard's rho) — real RSA moduli have 600+ digits, far beyond what any computer on Earth can factor.</p>
+
+      <div class="field">
+        <label for="factorN">Number to factor (try up to ~18 digits)</label>
+        <input type="text" id="factorN" placeholder="e.g. 3233, or generate one below" inputmode="numeric">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" id="genSmallBtn" data-bits="20">Generate 20-bit N</button>
+        <button class="btn" id="genMedBtn" data-bits="40">Generate 40-bit N</button>
+        <button class="btn btn-primary" id="factorBtn">Factor It</button>
+      </div>
+
+      <div id="factorStatus"></div>
+      <div class="kv-grid" id="factorResults" style="display:none;"></div>
+
+      <div class="divider"></div>
+
+      <h3 style="font-size:14px; margin:0 0 4px 0;">Real-world factoring records</h3>
+      <p class="panel-sub" style="margin-bottom:8px;">For context — public, well-documented milestones in RSA factoring history:</p>
+      <table class="records">
+        <thead><tr><th>Key size</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">512-bit</td><td>Broken</td><td>Routinely factored since ~1999; trivial today (minutes, cloud CPU)</td></tr>
+          <tr><td class="strong">768-bit</td><td>Broken</td><td>Factored in 2009 using hundreds of machines over ~2 years</td></tr>
+          <tr><td class="strong">829-bit (RSA-250)</td><td>Broken</td><td>Factored in 2020 using ~2,700 core-years</td></tr>
+          <tr><td class="strong">1024-bit</td><td>Deprecated</td><td>Not publicly factored, but considered within reach of well-funded attackers — disallowed by NIST since 2013</td></tr>
+          <tr><td class="strong">2048-bit</td><td>Current standard</td><td>No known feasible factoring attack; minimum recommended today</td></tr>
+          <tr><td class="strong">3072 / 4096-bit</td><td>Long-term / high-security</td><td>Recommended for data that must stay secure beyond ~2030</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+    Everything runs locally via the Web Crypto API and BigInt. No key or content is ever transmitted.
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+  // ════════════════════════════════════════════════════════════
+  //  THEME SYNC KEY — must match the main index.html exactly
+  //  Main page uses: localStorage.setItem('cryptokit-theme', mode)
+  // ════════════════════════════════════════════════════════════
+  const THEME_KEY = 'cryptokit-theme';
+
+  // ---------------- Back Button Smart Navigation ----------------
+  document.getElementById('homeBtn').addEventListener('click', function(e) {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    let sameSite = false;
+    try {
+      sameSite = !!document.referrer && new URL(document.referrer).origin === location.origin;
+    } catch (_) {}
+    if (sameSite && history.length > 1) {
+      history.back();
+      setTimeout(function() {
+        if (!document.hidden) location.href = '../index.html';
+      }, 400);
+    } else {
+      location.href = '../index.html';
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════
+  //  THEME MANAGEMENT — Reads & writes same localStorage key
+  //  so main page ↔ tool pages stay perfectly in sync
+  // ════════════════════════════════════════════════════════════
+  const themeToggle = document.getElementById('themeToggle');
+  const themeLabel  = document.getElementById('themeLabel');
+
+  function applyTheme(theme, saveToStorage) {
+    // Normalise legacy values
+    if (theme !== 'hacker') theme = 'normal';
+
+    document.documentElement.setAttribute('data-theme', theme);
+    if (themeLabel) themeLabel.textContent = (theme === 'hacker') ? 'HACKER' : 'Normal';
+
+    // Only write to storage when user explicitly toggles
+    if (saveToStorage) {
+      try { localStorage.setItem(THEME_KEY, theme); } catch(_){}
+    }
+  }
+
+  // ── Read saved theme on load (same key the main page writes) ──
+  let savedTheme = 'normal';
+  try { savedTheme = localStorage.getItem(THEME_KEY) || 'normal'; } catch(_){}
+  if (savedTheme !== 'hacker') savedTheme = 'normal';
+  applyTheme(savedTheme, false);
+
+  // ── Toggle on click ──
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = (current === 'hacker' ? 'normal' : 'hacker');
+    applyTheme(next, true);        // save = true
+  });
+
+  // ── Cross-tab sync: if user switches theme on the main page
+  //    while this tool page is also open, update instantly ──
+  window.addEventListener('storage', function(e) {
+    if (e.key === THEME_KEY && e.newValue) {
+      applyTheme(e.newValue, false);  // save = false (already saved by other tab)
+    }
+  });
+
+  // ── Also sync when this tab regains focus (covers mobile
+  //    browsers that don't always fire the storage event) ──
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+      let current = 'normal';
+      try { current = localStorage.getItem(THEME_KEY) || 'normal'; } catch(_){}
+      if (current !== document.documentElement.getAttribute('data-theme')) {
+        applyTheme(current, false);
+      }
+    }
+  });
+
+  // ---------------- Tabs ----------------
+  const tabs = document.querySelectorAll('.tab');
+  const panels = { inspect:'panel-inspect', encrypt:'panel-encrypt', sign:'panel-sign', factor:'panel-factor' };
+  tabs.forEach(t=>{
+    t.addEventListener('click', ()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      Object.values(panels).forEach(id=>document.getElementById(id).style.display='none');
+      document.getElementById(panels[t.dataset.tab]).style.display='block';
+    });
+  });
+
+  // ---------------- Shared helpers ----------------
+  function statusHTML(kind, title, msg){
+    const icons = {
+      good: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3L16 10"/></svg>',
+      bad: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+      warn: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>'
+    };
+    return `<div class="status status-${kind}">${icons[kind]}<div><strong>${title}</strong>${msg}</div></div>`;
+  }
+  function abToBase64(buf){
+    let binary=''; const bytes=new Uint8Array(buf);
+    for(let i=0;i<bytes.byteLength;i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+  function base64ToAb(b64){
+    const binary = atob(b64.trim());
+    const bytes = new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+    return bytes.buffer;
+  }
+  function pemToArrayBuffer(pem){
+    const lines = pem.trim().split('\n').filter(l => !l.includes('-----'));
+    return base64ToAb(lines.join(''));
+  }
+  function arrayBufferToPem(buf, label){
+    const b64 = abToBase64(buf);
+    const lines = b64.match(/.{1,64}/g).join('\n');
+    return `-----BEGIN ${label}-----\n${lines}\n-----END ${label}-----`;
+  }
+  function b64urlToBigInt(str){
+    if(!str) return null;
+    let s = str.replace(/-/g,'+').replace(/_/g,'/');
+    while(s.length % 4) s += '=';
+    const binary = atob(s);
+    let hex = '0x';
+    for(let i=0;i<binary.length;i++){
+      hex += binary.charCodeAt(i).toString(16).padStart(2,'0');
+    }
+    return BigInt(hex);
+  }
+  function bigIntBitLength(n){ return n.toString(2).length; }
+  function copyable(id, val){
+    return `<button class="copy-btn" onclick="navigator.clipboard.writeText(this.dataset.v); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',1200)" data-v="${val.replace(/"/g,'&quot;')}">Copy</button>`;
+  }
+
+  // ---------------- KEY INSPECTOR ----------------
+  async function tryImport(pem, isPrivate){
+    const buf = pemToArrayBuffer(pem);
+    const format = isPrivate ? 'pkcs8' : 'spki';
+    const usages = isPrivate ? ['decrypt'] : ['encrypt'];
+    const key = await crypto.subtle.importKey(format, buf, {name:'RSA-OAEP', hash:'SHA-256'}, true, usages);
+    return crypto.subtle.exportKey('jwk', key);
+  }
+
+  function strengthInfo(bits){
+    if(bits < 1024) return { label:'Critically weak', color:'var(--crit)', pct:15 };
+    if(bits < 2048) return { label:'Deprecated', color:'var(--bad)', pct:40 };
+    if(bits < 3072) return { label:'Acceptable (current minimum)', color:'var(--warn)', pct:65 };
+    if(bits < 4096) return { label:'Good, long-term secure', color:'var(--good)', pct:85 };
+    return { label:'Excellent', color:'var(--good)', pct:100 };
+  }
+
+  document.getElementById('inspectBtn').addEventListener('click', async ()=>{
+    const status = document.getElementById('inspectStatus');
+    const results = document.getElementById('inspectResults');
+    const pem = document.getElementById('inspectKey').value;
+    results.innerHTML = '';
+    if(!pem.includes('BEGIN')){
+      status.innerHTML = statusHTML('bad','No key provided', 'Paste a PEM-formatted RSA key above.');
+      return;
+    }
+    const isPrivate = pem.includes('PRIVATE KEY');
+    status.innerHTML = statusHTML('warn','Parsing…', 'Importing and decoding the key structure.');
+    try{
+      const jwk = await tryImport(pem, isPrivate);
+      const n = b64urlToBigInt(jwk.n);
+      const e = b64urlToBigInt(jwk.e);
+      const bits = bigIntBitLength(n);
+      const s = strengthInfo(bits);
+
+      let html = `<div class="divider"></div><div class="kv-grid">
+        <div class="kv-card"><div class="k">Key type</div><div class="v big">${isPrivate ? 'Private' : 'Public'}</div></div>
+        <div class="kv-card"><div class="k">Modulus size</div><div class="v big">${bits} bits</div></div>
+        <div class="kv-card" style="grid-column:1/-1;">
+          <div class="k">Strength: ${s.label}</div>
+          <div class="strength-bar-bg"><div class="strength-bar-fill" style="width:${s.pct}%; background:${s.color}; color:${s.color};"></div></div>
+        </div>
+        <div class="kv-card" style="grid-column:1/-1;">
+          <div class="k">Public exponent (e) ${copyable('e', e.toString())}</div>
+          <div class="v">${e.toString()}</div>
+        </div>
+        <div class="kv-card" style="grid-column:1/-1;">
+          <div class="k">Modulus (n, hex) ${copyable('n', n.toString(16))}</div>
+          <div class="v">${n.toString(16)}</div>
+        </div>`;
+
+      if(isPrivate){
+        const p = b64urlToBigInt(jwk.p);
+        const q = b64urlToBigInt(jwk.q);
+        const d = b64urlToBigInt(jwk.d);
+        const dp = b64urlToBigInt(jwk.dp);
+        const dq = b64urlToBigInt(jwk.dq);
+        const qi = b64urlToBigInt(jwk.qi);
+        html += `
+        <div class="kv-card" style="grid-column:1/-1;">
+          <div class="k">Prime p (${bigIntBitLength(p)} bits) ${copyable('p', p.toString(16))}</div>
+          <div class="v">${p.toString(16)}</div>
+        </div>
+        <div class="kv-card" style="grid-column:1/-1;">
+          <div class="k">Prime q (${bigIntBitLength(q)} bits) ${copyable('q', q.toString(16))}</div>
+          <div class="v">${q.toString(16)}</div>
+        </div>
+        <div class="kv-card" style="grid-column:1/-1;">
+          <div class="k">Private exponent (d, hex) ${copyable('d', d.toString(16))}</div>
+          <div class="v">${d.toString(16)}</div>
+        </div>
+        <div class="kv-card"><div class="k">dP = d mod (p-1)</div><div class="v">${dp.toString(16)}</div></div>
+        <div class="kv-card"><div class="k">dQ = d mod (q-1)</div><div class="v">${dq.toString(16)}</div></div>
+        <div class="kv-card" style="grid-column:1/-1;"><div class="k">qInv = q⁻¹ mod p (CRT coefficient)</div><div class="v">${qi.toString(16)}</div></div>`;
+      }
+      html += `</div>`;
+      results.innerHTML = html;
+      status.innerHTML = statusHTML('good','Key parsed', isPrivate
+        ? 'Full private key structure decoded, including CRT parameters used to speed up decryption ~4×.'
+        : 'Public key decoded. Paste the matching private key to also see p, q, and CRT parameters.');
+    }catch(err){
+      status.innerHTML = statusHTML('bad','Could not parse key', 'Make sure this is a valid PEM-encoded SPKI (public) or PKCS8 (private) RSA key. ' + err.message);
+    }
+  });
+
+  document.getElementById('genLabKeyBtn').addEventListener('click', async ()=>{
+    const status = document.getElementById('inspectStatus');
+    status.innerHTML = statusHTML('warn','Generating…', 'Creating a fresh 2048-bit RSA key pair for the lab.');
+    try{
+      const keyPair = await crypto.subtle.generateKey(
+        { name:'RSA-OAEP', modulusLength:2048, publicExponent:new Uint8Array([1,0,1]), hash:'SHA-256' },
+        true, ['encrypt','decrypt']
+      );
+      const pubPem = arrayBufferToPem(await crypto.subtle.exportKey('spki', keyPair.publicKey), 'PUBLIC KEY');
+      const privPem = arrayBufferToPem(await crypto.subtle.exportKey('pkcs8', keyPair.privateKey), 'PRIVATE KEY');
+      document.getElementById('inspectKey').value = privPem;
+      document.getElementById('oaepPub').value = pubPem;
+      document.getElementById('oaepPriv').value = privPem;
+      document.getElementById('signPrivKey').value = privPem;
+      document.getElementById('signPubKey').value = pubPem;
+      updateCapacity();
+      status.innerHTML = statusHTML('good','Lab key pair generated', 'Dropped the private key above (so you can see p, q, and CRT params), and prefilled the Padding Lab and Sign Schemes tabs too. Click "Inspect Key" to decode it.');
+    }catch(err){
+      status.innerHTML = statusHTML('bad','Generation failed', err.message);
+    }
+  });
+
+  // ---------------- PADDING LAB (OAEP) ----------------
+  const hashByteLen = { 'SHA-1':20, 'SHA-256':32, 'SHA-384':48, 'SHA-512':64 };
+
+  async function getModulusBytes(pem, isPrivate){
+    try{
+      const jwk = await tryImport(pem, isPrivate);
+      const n = b64urlToBigInt(jwk.n);
+      return Math.ceil(bigIntBitLength(n)/8);
+    }catch(e){ return null; }
+  }
+
+  async function updateCapacity(){
+    const pub = document.getElementById('oaepPub').value;
+    const grid = document.getElementById('capacityGrid');
+    if(!pub.includes('PUBLIC KEY')){ grid.style.display='none'; return; }
+    const keyBytes = await getModulusBytes(pub, false);
+    if(!keyBytes){ grid.style.display='none'; return; }
+    const hash = document.getElementById('oaepHash').value;
+    const hLen = hashByteLen[hash];
+    const capacity = keyBytes - 2*hLen - 2;
+    grid.style.display = 'grid';
+    grid.innerHTML = `
+      <div class="kv-card"><div class="k">Key size</div><div class="v big">${keyBytes*8} bits</div></div>
+      <div class="kv-card"><div class="k">Max message size</div><div class="v big" style="color:${capacity>0?'var(--gold-1)':'var(--bad)'}">${capacity>0?capacity+' bytes':'Too small!'}</div></div>`;
+  }
+  document.getElementById('oaepPub').addEventListener('input', updateCapacity);
+  document.getElementById('oaepHash').addEventListener('change', updateCapacity);
+
+  document.getElementById('oaepEncryptBtn').addEventListener('click', async ()=>{
+    const status = document.getElementById('oaepStatus');
+    const outBox = document.getElementById('oaepOutputBox');
+    const pem = document.getElementById('oaepPub').value;
+    const msg = document.getElementById('oaepPlain').value;
+    const hash = document.getElementById('oaepHash').value;
+    if(!pem.includes('PUBLIC KEY') || !msg){
+      status.innerHTML = statusHTML('bad','Missing input', 'Provide a public key and a message.');
+      outBox.style.display='none'; return;
+    }
+    try{
+      const buf = pemToArrayBuffer(pem);
+      const key = await crypto.subtle.importKey('spki', buf, {name:'RSA-OAEP', hash}, false, ['encrypt']);
+      const cipherBuf = await crypto.subtle.encrypt({name:'RSA-OAEP'}, key, new TextEncoder().encode(msg));
+      const b64 = abToBase64(cipherBuf);
+      document.getElementById('oaepOutput').textContent = b64;
+      outBox.style.display = 'flex';
+      status.innerHTML = statusHTML('good','Encrypted', `Encrypted with RSA-OAEP / ${hash}. Click "Decrypt result below" to round-trip it with the private key.`);
+    }catch(err){
+      status.innerHTML = statusHTML('bad','Encryption failed', err.message + ' — the message may be too long for this key size and hash. Check the capacity above.');
+      outBox.style.display='none';
+    }
+  });
+
+  document.getElementById('oaepDecryptBtn').addEventListener('click', async ()=>{
+    const status = document.getElementById('oaepStatus');
+    const pem = document.getElementById('oaepPriv').value;
+    const hash = document.getElementById('oaepHash').value;
+    const cipherB64 = document.getElementById('oaepOutput').textContent;
+    if(!pem.includes('PRIVATE KEY') || !cipherB64){
+      status.innerHTML = statusHTML('bad','Missing input', 'Provide a private key and encrypt something first.');
+      return;
+    }
+    try{
+      const buf = pemToArrayBuffer(pem);
+      const key = await crypto.subtle.importKey('pkcs8', buf, {name:'RSA-OAEP', hash}, false, ['decrypt']);
+      const plainBuf = await crypto.subtle.decrypt({name:'RSA-OAEP'}, key, base64ToAb(cipherB64));
+      const plain = new TextDecoder().decode(plainBuf);
+      status.innerHTML = statusHTML('good','Decrypted', `Recovered: "${plain}"`);
+    }catch(err){
+      status.innerHTML = statusHTML('bad','Decryption failed', 'Wrong private key, wrong hash, or the ciphertext was altered.');
+    }
+  });
+
+  // ---------------- SIGN SCHEMES ----------------
+  document.getElementById('signScheme').addEventListener('change', e=>{
+    document.getElementById('saltLenField').style.display = e.target.value === 'RSA-PSS' ? 'block' : 'none';
+  });
+
+  document.getElementById('signRunBtn').addEventListener('click', async ()=>{
+    const status = document.getElementById('signStatus2');
+    const outBox = document.getElementById('sigOutputBox');
+    const privPem = document.getElementById('signPrivKey').value;
+    const pubPem = document.getElementById('signPubKey').value;
+    const scheme = document.getElementById('signScheme').value;
+    const hash = document.getElementById('signHash').value;
+    const saltLen = parseInt(document.getElementById('saltLen').value, 10) || 0;
+    const msg = document.getElementById('signMsg2').value;
+
+    if(!privPem.includes('PRIVATE KEY') || !pubPem.includes('PUBLIC KEY') || !msg){
+      status.innerHTML = statusHTML('bad','Missing input', 'Provide a private key, matching public key, and a message.');
+      outBox.style.display='none'; return;
+    }
+    try{
+      const algoImport = { name: scheme, hash };
+      const privKey = await crypto.subtle.importKey('pkcs8', pemToArrayBuffer(privPem), algoImport, false, ['sign']);
+      const pubKey = await crypto.subtle.importKey('spki', pemToArrayBuffer(pubPem), algoImport, false, ['verify']);
+      const signAlgo = scheme === 'RSA-PSS' ? { name:'RSA-PSS', saltLength: saltLen } : { name:'RSASSA-PKCS1-v1_5' };
+      const enc = new TextEncoder().encode(msg);
+      const sigBuf = await crypto.subtle.sign(signAlgo, privKey, enc);
+      const sigB64 = abToBase64(sigBuf);
+      const valid = await crypto.subtle.verify(signAlgo, pubKey, sigBuf, enc);
+
+      document.getElementById('sigOutput2').textContent = sigB64;
+      outBox.style.display = 'flex';
+      status.innerHTML = valid
+        ? statusHTML('good','Signed & verified', `${scheme} / ${hash} signature created and successfully verified (${sigBuf.byteLength} bytes).`)
+        : statusHTML('bad','Verification failed unexpectedly', 'This should not happen with matching keys — double check the key pair.');
+    }catch(err){
+      status.innerHTML = statusHTML('bad','Operation failed', err.message + ' — make sure the private and public key are a matching pair.');
+      outBox.style.display='none';
+    }
+  });
+
+  // ---------------- FACTORIZATION DEMO ----------------
+  function bigAbs(n){ return n < 0n ? -n : n; }
+  function gcdBig(a,b){ a=bigAbs(a); b=bigAbs(b); while(b){ [a,b] = [b, a % b]; } return a; }
+  function mulMod(a,b,m){ return (a * b) % m; }
+  function powMod(base, exp, mod){
+    base = base % mod;
+    let result = 1n;
+    while(exp > 0n){
+      if(exp & 1n) result = mulMod(result, base, mod);
+      base = mulMod(base, base, mod);
+      exp >>= 1n;
+    }
+    return result;
+  }
+  function isProbablePrime(n, k=8){
+    if(n < 2n) return false;
+    for(const p of [2n,3n,5n,7n,11n,13n,17n,19n,23n,29n]){
+      if(n === p) return true;
+      if(n % p === 0n) return false;
+    }
+    let d = n - 1n, r = 0n;
+    while(d % 2n === 0n){ d /= 2n; r += 1n; }
+    witnessLoop:
+    for(let i=0;i<k;i++){
+      const a = 2n + BigInt(Math.floor(Math.random()*1e9)) % (n - 3n);
+      let x = powMod(a, d, n);
+      if(x === 1n || x === n-1n) continue;
+      for(let j=0n; j<r-1n; j++){
+        x = mulMod(x,x,n);
+        if(x === n-1n) continue witnessLoop;
+      }
+      return false;
+    }
+    return true;
+  }
+  function randomBigIntBits(bits){
+    let hex = '1';
+    const hexLen = Math.ceil(bits/4);
+    for(let i=1;i<hexLen;i++){ hex += Math.floor(Math.random()*16).toString(16); }
+    return BigInt('0x'+hex);
+  }
+  function randomPrimeBits(bits){
+    let candidate;
+    do{
+      candidate = randomBigIntBits(bits);
+      if(candidate % 2n === 0n) candidate += 1n;
+    } while(!isProbablePrime(candidate));
+    return candidate;
+  }
+  function pollardRho(n){
+    if(n % 2n === 0n) return 2n;
+    let x = 2n, y = 2n, d = 1n;
+    const f = (v) => (mulMod(v,v,n) + 1n) % n;
+    let c = 0;
+    while(d === 1n){
+      x = f(x);
+      y = f(f(y));
+      d = gcdBig(x>y? x-y : y-x, n);
+      c++;
+      if(c > 2000000) return null;
+    }
+    return d === n ? null : d;
+  }
+  function trialDivide(n, limit=1000000n){
+    if(n % 2n === 0n) return 2n;
+    for(let i=3n; i<=limit && i*i<=n; i+=2n){
+      if(n % i === 0n) return i;
+    }
+    return null;
+  }
+
+  function genN(bits){
+    const half = Math.floor(bits/2);
+    const p = randomPrimeBits(half);
+    const q = randomPrimeBits(bits-half);
+    document.getElementById('factorN').value = (p*q).toString();
+  }
+  document.getElementById('genSmallBtn').addEventListener('click', function(){ genN(parseInt(this.dataset.bits,10)); });
+  document.getElementById('genMedBtn').addEventListener('click', function(){ genN(parseInt(this.dataset.bits,10)); });
+
+  document.getElementById('factorBtn').addEventListener('click', ()=>{
+    const status = document.getElementById('factorStatus');
+    const results = document.getElementById('factorResults');
+    results.style.display = 'none';
+    const raw = document.getElementById('factorN').value.trim();
+    if(!/^\d+$/.test(raw)){
+      status.innerHTML = statusHTML('bad','Invalid input', 'Enter a positive whole number.');
+      return;
+    }
+    let n;
+    try{ n = BigInt(raw); }catch(e){
+      status.innerHTML = statusHTML('bad','Invalid number', 'Could not parse this as an integer.');
+      return;
+    }
+    if(n < 4n){ status.innerHTML = statusHTML('bad','Too small', 'Pick a number of at least 4.'); return; }
+    if(n.toString().length > 19){
+      status.innerHTML = statusHTML('warn','Too large for this demo', 'Keep it under ~19 digits (~63 bits) so the browser can factor it in reasonable time. Real RSA moduli (600+ digits) are far beyond any computer\'s reach — that\'s the whole point!');
+      return;
+    }
+    status.innerHTML = statusHTML('warn','Factoring…', 'Running trial division then Pollard\'s rho.');
+    setTimeout(()=>{
+      const start = performance.now();
+      let factor = trialDivide(n, 100000n);
+      if(!factor && !isProbablePrime(n)){ factor = pollardRho(n); }
+      const elapsed = (performance.now() - start).toFixed(1);
+
+      if(isProbablePrime(n)){
+        status.innerHTML = statusHTML('warn','This number is prime', `${n} has no factors other than 1 and itself — it can't be used as an RSA modulus (which needs exactly two prime factors).`);
+        return;
+      }
+      if(!factor){
+        status.innerHTML = statusHTML('bad','Could not factor in time', 'This number is too hard for this simple browser demo — which is exactly the property real RSA relies on, just at a vastly larger scale.');
+        return;
+      }
+      const other = n / factor;
+      results.style.display = 'grid';
+      results.innerHTML = `
+        <div class="kv-card"><div class="k">N</div><div class="v">${n.toString()}</div></div>
+        <div class="kv-card"><div class="k">Time taken</div><div class="v big">${elapsed} ms</div></div>
+        <div class="kv-card"><div class="k">Factor p</div><div class="v">${factor.toString()}</div></div>
+        <div class="kv-card"><div class="k">Factor q</div><div class="v">${other.toString()}</div></div>`;
+      status.innerHTML = statusHTML('good','Factored!', `n = ${factor} × ${other}. This took ${elapsed} ms because n is only ${bigIntBitLength(n)} bits. A 2048-bit RSA modulus has roughly 2^1984 times more possible factors to search — utterly infeasible with any known algorithm or hardware.`);
+    }, 30);
+  });
+
+})();
+</script>
+</body>
+</html>
