@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced ECC Suite — CryptoKit Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  /* ---------------- NORMAL THEME ---------------- */
+  [data-theme="normal"] {
+    --bg-0:#eef0fc;
+    --surface:#ffffff;
+    --surface-soft:#f4f5fd;
+    --border:#e1e3f5;
+    --ink:#1c1f37;
+    --ink-soft:#5b5f7e;
+    --ink-faint:#9599b8;
+    --accent-1:#6366f1;
+    --accent-2:#38bdf8;
+    --accent-soft:#eef0fe;
+    --gold-1:#d97706;
+    --gold-2:#f59e0b;
+    --gold-bg:#fef3e2;
+    --gold-border:#fbd999;
+    --good:#1f9d68; --good-bg:#eafaf2;
+    --warn:#b4700a; --warn-bg:#fff6e6;
+    --bad:#d0483f; --bad-bg:#fdeceb;
+    --crit:#b91c1c; --crit-bg:#fde3e2;
+    --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+    --font-display: 'Arial Rounded MT Bold', 'Arial Rounded MT', ui-rounded, 'SF Pro Rounded', 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+
+  /* ---------------- HACKER THEME ---------------- */
+  [data-theme="hacker"] {
+    --bg-0:#000000;
+    --surface:#050505;
+    --surface-soft:#0a0a0a;
+    --border:rgba(0, 255, 65, 0.25);
+    --ink:#00FF41;
+    --ink-soft:#00CC33;
+    --ink-faint:#006611;
+    --accent-1:#00FF41;
+    --accent-2:#39FF14;
+    --accent-soft:rgba(0, 255, 65, 0.08);
+    --gold-1:#00FF41;
+    --gold-2:#39FF14;
+    --gold-bg:rgba(0, 255, 65, 0.05);
+    --gold-border:rgba(0, 255, 65, 0.3);
+    --good:#00FF41; --good-bg:rgba(0, 255, 65, 0.08);
+    --warn:#FFD700; --warn-bg:rgba(255, 215, 0, 0.1);
+    --bad:#FF0040; --bad-bg:rgba(255, 0, 64, 0.12);
+    --crit:#FF0040; --crit-bg:rgba(255, 0, 64, 0.15);
+    --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+    --font-display: 'Share Tech Mono', monospace;
+    --font-body: 'Share Tech Mono', monospace;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg-0);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  [data-theme="normal"] body {
+    background:
+      radial-gradient(1100px 500px at 12% -8%, #f8ecd8 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #e7f1fb 0%, transparent 55%),
+      var(--bg-0);
+  }
+
+  [data-theme="hacker"] body {
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(0,255,65,0.06), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(57,255,20,0.04), transparent 60%);
+  }
+
+  [data-theme="hacker"] body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px; z-index: -1; pointer-events: none;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove {
+    0%   { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+  }
+
+  .wrap{ max-width:1080px; margin:0 auto; padding:36px 24px 80px; position:relative; z-index:2; }
+
+  .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:34px; flex-wrap:wrap; gap:12px;}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+    background:var(--surface); border:1px solid var(--border);
+    padding:9px 16px; border-radius:999px; font-size:13.5px; color:var(--ink-soft); font-weight:500;
+    transition: all 0.3s ease;
+  }
+  .back-pill{ color:var(--ink); cursor:pointer; }
+  .back-pill:hover { border-color: var(--accent-1); color: var(--accent-1); transform: translateX(-2px); }
+
+  [data-theme="hacker"] .pill { text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; background: rgba(0,255,65,0.03); box-shadow: 0 0 10px rgba(0,255,65,0.03); }
+  [data-theme="hacker"] .back-pill:hover { box-shadow: 0 0 16px rgba(0,255,65,0.2); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .lock-pill{ color:var(--accent-1); font-weight:600; }
+  .lock-pill svg{ color:var(--accent-1); }
+  [data-theme="hacker"] .lock-pill { text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .toggle-pill{ gap:10px; cursor:pointer; user-select:none; }
+  .switch{ width:34px; height:19px; border-radius:999px; background:#d5d8ee; position:relative; flex-shrink:0; transition: background 0.3s; }
+  .switch::after{
+    content:''; position:absolute; top:2px; left:2px; width:15px; height:15px;
+    border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-theme="hacker"] .switch { background: rgba(0,255,65,0.3); }
+  [data-theme="hacker"] .switch::after { left: 17px; background: var(--accent-1); box-shadow: 0 0 8px var(--accent-1); }
+  [data-theme="hacker"] #themeLabel { text-shadow: 0 0 6px rgba(0,255,65,0.4); }
+
+  .kicker{
+    display:inline-flex; align-items:center; gap:7px;
+    background:var(--gold-bg); border:1px solid var(--gold-border);
+    padding:7px 14px; border-radius:999px;
+    font-size:11.5px; letter-spacing:.08em; color:var(--gold-1); font-weight:800;
+    margin-bottom:18px; transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .kicker { box-shadow: 0 0 12px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .hero{ display:flex; gap:20px; align-items:flex-start; margin-bottom:16px; }
+  .hero-icon{
+    width:58px; height:58px; border-radius:16px; flex-shrink:0;
+    background:linear-gradient(135deg, var(--gold-1), var(--gold-2));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px -8px rgba(217,119,6,.5);
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .hero-icon { background: transparent; border: 2px solid var(--accent-1); box-shadow: 0 0 20px rgba(0,255,65,0.25); animation: pulseHacker 2s infinite; }
+  [data-theme="hacker"] .hero-icon svg { stroke: var(--accent-1); }
+  [data-theme="hacker"] .hero-icon svg circle { fill: var(--accent-1); }
+  @keyframes pulseHacker { 0%, 100% { box-shadow: 0 0 20px rgba(0,255,65,0.25); } 50% { box-shadow: 0 0 35px rgba(0,255,65,0.5); } }
+
+  .hero h1{
+    font-family:var(--font-display); font-weight:800; font-size:34px; line-height:1.15;
+    margin:0 0 10px 0; letter-spacing:-.01em;
+    background:linear-gradient(90deg, var(--gold-1), #ef8f1e);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .hero h1 { background:none; color: var(--accent-1); -webkit-text-fill-color: var(--accent-1); text-shadow: 0 0 15px rgba(0,255,65,0.4); letter-spacing: 2px; }
+
+  .hero p{ margin:0; color:var(--ink-soft); font-size:15.5px; line-height:1.55; max-width:660px; }
+
+  .tag-row{ display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 30px 78px; }
+  .tag{
+    font-family:var(--font-mono); font-size:13px; color:var(--ink-faint);
+    background:var(--surface); border:1px solid var(--border);
+    padding:8px 18px; border-radius:999px; transition: all 0.3s ease;
+  }
+  .tag.tag-gold{ color:var(--gold-1); border-color:var(--gold-border); background:var(--gold-bg); font-family:var(--font-body); font-weight:700; }
+  [data-theme="hacker"] .tag.tag-gold { box-shadow: 0 0 10px rgba(0,255,65,0.15); text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .premium-strip{
+    display:flex; align-items:center; gap:8px;
+    background:var(--gold-bg); border:1px solid var(--gold-border); border-radius:var(--radius-md);
+    padding:12px 18px; margin-bottom:20px; font-size:13.5px; color:var(--gold-1); font-weight:700;
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .premium-strip { box-shadow: 0 0 15px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .tabs{
+    display:flex; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:6px; gap:4px; margin-bottom:22px; flex-wrap:wrap;
+    box-shadow:0 2px 10px -6px rgba(30,35,80,.08);
+    transition: all 0.4s ease;
+  }
+  [data-theme="hacker"] .tabs { box-shadow: 0 0 20px rgba(0,255,65,0.03); }
+
+  .tab{
+    flex:1; min-width:140px; display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:12px 14px; border-radius:11px; cursor:pointer;
+    font-size:13.5px; font-weight:600; color:var(--ink-faint);
+    border:none; background:transparent; font-family:var(--font-body);
+    transition:background .15s ease, color .15s ease, box-shadow .2s ease;
+  }
+  .tab svg{ opacity:.75; }
+  .tab.active{ background:linear-gradient(90deg, var(--gold-bg), #fff3e0); color:var(--gold-1); }
+  .tab.active svg{ opacity:1; }
+  .tab:not(.active):hover{ color:var(--ink-soft); background:var(--surface-soft); }
+
+  [data-theme="hacker"] .tab { text-transform: uppercase; letter-spacing: 1px; font-size: 11.5px; }
+  [data-theme="hacker"] .tab.active { background: rgba(0,255,65,0.08); color: var(--accent-1); border:1px solid rgba(0,255,65,0.3); box-shadow: 0 0 14px rgba(0,255,65,0.12); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+  [data-theme="hacker"] .tab:not(.active):hover { background: rgba(0,255,65,0.04); color: var(--ink-soft); }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:32px;
+    box-shadow:0 4px 24px -12px rgba(30,35,80,.10);
+    transition: all 0.4s ease;
+  }
+  [data-theme="hacker"] .panel { box-shadow: 0 0 25px rgba(0,255,65,0.02); }
+  [data-theme="hacker"] .panel:hover { border-color: rgba(0,255,65,0.35); box-shadow: 0 0 30px rgba(0,255,65,0.06); }
+
+  .panel + .panel{ margin-top:20px; }
+  .panel-head{ display:flex; align-items:center; gap:9px; margin-bottom:6px; }
+  .panel-head svg{ color:var(--gold-1); flex-shrink:0; }
+  .panel-head h2{ font-size:18px; margin:0; font-weight:700; }
+  [data-theme="hacker"] .panel-head h2 { text-shadow: 0 0 10px rgba(0,255,65,0.3); letter-spacing: 1px; }
+
+  .panel-sub{ color:var(--ink-soft); font-size:14px; margin:0 0 20px 0; line-height:1.5; }
+  .panel-sub code{ font-family:var(--font-mono); background:var(--surface-soft); padding:1px 5px; border-radius:4px; }
+
+  .field{ margin-bottom:18px; }
+  .field label{ display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:8px; text-transform:uppercase; letter-spacing:.05em; }
+  [data-theme="hacker"] .field label { color: rgba(0,255,65,0.6); }
+  .hint{ font-size:12.5px; color:var(--ink-faint); margin-top:6px; }
+
+  select, input[type=text], input[type=number], textarea{
+    width:100%; padding:11px 13px; border-radius:var(--radius-sm);
+    border:1px solid var(--border); background:var(--surface-soft);
+    font-size:14px; font-family:var(--font-mono); color:var(--ink); outline:none;
+    transition: all 0.3s ease;
+  }
+  select:focus, input:focus, textarea:focus{ border-color:var(--gold-2); background:var(--surface); box-shadow: 0 0 0 3px var(--gold-bg); }
+  [data-theme="hacker"] select:focus, [data-theme="hacker"] input:focus, [data-theme="hacker"] textarea:focus { box-shadow: 0 0 0 3px rgba(0,255,65,0.1), 0 0 15px rgba(0,255,65,0.1); }
+  [data-theme="hacker"] select option { background:#050505; color:var(--ink); }
+  textarea{ font-size:12px; min-height:120px; resize:vertical; line-height:1.6; }
+
+  input[type=range]{
+    width:100%; -webkit-appearance:none; appearance:none; height:6px;
+    border-radius:999px; background:var(--border); outline:none;
+    transition: all 0.3s ease; padding:0;
+  }
+  input[type=range]:focus{ box-shadow:none; }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:18px; height:18px; border-radius:50%;
+    background:var(--gold-1); cursor:pointer; border:2px solid var(--surface);
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
+  }
+  [data-theme="hacker"] input[type=range]::-webkit-slider-thumb {
+    box-shadow: 0 0 10px rgba(0,255,65,0.5);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:18px; height:18px; border-radius:50%;
+    background:var(--gold-1); cursor:pointer; border:2px solid var(--surface);
+  }
+
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .field-row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
+  @media(max-width:640px){ .field-row, .field-row3{ grid-template-columns:1fr; } }
+
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 18px; border-radius:var(--radius-sm);
+    font-size:14px; font-weight:600; font-family:var(--font-body);
+    cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--ink);
+    transition:all .15s ease;
+  }
+  .btn:hover{ background:var(--surface-soft); border-color:var(--ink-soft); }
+  .btn:active{ transform:scale(.98); }
+  [data-theme="hacker"] .btn { text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+
+  .btn-primary{
+    background:linear-gradient(90deg, var(--gold-1), var(--gold-2));
+    border:none; color:#fff; box-shadow:0 8px 20px -8px rgba(217,119,6,.5);
+  }
+  [data-theme="hacker"] .btn-primary { background: var(--accent-1); color: #000; box-shadow: 0 0 15px rgba(0,255,65,0.3); font-weight: 800; }
+  .btn-primary:hover{ filter:brightness(1.05); transform: translateY(-1px); }
+  [data-theme="hacker"] .btn-primary:hover { box-shadow: 0 0 25px rgba(0,255,65,0.6); }
+  .btn-primary:disabled{ opacity:.5; cursor:not-allowed; box-shadow:none; }
+
+  .btn-ghost{ background:transparent; border:1px dashed var(--border); color:var(--ink-soft); }
+  [data-theme="hacker"] .btn-ghost:hover { border-color: var(--accent-1); color: var(--accent-1); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .kv-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:16px; }
+  @media(max-width:640px){ .kv-grid{ grid-template-columns:1fr; } }
+  .kv-card{ border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 16px; background:var(--surface-soft); transition: all 0.3s ease; }
+  .kv-card:hover{ border-color:var(--ink-faint); }
+  [data-theme="hacker"] .kv-card:hover { border-color: var(--accent-1); box-shadow: 0 0 15px rgba(0,255,65,0.08); }
+  .kv-card .k{ font-size:11.5px; color:var(--ink-faint); font-weight:700; letter-spacing:.04em; text-transform:uppercase; margin-bottom:6px; }
+  .kv-card .v{ font-family:var(--font-mono); font-size:13px; color:var(--ink); word-break:break-all; line-height:1.5; }
+  .kv-card .v.big{ font-family:var(--font-display); font-size:20px; font-weight:800; color:var(--gold-1); word-break:normal; }
+  [data-theme="hacker"] .kv-card .v.big { text-shadow: 0 0 10px rgba(0,255,65,0.4); }
+
+  .copy-btn{ font-size:11.5px; font-weight:600; color:var(--gold-1); background:none; border:none; cursor:pointer; padding:2px 6px; border-radius:5px; float:right; font-family:var(--font-body);}
+  .copy-btn:hover{ background:var(--gold-bg); }
+  [data-theme="hacker"] .copy-btn:hover { text-shadow: 0 0 8px rgba(0,255,65,0.5); }
+
+  .status{ display:flex; align-items:flex-start; gap:10px; border-radius:var(--radius-md); padding:14px 16px; margin-top:18px; font-size:14px; line-height:1.5; border:1px solid transparent; transition: all 0.3s ease; }
+  .status svg{ flex-shrink:0; margin-top:1px; }
+  .status-good{ background:var(--good-bg); color:var(--good); }
+  .status-bad{ background:var(--bad-bg); color:var(--bad); }
+  .status-warn{ background:var(--warn-bg); color:var(--warn); }
+  .status strong{ display:block; margin-bottom:2px; }
+  [data-theme="hacker"] .status-good{ border-color:var(--good); box-shadow:0 0 15px rgba(0,255,65,0.1); text-shadow:0 0 5px rgba(0,255,65,0.4); }
+  [data-theme="hacker"] .status-bad{ border-color:var(--bad); box-shadow:0 0 15px rgba(255,0,64,0.12); }
+  [data-theme="hacker"] .status-warn{ border-color:var(--warn); box-shadow:0 0 15px rgba(255,215,0,0.1); }
+
+  .output-box{
+    display:flex; align-items:flex-start; gap:10px; margin-top:18px;
+    background:var(--surface-soft); border:1px solid var(--border);
+    border-radius:var(--radius-md); padding:16px; transition: all .3s ease;
+  }
+  [data-theme="hacker"] .output-box { box-shadow: inset 0 0 20px rgba(0,255,65,0.03); }
+  .output-box .txt{ flex:1; font-family:var(--font-mono); font-size:12.5px; line-height:1.6; color:var(--ink); word-break:break-all; white-space:pre-wrap; max-height:200px; overflow-y:auto; }
+
+  .info-box{ display:flex; gap:10px; align-items:flex-start; background:var(--accent-soft); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 16px; font-size:13px; color:var(--ink-soft); line-height:1.55; margin-top:16px; transition: all .3s ease;}
+  .info-box svg{ flex-shrink:0; color:var(--accent-1); margin-top:1px; }
+  .info-box.gold{ background:var(--gold-bg); border-color:var(--gold-border); }
+  .info-box.gold svg{ color:var(--gold-1); }
+  [data-theme="hacker"] .info-box { box-shadow: 0 0 12px rgba(0,255,65,0.04); }
+
+  table.records{ width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
+  table.records th{ text-align:left; font-size:11.5px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; padding:8px 10px; border-bottom:1px solid var(--border); }
+  table.records td{ padding:9px 10px; border-bottom:1px solid var(--border); color:var(--ink-soft); }
+  table.records tr:last-child td{ border-bottom:none; }
+  table.records td.strong{ color:var(--ink); font-weight:600; }
+  [data-theme="hacker"] table.records tr:hover td { background: rgba(0,255,65,0.04); }
+
+  .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media(max-width:800px){ .two-col{ grid-template-columns:1fr; } }
+  .person-card{ border:1px solid var(--border); border-radius:var(--radius-md); padding:18px; background:var(--surface-soft); transition: all 0.3s ease; }
+  [data-theme="hacker"] .person-card:hover { border-color: var(--accent-1); box-shadow: 0 0 15px rgba(0,255,65,0.08); }
+  .person-card h4{ margin:0 0 12px 0; font-size:14px; display:flex; align-items:center; gap:8px; }
+  .person-dot{ width:9px; height:9px; border-radius:50%; }
+  .dot-alice{ background:var(--gold-1); }
+  .dot-bob{ background:var(--accent-1); }
+  [data-theme="hacker"] .dot-alice { box-shadow: 0 0 8px var(--gold-1); }
+  [data-theme="hacker"] .dot-bob { box-shadow: 0 0 8px var(--accent-1); }
+
+  .curve-canvas-wrap{ border:1px solid var(--border); border-radius:var(--radius-md); background:var(--surface-soft); padding:12px; margin-top:6px; transition: all 0.3s ease; }
+  [data-theme="hacker"] .curve-canvas-wrap { box-shadow: 0 0 20px rgba(0,255,65,0.05); }
+  canvas{ width:100%; height:auto; display:block; border-radius:8px; }
+
+  .divider{ height:1px; background:var(--border); margin:26px 0; transition: background 0.3s; }
+  .footnote{ text-align:center; color:var(--ink-faint); font-size:12.5px; margin-top:26px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  [data-theme="hacker"] .footnote { letter-spacing: 1px; text-shadow: 0 0 5px rgba(0,255,65,0.2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="../index.html" class="pill back-pill" id="homeBtn" title="Go back to Home">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to CryptoKit
+    </a>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="pill lock-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+        100% Client-Side — Nothing Ever Leaves Your Browser
+      </div>
+      <div class="pill toggle-pill" id="themeToggle" title="Toggle Theme">
+        <span id="themeLabel">Normal</span>
+        <span class="switch"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="kicker">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-7.4L2.5 8l6.5-1z"/></svg>
+    Premium Tool
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 15c3-7 6-9 8-9s5 2 8 9"/>
+        <circle cx="7.5" cy="13" r="1.3" fill="#fff" stroke="none"/>
+        <circle cx="16.5" cy="13" r="1.3" fill="#fff" stroke="none"/>
+        <circle cx="12" cy="7.2" r="1.3" fill="#fff" stroke="none"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Advanced ECC Suite</h1>
+      <p>Inspect elliptic-curve keys, run a real ECDH key exchange between two parties, compare ECDSA signature schemes, and visualize the curve math itself — all locally in your browser.</p>
+    </div>
+  </div>
+
+  <div class="tag-row">
+    <span class="tag">ECDH</span>
+    <span class="tag">P-256 / P-384 / P-521</span>
+    <span class="tag tag-gold">★ Premium</span>
+  </div>
+
+  <div class="premium-strip">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-7.4L2.5 8l6.5-1z"/></svg>
+    Premium unlocked — full suite access
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="inspect">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      Key Inspector
+    </button>
+    <button class="tab" data-tab="exchange">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg>
+      ECDH Exchange
+    </button>
+    <button class="tab" data-tab="sign">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+      Sign Schemes
+    </button>
+    <button class="tab" data-tab="curve">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15c3-7 6-9 8-9s5 2 8 9"/></svg>
+      Curve Explorer
+    </button>
+  </div>
+
+  <!-- ============ KEY INSPECTOR ============ -->
+  <div class="tab-panel" id="panel-inspect">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <h2>Inspect an EC key</h2>
+      </div>
+      <p class="panel-sub">Paste a PEM public or private elliptic-curve key (ECDSA or ECDH). This decodes the curve, coordinates, and — for private keys — the raw secret scalar.</p>
+
+      <div class="field">
+        <label for="inspectKey">EC key (PEM)</label>
+        <textarea id="inspectKey" placeholder="-----BEGIN PUBLIC KEY----- or -----BEGIN PRIVATE KEY-----&#10;...&#10;-----END KEY-----"></textarea>
+      </div>
+      <div class="field">
+        <label for="inspectCurve">Curve (used if not auto-detected)</label>
+        <select id="inspectCurve">
+          <option value="P-256" selected>P-256</option>
+          <option value="P-384">P-384</option>
+          <option value="P-521">P-521</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="inspectBtn">Inspect Key</button>
+        <button class="btn btn-ghost" id="genLabKeyBtn">Generate a lab key pair</button>
+      </div>
+
+      <div id="inspectStatus"></div>
+      <div id="inspectResults"></div>
+    </div>
+  </div>
+
+  <!-- ============ ECDH EXCHANGE ============ -->
+  <div class="tab-panel" id="panel-exchange" style="display:none;">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg>
+        <h2>Run a real ECDH key exchange</h2>
+      </div>
+      <p class="panel-sub">Alice and Bob each generate their own key pair, exchange only their <em>public</em> keys, and independently derive the same shared secret — without ever transmitting it.</p>
+
+      <div class="field">
+        <label for="exchangeCurve">Curve</label>
+        <select id="exchangeCurve">
+          <option value="P-256" selected>P-256</option>
+          <option value="P-384">P-384</option>
+          <option value="P-521">P-521</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="runExchangeBtn">Generate Both Key Pairs &amp; Exchange</button>
+      </div>
+
+      <div id="exchangeStatus"></div>
+
+      <div id="exchangeResults" style="display:none;">
+        <div class="divider"></div>
+        <div class="two-col">
+          <div class="person-card">
+            <h4><span class="person-dot dot-alice"></span>Alice</h4>
+            <div class="kv-card" style="margin-bottom:10px;"><div class="k">Public key (x, hex, truncated)</div><div class="v" id="alicePubX"></div></div>
+            <div class="kv-card"><div class="k">Derived shared secret (SHA-256 of raw bits)</div><div class="v" id="aliceSecret"></div></div>
+          </div>
+          <div class="person-card">
+            <h4><span class="person-dot dot-bob"></span>Bob</h4>
+            <div class="kv-card" style="margin-bottom:10px;"><div class="k">Public key (x, hex, truncated)</div><div class="v" id="bobPubX"></div></div>
+            <div class="kv-card"><div class="k">Derived shared secret (SHA-256 of raw bits)</div><div class="v" id="bobSecret"></div></div>
+          </div>
+        </div>
+        <div id="matchStatus"></div>
+      </div>
+
+      <div class="info-box gold">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+        <div><strong>This is the core idea behind TLS, Signal, and WireGuard.</strong> Neither party ever sends their private key or the shared secret itself — an eavesdropper who sees both public keys still can't compute the shared secret (the Elliptic Curve Diffie-Hellman problem). In production, the raw shared secret is passed through a KDF (like HKDF) before being used as an encryption key.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SIGN SCHEMES ============ -->
+  <div class="tab-panel" id="panel-sign" style="display:none;">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+        <h2>ECDSA signing across curves</h2>
+      </div>
+      <p class="panel-sub">Sign the same message with different curve/hash combinations and inspect the raw (r, s) signature components.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="signPrivKey">Private key (PEM)</label>
+          <textarea id="signPrivKey" style="min-height:100px;" placeholder="-----BEGIN PRIVATE KEY-----"></textarea>
+        </div>
+        <div class="field">
+          <label for="signPubKey">Public key (PEM, for verify)</label>
+          <textarea id="signPubKey" style="min-height:100px;" placeholder="-----BEGIN PUBLIC KEY-----"></textarea>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="signCurve2">Curve (must match the key)</label>
+          <select id="signCurve2">
+            <option value="P-256" selected>P-256</option>
+            <option value="P-384">P-384</option>
+            <option value="P-521">P-521</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="signHash2">Hash</label>
+          <select id="signHash2">
+            <option value="SHA-256" selected>SHA-256</option>
+            <option value="SHA-384">SHA-384</option>
+            <option value="SHA-512">SHA-512</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="signMsg2">Message</label>
+        <textarea id="signMsg2" style="min-height:80px;" placeholder="Message to sign..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="signRunBtn">Sign &amp; Verify</button>
+      </div>
+
+      <div id="signStatus2"></div>
+      <div class="kv-grid" id="sigResultsGrid" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ============ CURVE EXPLORER ============ -->
+  <div class="tab-panel" id="panel-curve" style="display:none;">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15c3-7 6-9 8-9s5 2 8 9"/></svg>
+        <h2>Visualize the curve equation</h2>
+      </div>
+      <p class="panel-sub">Every elliptic curve used in cryptography follows the short Weierstrass form <code>y² = x³ + ax + b</code>. This plots it over real numbers (not the actual finite field used in ECDSA) so the shape and point addition are easy to see.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label>a <span id="aVal">-1</span></label>
+          <input type="range" id="aSlider" min="-5" max="5" step="0.5" value="-1">
+        </div>
+        <div class="field">
+          <label>b <span id="bVal">1</span></label>
+          <input type="range" id="bSlider" min="-5" max="5" step="0.5" value="1">
+        </div>
+      </div>
+
+      <div class="curve-canvas-wrap">
+        <canvas id="curveCanvas" width="900" height="500"></canvas>
+      </div>
+
+      <div class="field-row" style="margin-top:18px;">
+        <div class="field">
+          <label for="p1x">Point P — x coordinate</label>
+          <input type="number" id="p1x" value="-1" step="0.1">
+        </div>
+        <div class="field">
+          <label for="p2x">Point Q — x coordinate</label>
+          <input type="number" id="p2x" value="1.5" step="0.1">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="addPointsBtn">Compute P + Q</button>
+        <button class="btn btn-ghost" id="clearPointsBtn">Clear points</button>
+      </div>
+      <div id="curveStatus"></div>
+
+      <div class="divider"></div>
+      <h3 style="font-size:14px; margin:0 0 4px 0;">Standard curve comparison</h3>
+      <table class="records">
+        <thead><tr><th>Curve</th><th>Field size</th><th>~Security level</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">P-256 (secp256r1)</td><td>256-bit</td><td>128-bit</td><td>Most widely supported; used in TLS, WebAuthn, most Web Crypto deployments</td></tr>
+          <tr><td class="strong">P-384 (secp384r1)</td><td>384-bit</td><td>192-bit</td><td>Used where longer-term security is required (e.g. some government profiles)</td></tr>
+          <tr><td class="strong">P-521 (secp521r1)</td><td>521-bit</td><td>256-bit</td><td>Highest security NIST curve exposed by the Web Crypto API</td></tr>
+          <tr><td class="strong">Curve25519 / Ed25519</td><td>255-bit</td><td>128-bit</td><td>Faster and simpler than NIST curves; <strong>not</strong> supported by the browser Web Crypto API</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+    Everything runs locally via the Web Crypto API. No key or content is ever transmitted.
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+  // ════════════════════════════════════════════════════════════
+  //  THEME SYNC KEY — must match the main index.html exactly
+  //  Main page uses: localStorage.setItem('cryptokit-theme', mode)
+  // ════════════════════════════════════════════════════════════
+  var THEME_KEY = 'cryptokit-theme';
+
+  // Guard flag: prevents drawCurve() from running before the
+  // canvas / slider consts are initialised (Temporal Dead Zone fix)
+  var curveReady = false;
+
+  function safeRedrawCurve(){
+    if (curveReady) {
+      try { drawCurve(); } catch(err){ console.warn('curve redraw skipped:', err); }
+    }
+  }
+
+  // ---------------- Back Button Smart Navigation ----------------
+  document.getElementById('homeBtn').addEventListener('click', function(e) {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    var sameSite = false;
+    try {
+      sameSite = !!document.referrer && new URL(document.referrer).origin === location.origin;
+    } catch (_) {}
+    if (sameSite && history.length > 1) {
+      history.back();
+      setTimeout(function() {
+        if (!document.hidden) location.href = '../index.html';
+      }, 400);
+    } else {
+      location.href = '../index.html';
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════
+  //  THEME MANAGEMENT — Reads & writes the same localStorage key
+  //  so main page ↔ tool pages stay perfectly in sync
+  // ════════════════════════════════════════════════════════════
+  var themeToggle = document.getElementById('themeToggle');
+  var themeLabel  = document.getElementById('themeLabel');
+
+  function applyTheme(theme, saveToStorage) {
+    if (theme !== 'hacker') theme = 'normal';   // normalise legacy values
+
+    document.documentElement.setAttribute('data-theme', theme);
+    if (themeLabel) themeLabel.textContent = (theme === 'hacker') ? 'HACKER' : 'Normal';
+
+    if (saveToStorage) {
+      try { localStorage.setItem(THEME_KEY, theme); } catch(_){}
+    }
+
+    safeRedrawCurve();   // safe — no-op until canvas is ready
+  }
+
+  // ── Read saved theme on load ──
+  var savedTheme = 'normal';
+  try { savedTheme = localStorage.getItem(THEME_KEY) || 'normal'; } catch(_){}
+  if (savedTheme !== 'hacker') savedTheme = 'normal';
+  applyTheme(savedTheme, false);
+
+  // ── Toggle on click ──
+  themeToggle.addEventListener('click', function(){
+    var current = document.documentElement.getAttribute('data-theme');
+    var next = (current === 'hacker') ? 'normal' : 'hacker';
+    applyTheme(next, true);
+  });
+
+  // ── Cross-tab sync ──
+  window.addEventListener('storage', function(e) {
+    if (e.key === THEME_KEY && e.newValue) {
+      applyTheme(e.newValue, false);
+    }
+  });
+
+  // ── Sync when tab regains focus (mobile fallback) ──
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+      var current = 'normal';
+      try { current = localStorage.getItem(THEME_KEY) || 'normal'; } catch(_){}
+      if (current !== 'hacker') current = 'normal';
+      if (current !== document.documentElement.getAttribute('data-theme')) {
+        applyTheme(current, false);
+      }
+    }
+  });
+
+  // ---------------- Tabs ----------------
+  var tabs = document.querySelectorAll('.tab');
+  var tabPanels = { inspect:'panel-inspect', exchange:'panel-exchange', sign:'panel-sign', curve:'panel-curve' };
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('active'); });
+      t.classList.add('active');
+      Object.values(tabPanels).forEach(function(id){ document.getElementById(id).style.display='none'; });
+      document.getElementById(tabPanels[t.dataset.tab]).style.display='block';
+      if (t.dataset.tab === 'curve') safeRedrawCurve();
+    });
+  });
+
+  // ---------------- Shared helpers ----------------
+  function statusHTML(kind, title, msg){
+    var icons = {
+      good: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3L16 10"/></svg>',
+      bad: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+      warn: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>'
+    };
+    return '<div class="status status-'+kind+'">'+icons[kind]+'<div><strong>'+title+'</strong>'+msg+'</div></div>';
+  }
+  function abToBase64(buf){
+    var binary=''; var bytes=new Uint8Array(buf);
+    for(var i=0;i<bytes.byteLength;i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+  function base64ToAb(b64){
+    var binary = atob(b64.trim());
+    var bytes = new Uint8Array(binary.length);
+    for(var i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+    return bytes.buffer;
+  }
+  function pemToArrayBuffer(pem){
+    var lines = pem.trim().split('\n').filter(function(l){ return !l.includes('-----'); });
+    return base64ToAb(lines.join(''));
+  }
+  function arrayBufferToPem(buf, label){
+    var b64 = abToBase64(buf);
+    var lines = b64.match(/.{1,64}/g).join('\n');
+    return '-----BEGIN '+label+'-----\n'+lines+'\n-----END '+label+'-----';
+  }
+  function b64urlToHex(str){
+    if(!str) return '';
+    var s = str.replace(/-/g,'+').replace(/_/g,'/');
+    while(s.length % 4) s += '=';
+    var binary = atob(s);
+    var hex = '';
+    for(var i=0;i<binary.length;i++) hex += binary.charCodeAt(i).toString(16).padStart(2,'0');
+    return hex;
+  }
+  function abToHex(buf){
+    return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  }
+  function copyable(val){
+    return '<button class="copy-btn" onclick="navigator.clipboard.writeText(this.dataset.v); this.textContent=\'Copied!\'; setTimeout(()=>this.textContent=\'Copy\',1200)" data-v="'+val.replace(/"/g,'&quot;')+'">Copy</button>';
+  }
+  function curveBits(curve){ return curve === 'P-256' ? 256 : curve === 'P-384' ? 384 : 521; }
+
+  // ---------------- KEY INSPECTOR ----------------
+  async function tryImportEc(pem, isPrivate, curve){
+    var buf = pemToArrayBuffer(pem);
+    var format = isPrivate ? 'pkcs8' : 'spki';
+    var usages = isPrivate ? ['sign'] : ['verify'];
+    var key = await crypto.subtle.importKey(format, buf, { name:'ECDSA', namedCurve: curve }, true, usages);
+    return crypto.subtle.exportKey('jwk', key);
+  }
+
+  document.getElementById('inspectBtn').addEventListener('click', async function(){
+    var status = document.getElementById('inspectStatus');
+    var results = document.getElementById('inspectResults');
+    var pem = document.getElementById('inspectKey').value;
+    var curveGuess = document.getElementById('inspectCurve').value;
+    results.innerHTML = '';
+    if(!pem.includes('BEGIN')){
+      status.innerHTML = statusHTML('bad','No key provided', 'Paste a PEM-formatted EC key above.');
+      return;
+    }
+    var isPrivate = pem.includes('PRIVATE KEY');
+    status.innerHTML = statusHTML('warn','Parsing…', 'Importing and decoding the key structure.');
+    try{
+      var jwk = await tryImportEc(pem, isPrivate, curveGuess);
+      var xHex = b64urlToHex(jwk.x);
+      var yHex = b64urlToHex(jwk.y);
+      var curve = jwk.crv;
+      var bits = curveBits(curve);
+
+      var html = '<div class="divider"></div><div class="kv-grid">'+
+        '<div class="kv-card"><div class="k">Key type</div><div class="v big">'+(isPrivate ? 'Private' : 'Public')+'</div></div>'+
+        '<div class="kv-card"><div class="k">Curve</div><div class="v big">'+curve+'</div></div>'+
+        '<div class="kv-card" style="grid-column:1/-1;">'+
+          '<div class="k">Field / security</div>'+
+          '<div class="v">'+bits+'-bit field · ~'+(bits===256?128:bits===384?192:256)+'-bit security level</div>'+
+        '</div>'+
+        '<div class="kv-card" style="grid-column:1/-1;">'+
+          '<div class="k">Point X coordinate '+copyable(xHex)+'</div>'+
+          '<div class="v">'+xHex+'</div>'+
+        '</div>'+
+        '<div class="kv-card" style="grid-column:1/-1;">'+
+          '<div class="k">Point Y coordinate '+copyable(yHex)+'</div>'+
+          '<div class="v">'+yHex+'</div>'+
+        '</div>';
+
+      if(isPrivate){
+        var dHex = b64urlToHex(jwk.d);
+        html += '<div class="kv-card" style="grid-column:1/-1;">'+
+          '<div class="k">Private scalar (d) '+copyable(dHex)+'</div>'+
+          '<div class="v">'+dHex+'</div>'+
+        '</div>';
+      }
+      html += '</div>';
+      results.innerHTML = html;
+      status.innerHTML = statusHTML('good','Key parsed', isPrivate
+        ? 'Full private key decoded — the scalar d is the single secret number this entire key pair is built from.'
+        : 'Public key decoded (a point on the curve: X, Y). Paste the matching private key to also see the secret scalar d.');
+    }catch(err){
+      status.innerHTML = statusHTML('bad','Could not parse key', 'Make sure this is a valid PEM SPKI/PKCS8 EC key, and that the selected curve matches. ' + err.message);
+    }
+  });
+
+  document.getElementById('genLabKeyBtn').addEventListener('click', async function(){
+    var status = document.getElementById('inspectStatus');
+    var curve = document.getElementById('inspectCurve').value;
+    status.innerHTML = statusHTML('warn','Generating…', 'Creating a fresh ECDSA '+curve+' key pair for the lab.');
+    try{
+      var keyPair = await crypto.subtle.generateKey({ name:'ECDSA', namedCurve: curve }, true, ['sign','verify']);
+      var pubPem = arrayBufferToPem(await crypto.subtle.exportKey('spki', keyPair.publicKey), 'PUBLIC KEY');
+      var privPem = arrayBufferToPem(await crypto.subtle.exportKey('pkcs8', keyPair.privateKey), 'PRIVATE KEY');
+      document.getElementById('inspectKey').value = privPem;
+      document.getElementById('signPrivKey').value = privPem;
+      document.getElementById('signPubKey').value = pubPem;
+      document.getElementById('signCurve2').value = curve;
+      status.innerHTML = statusHTML('good','Lab key pair generated', 'Dropped the private key above and prefilled the Sign Schemes tab too. Click "Inspect Key" to decode it.');
+    }catch(err){
+      status.innerHTML = statusHTML('bad','Generation failed', err.message);
+    }
+  });
+
+  // ---------------- ECDH EXCHANGE ----------------
+  document.getElementById('runExchangeBtn').addEventListener('click', async function(){
+    var status = document.getElementById('exchangeStatus');
+    var results = document.getElementById('exchangeResults');
+    var curve = document.getElementById('exchangeCurve').value;
+    status.innerHTML = statusHTML('warn','Running exchange…', 'Generating two independent '+curve+' key pairs for Alice and Bob.');
+    results.style.display = 'none';
+    try{
+      var aliceKeys = await crypto.subtle.generateKey({ name:'ECDH', namedCurve: curve }, true, ['deriveBits']);
+      var bobKeys = await crypto.subtle.generateKey({ name:'ECDH', namedCurve: curve }, true, ['deriveBits']);
+
+      var bitLen = curveBits(curve);
+      var aliceSharedBits = await crypto.subtle.deriveBits(
+        { name:'ECDH', public: bobKeys.publicKey }, aliceKeys.privateKey, bitLen
+      );
+      var bobSharedBits = await crypto.subtle.deriveBits(
+        { name:'ECDH', public: aliceKeys.publicKey }, bobKeys.privateKey, bitLen
+      );
+
+      var aliceSecretHash = await crypto.subtle.digest('SHA-256', aliceSharedBits);
+      var bobSecretHash = await crypto.subtle.digest('SHA-256', bobSharedBits);
+      var aliceHex = abToHex(aliceSecretHash);
+      var bobHex = abToHex(bobSecretHash);
+
+      var aliceJwk = await crypto.subtle.exportKey('jwk', aliceKeys.publicKey);
+      var bobJwk = await crypto.subtle.exportKey('jwk', bobKeys.publicKey);
+      document.getElementById('alicePubX').textContent = b64urlToHex(aliceJwk.x).slice(0,40) + '…';
+      document.getElementById('bobPubX').textContent = b64urlToHex(bobJwk.x).slice(0,40) + '…';
+      document.getElementById('aliceSecret').textContent = aliceHex;
+      document.getElementById('bobSecret').textContent = bobHex;
+      results.style.display = 'block';
+
+      var match = aliceHex === bobHex;
+      document.getElementById('matchStatus').innerHTML = match
+        ? statusHTML('good','Shared secrets match!', 'Alice and Bob independently arrived at the exact same secret — using only their own private key and the other party\'s public key. This secret was never transmitted.')
+        : statusHTML('bad','Secrets do not match', 'Something went wrong deriving the shared secret.');
+      status.innerHTML = '';
+    }catch(err){
+      status.innerHTML = statusHTML('bad','Exchange failed', err.message);
+    }
+  });
+
+  // ---------------- SIGN SCHEMES ----------------
+  document.getElementById('signRunBtn').addEventListener('click', async function(){
+    var status = document.getElementById('signStatus2');
+    var grid = document.getElementById('sigResultsGrid');
+    var privPem = document.getElementById('signPrivKey').value;
+    var pubPem = document.getElementById('signPubKey').value;
+    var curve = document.getElementById('signCurve2').value;
+    var hash = document.getElementById('signHash2').value;
+    var msg = document.getElementById('signMsg2').value;
+
+    if(!privPem.includes('PRIVATE KEY') || !pubPem.includes('PUBLIC KEY') || !msg){
+      status.innerHTML = statusHTML('bad','Missing input', 'Provide a private key, matching public key, and a message.');
+      grid.style.display='none'; return;
+    }
+    try{
+      var privKey = await crypto.subtle.importKey('pkcs8', pemToArrayBuffer(privPem), { name:'ECDSA', namedCurve: curve }, false, ['sign']);
+      var pubKey = await crypto.subtle.importKey('spki', pemToArrayBuffer(pubPem), { name:'ECDSA', namedCurve: curve }, false, ['verify']);
+      var enc = new TextEncoder().encode(msg);
+      var sigBuf = await crypto.subtle.sign({ name:'ECDSA', hash: hash }, privKey, enc);
+      var valid = await crypto.subtle.verify({ name:'ECDSA', hash: hash }, pubKey, sigBuf, enc);
+
+      var sigBytes = new Uint8Array(sigBuf);
+      var half = sigBytes.length / 2;
+      var rHex = Array.from(sigBytes.slice(0, half)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+      var sHex = Array.from(sigBytes.slice(half)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+
+      grid.style.display = 'grid';
+      grid.innerHTML =
+        '<div class="kv-card" style="grid-column:1/-1;"><div class="k">r component '+copyable(rHex)+'</div><div class="v">'+rHex+'</div></div>'+
+        '<div class="kv-card" style="grid-column:1/-1;"><div class="k">s component '+copyable(sHex)+'</div><div class="v">'+sHex+'</div></div>'+
+        '<div class="kv-card"><div class="k">Signature size</div><div class="v big">'+sigBytes.length+' bytes</div></div>'+
+        '<div class="kv-card"><div class="k">Verification</div><div class="v big" style="color:'+(valid?'var(--good)':'var(--bad)')+'">'+(valid ? 'Valid ✓' : 'Failed')+'</div></div>';
+      status.innerHTML = statusHTML('good','Signed &amp; verified', 'ECDSA '+curve+' / '+hash+' produced a compact '+sigBytes.length+'-byte signature — notice how much smaller this is than an equivalent-strength RSA signature.');
+    }catch(err){
+      status.innerHTML = statusHTML('bad','Operation failed', err.message + ' — make sure the private and public key are a matching pair on the selected curve.');
+      grid.style.display='none';
+    }
+  });
+
+  // ---------------- CURVE EXPLORER (canvas) ----------------
+  var canvas = document.getElementById('curveCanvas');
+  var ctx = canvas.getContext('2d');
+  var aSlider = document.getElementById('aSlider');
+  var bSlider = document.getElementById('bSlider');
+  var lastAddedPoints = null;
+
+  function getThemeCanvasColors(){
+    var isHacker = document.documentElement.getAttribute('data-theme') === 'hacker';
+    if(isHacker){
+      return {
+        bg: '#050505',
+        axis: 'rgba(0,255,65,0.15)',
+        curve: '#00FF41',
+        curveWidth: 2.5,
+        curveShadow: 'rgba(0,255,65,0.4)',
+        line: '#39FF14',
+        dotP: '#00FF41',
+        dotR: '#FFD700',
+        text: '#00FF41',
+        gridLine: 'rgba(0,255,65,0.06)'
+      };
+    }
+    return {
+      bg: '#ffffff',
+      axis: '#e1e3f5',
+      curve: '#d97706',
+      curveWidth: 2.5,
+      curveShadow: null,
+      line: '#6366f1',
+      dotP: '#d97706',
+      dotR: '#38bdf8',
+      text: '#1c1f37',
+      gridLine: null
+    };
+  }
+
+  function worldToScreen(x, y, scale, cx, cy){
+    return { sx: cx + x*scale, sy: cy - y*scale };
+  }
+
+  function drawCurve(){
+    var W = canvas.width, H = canvas.height;
+    var a = parseFloat(aSlider.value), b = parseFloat(bSlider.value);
+    document.getElementById('aVal').textContent = a;
+    document.getElementById('bVal').textContent = b;
+
+    var colors = getThemeCanvasColors();
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = colors.bg;
+    ctx.fillRect(0,0,W,H);
+
+    var scale = 55;
+    var cx = W/2, cy = H/2;
+
+    // grid lines (hacker mode)
+    if(colors.gridLine){
+      ctx.strokeStyle = colors.gridLine;
+      ctx.lineWidth = 1;
+      for(var gx = cx % 55; gx < W; gx += 55){
+        ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke();
+      }
+      for(var gy = cy % 55; gy < H; gy += 55){
+        ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke();
+      }
+    }
+
+    // axes
+    ctx.strokeStyle = colors.axis;
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    // curve glow (hacker mode)
+    if(colors.curveShadow){
+      ctx.save();
+      ctx.shadowColor = colors.curveShadow;
+      ctx.shadowBlur = 12;
+    }
+
+    // curve: y^2 = x^3 + a x + b  (upper half)
+    ctx.strokeStyle = colors.curve;
+    ctx.lineWidth = colors.curveWidth;
+    var started = false;
+    ctx.beginPath();
+    for(var px=0; px<=W; px++){
+      var x = (px - cx)/scale;
+      var rhs = x*x*x + a*x + b;
+      if(rhs >= 0){
+        var y = Math.sqrt(rhs);
+        var p = worldToScreen(x, y, scale, cx, cy);
+        if(!started){ ctx.moveTo(p.sx, p.sy); started = true; } else { ctx.lineTo(p.sx, p.sy); }
+      } else { started = false; }
+    }
+    ctx.stroke();
+
+    // lower half
+    started = false;
+    ctx.beginPath();
+    for(var px2=0; px2<=W; px2++){
+      var x2 = (px2 - cx)/scale;
+      var rhs2 = x2*x2*x2 + a*x2 + b;
+      if(rhs2 >= 0){
+        var y2 = -Math.sqrt(rhs2);
+        var p2 = worldToScreen(x2, y2, scale, cx, cy);
+        if(!started){ ctx.moveTo(p2.sx, p2.sy); started = true; } else { ctx.lineTo(p2.sx, p2.sy); }
+      } else { started = false; }
+    }
+    ctx.stroke();
+
+    if(colors.curveShadow){ ctx.restore(); }
+
+    if(lastAddedPoints){
+      var P = lastAddedPoints.P, Q = lastAddedPoints.Q, R = lastAddedPoints.R, line = lastAddedPoints.line;
+
+      ctx.strokeStyle = colors.line;
+      ctx.setLineDash([6,5]);
+      ctx.lineWidth = 1.5;
+      if(colors.curveShadow){
+        ctx.save();
+        ctx.shadowColor = colors.line;
+        ctx.shadowBlur = 6;
+      }
+      ctx.beginPath();
+      var lx1 = -cx/scale, lx2 = cx/scale;
+      var ly1 = line.m*(lx1-P.x)+P.y, ly2 = line.m*(lx2-P.x)+P.y;
+      var s1 = worldToScreen(lx1,ly1,scale,cx,cy), s2 = worldToScreen(lx2,ly2,scale,cx,cy);
+      ctx.moveTo(s1.sx, s1.sy); ctx.lineTo(s2.sx, s2.sy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if(colors.curveShadow) ctx.restore();
+
+      function dot(pt, color, label){
+        var s = worldToScreen(pt.x, pt.y, scale, cx, cy);
+        if(colors.curveShadow){
+          ctx.save();
+          ctx.shadowColor = color;
+          ctx.shadowBlur = 10;
+        }
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(s.sx, s.sy, 6, 0, Math.PI*2); ctx.fill();
+        if(colors.curveShadow) ctx.restore();
+        ctx.fillStyle = colors.text;
+        ctx.font = '600 13px sans-serif';
+        ctx.fillText(label, s.sx+10, s.sy-8);
+      }
+      dot(P, colors.dotP, 'P');
+      dot(Q, colors.dotP, 'Q');
+      dot(R, colors.dotR, 'P+Q');
+    }
+  }
+
+  aSlider.addEventListener('input', drawCurve);
+  bSlider.addEventListener('input', drawCurve);
+
+  document.getElementById('addPointsBtn').addEventListener('click', function(){
+    var status = document.getElementById('curveStatus');
+    var a = parseFloat(aSlider.value), b = parseFloat(bSlider.value);
+    var x1 = parseFloat(document.getElementById('p1x').value);
+    var x2 = parseFloat(document.getElementById('p2x').value);
+    var rhs1 = x1*x1*x1 + a*x1 + b;
+    var rhs2 = x2*x2*x2 + a*x2 + b;
+    if(isNaN(x1) || isNaN(x2)){
+      status.innerHTML = statusHTML('bad','Invalid input', 'Enter numeric x coordinates for both P and Q.');
+      return;
+    }
+    if(rhs1 < 0 || rhs2 < 0){
+      status.innerHTML = statusHTML('bad','Point not on curve', 'For this a/b, one of those x values gives a negative y² — pick different x coordinates or adjust a/b.');
+      return;
+    }
+    var y1 = Math.sqrt(rhs1), y2 = Math.sqrt(rhs2);
+    var P = { x:x1, y:y1 }, Q = { x:x2, y:y2 };
+    if(Math.abs(x1-x2) < 1e-9){
+      status.innerHTML = statusHTML('warn','Same x coordinate', 'Pick two points with different x values for a clear addition (point doubling needs a tangent line, not shown in this simple demo).');
+      return;
+    }
+    var m = (y2-y1)/(x2-x1);
+    var x3 = m*m - x1 - x2;
+    var y3 = m*(x1-x3) - y1;
+    var R = { x:x3, y:-y3 };
+    lastAddedPoints = { P:P, Q:Q, R:R, line: { m:m } };
+    drawCurve();
+    status.innerHTML = statusHTML('good','P + Q computed', 'The line through P and Q hits the curve at a third point; reflecting it over the x-axis gives P+Q = ('+R.x.toFixed(3)+', '+R.y.toFixed(3)+'). This geometric rule is the group law that makes ECC work.');
+  });
+
+  document.getElementById('clearPointsBtn').addEventListener('click', function(){
+    lastAddedPoints = null;
+    document.getElementById('curveStatus').innerHTML = '';
+    drawCurve();
+  });
+
+  // ✅ Canvas is now fully initialised — enable redraws and do first paint
+  curveReady = true;
+  drawCurve();
+
+})();
+</script>
+</body>
+</html>
