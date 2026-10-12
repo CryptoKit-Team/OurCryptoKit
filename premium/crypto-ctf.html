@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto CTF / Challenge Mode — Quantum Elite Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --bg-0:#eef0fc;
+    --surface:#ffffff;
+    --surface-soft:#f6f7fc;
+    --border:#e7e8f3;
+    --ink:#15172b;
+    --ink-soft:#5b5f7e;
+    --ink-faint:#9599b8;
+    --grad-1:#2563eb;
+    --grad-2:#7c3aed;
+    --grad-3:#ec4899;
+    --purple-bg:#f1ecfd;
+    --purple:#7c3aed;
+    --ok:#16a34a;
+    --bad:#dc2626;
+    --warn:#d97706;
+    --radius-lg:20px;
+    --radius-md:12px;
+    --font-display:'Space Grotesk','Arial Rounded MT Bold',ui-rounded,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --font-body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    --font-mono:'JetBrains Mono','SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  }
+  html[data-theme="hacker"]{
+    --bg-0:#07070f;
+    --surface:#0e0e1c;
+    --surface-soft:#131326;
+    --border:#242442;
+    --ink:#f1f1fb;
+    --ink-soft:#b4b6d6;
+    --ink-faint:#6b6e95;
+    --purple-bg:#1d1a3a;
+    --ok:#34d399;
+    --bad:#f87171;
+    --warn:#fbbf24;
+  }
+  html[data-theme="hacker"] body{background:
+    radial-gradient(900px 420px at 15% -10%, rgba(37,99,235,.18) 0%, transparent 60%),
+    radial-gradient(900px 420px at 100% 0%, rgba(236,72,153,.14) 0%, transparent 55%),
+    var(--bg-0);}
+  html[data-theme="hacker"] .data-box,
+  html[data-theme="hacker"] .mini-console{background:#000;border:1px solid var(--border);}
+  html[data-theme="hacker"] .chall.solved{background:#0d1f14;border-color:#1f6b3f;}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:
+    radial-gradient(900px 420px at 15% -10%, #dde3fb 0%, transparent 60%),
+    radial-gradient(900px 420px at 100% 0%, #fbe3f0 0%, transparent 55%),
+    var(--bg-0);
+    color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;min-height:100vh;transition:background .25s ease, color .25s ease;}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 24px 100px;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:14px;}
+  .back-link{display:flex;align-items:center;gap:8px;color:var(--ink-soft);text-decoration:none;font-size:14px;font-weight:600;}
+  .back-link:hover{color:var(--purple);}
+  .nav-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .pill-badge{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--ink-soft);font-size:12.5px;font-weight:700;}
+  .elite-tag{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3));color:#fff;font-size:13px;font-weight:700;}
+  .theme-switch{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--border);font-size:12.5px;font-weight:700;color:var(--ink-soft);cursor:pointer;user-select:none;}
+  .switch-track{width:38px;height:22px;border-radius:999px;background:var(--border);position:relative;transition:background .2s;flex-shrink:0;}
+  .switch-thumb{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .2s;}
+  html[data-theme="hacker"] .switch-track{background:linear-gradient(90deg,var(--grad-1),var(--grad-2));}
+  html[data-theme="hacker"] .switch-thumb{left:18px;}
+
+  .hero{text-align:center;margin-bottom:24px;}
+  .hero h1{font-family:var(--font-display);font-weight:800;font-size:38px;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;}
+  .hero h1 .accent{background:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p{margin:0;color:var(--ink-soft);font-size:15.5px;max-width:640px;margin:0 auto;}
+
+  /* scoreboard */
+  .scoreboard{display:flex;gap:14px;flex-wrap:wrap;margin:28px 0 32px;}
+  .stat-card{flex:1;min-width:140px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 18px;text-align:center;box-shadow:0 10px 24px -18px rgba(30,20,80,.2);}
+  .stat-card .v{font-family:var(--font-display);font-weight:800;font-size:24px;background:linear-gradient(90deg,var(--grad-1),var(--grad-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .stat-card .l{font-size:11.5px;color:var(--ink-soft);margin-top:4px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;}
+  .progress-bar{height:10px;background:var(--surface-soft);border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:30px;}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3));transition:width .3s;}
+
+  .cert-row{display:flex;justify-content:center;margin:-16px 0 32px;}
+  .cert-row button{display:none;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+
+  .chall{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;box-shadow:0 14px 34px -22px rgba(30,20,80,.2);position:relative;overflow:hidden;transition:border-color .2s;}
+  .chall.solved{border-color:#bbf3d1;background:#f8fffb;}
+  .chall .top-bar{position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3));}
+  .chall.solved .top-bar{background:linear-gradient(90deg,#16a34a,#22c55e);}
+
+  .chall-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;margin-top:6px;}
+  .chall-head h3{font-family:var(--font-display);font-size:17px;margin:0;}
+  .pts{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--purple);background:var(--purple-bg);padding:4px 10px;border-radius:999px;white-space:nowrap;}
+  .chall.solved .pts{background:#dcfce7;color:#166534;}
+
+  .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .tag{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-soft);background:var(--surface-soft);border:1px solid var(--border);padding:3px 9px;border-radius:999px;}
+
+  .desc{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin-bottom:12px;}
+
+  .data-box{background:#0f1124;color:#9ae6b4;font-family:var(--font-mono);font-size:12px;padding:12px 14px;border-radius:10px;word-break:break-all;line-height:1.6;margin-bottom:12px;max-height:140px;overflow-y:auto;}
+  .data-box .lbl{color:#93c5fd;display:block;margin-bottom:4px;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;}
+
+  .helper{background:var(--surface-soft);border:1px dashed var(--border);border-radius:10px;padding:10px 12px;margin-bottom:12px;}
+  .helper summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--purple);}
+  .helper .inner{margin-top:10px;}
+  .mini-console{background:#0f1124;color:#9ae6b4;font-family:var(--font-mono);font-size:11px;padding:10px;border-radius:8px;max-height:160px;overflow-y:auto;margin-top:8px;line-height:1.6;}
+  .mini-console .ln.ok{color:#6ee7b7;}
+  .mini-console .ln.hit{color:#fcd34d;font-weight:700;}
+
+  .btn{border:none;border-radius:9px;padding:9px 14px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:var(--font-body);}
+  .btn-ghost{background:var(--surface);border:1px solid var(--border);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--purple);}
+  .btn-mini{background:var(--purple-bg);color:var(--purple);border:none;}
+
+  .submit-row{display:flex;gap:8px;margin-top:4px;}
+  .flag-input{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-family:var(--font-mono);font-size:13px;background:var(--surface-soft);}
+  .flag-input:disabled{opacity:.6;}
+  .btn-submit{background:linear-gradient(90deg,var(--grad-2),#8b3df0);color:#fff;border:none;border-radius:9px;padding:10px 18px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;}
+  .btn-submit:hover{filter:brightness(1.06);}
+  .btn-submit[disabled]{opacity:.5;cursor:not-allowed;}
+
+  .feedback{font-size:12.5px;margin-top:8px;font-weight:600;min-height:16px;}
+  .feedback.ok{color:var(--ok);}
+  .feedback.bad{color:var(--bad);}
+
+  .hint-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+  .hint-text{font-size:12px;color:var(--warn);background:#fef3e2;border:1px solid #fbd999;border-radius:8px;padding:8px 10px;margin-top:8px;display:none;}
+
+  .solved-badge{display:flex;align-items:center;gap:6px;color:#166534;font-weight:700;font-size:12.5px;margin-top:10px;}
+
+  .footer-note{text-align:center;color:var(--ink-faint);font-size:12px;margin-top:40px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="../index.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M15 18l-6-6 6-6"/></svg>
+      Quantum Elite Labs
+    </a>
+    <div class="nav-actions">
+      <div class="pill-badge"><i class="fa-solid fa-lock"></i> 100% Client-Side</div>
+      <div class="elite-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-7 5 7 4-3-2 11H5L3 8z"/></svg>
+        Quantum Elite — Lab Unlocked
+      </div>
+      <div class="theme-switch" id="themeSwitch">
+        <span id="themeLabel">Normal</span>
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1>Crypto CTF <span class="accent">Challenge Mode</span></h1>
+    <p>Six hands-on cryptography puzzles, from Base64 warm-ups to factoring an RSA modulus. All flags look like <b>QEL{...}</b> — crack the cipher, type the flag, score points.</p>
+  </div>
+
+  <div class="scoreboard">
+    <div class="stat-card"><div class="v" id="scoreVal">0</div><div class="l">Score</div></div>
+    <div class="stat-card"><div class="v" id="solvedVal">0 / 6</div><div class="l">Solved</div></div>
+    <div class="stat-card"><div class="v" id="rankVal">Recruit</div><div class="l">Rank</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+  <div class="cert-row"><button class="btn btn-ghost" id="certBtn">Download Certificate</button></div>
+
+  <div class="grid" id="challGrid"></div>
+
+  <div class="footer-note">Progress is kept in memory for this session only — refreshing the page resets the board.</div>
+</div>
+
+<script>
+(function(){ // isolated scope — nothing here leaks into the host page's globals, so it won't collide with jQuery or any other site script
+const qelGet=id=>document.getElementById(id);
+const enc=new TextEncoder();
+
+/* theme toggle (Normal / Hacker), persisted across Quantum Elite pages */
+(function(){
+  const saved=localStorage.getItem('qel-theme')||'normal';
+  document.documentElement.setAttribute('data-theme', saved);
+  function syncLabel(){
+    const mode=document.documentElement.getAttribute('data-theme');
+    const label=document.getElementById('themeLabel');
+    if(label) label.textContent = mode==='hacker' ? 'Hacker' : 'Normal';
+  }
+  syncLabel();
+  const sw=document.getElementById('themeSwitch');
+  if(sw){
+    sw.addEventListener('click',()=>{
+      const current=document.documentElement.getAttribute('data-theme')||'normal';
+      const next=current==='hacker'?'normal':'hacker';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('qel-theme', next);
+      syncLabel();
+    });
+  }
+})();
+
+async function sha256hex(str){
+  const buf=await crypto.subtle.digest('SHA-256', enc.encode(str));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function md5hex(str){ return md5(str); }
+
+/* ---- pure JS MD5 (for Hash Hunter dictionary cracking) ---- */
+function md5(string){
+  function rotl(x,c){return (x<<c)|(x>>>(32-c));}
+  function toHexBytes(n){let s='';for(let i=0;i<4;i++)s+=((n>>>(8*i))&255).toString(16).padStart(2,'0');return s;}
+  const K=new Uint32Array(64);for(let i=0;i<64;i++)K[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296);
+  const S=[7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+  const msgBytes=new TextEncoder().encode(string);
+  const bitLen=msgBytes.length*8;
+  let padLen=(msgBytes.length%64<56)?(56-msgBytes.length%64):(120-msgBytes.length%64);
+  const padded=new Uint8Array(msgBytes.length+padLen+8);
+  padded.set(msgBytes,0); padded[msgBytes.length]=0x80;
+  for(let i=0;i<8;i++) padded[padded.length-8+i]=Number((BigInt(bitLen)>>BigInt(8*i))&0xFFn);
+  let [a0,b0,c0,d0]=[0x67452301,0xefcdab89,0x98badcfe,0x10325476];
+  for(let off=0;off<padded.length;off+=64){
+    const M=new Uint32Array(16);
+    for(let i=0;i<16;i++) M[i]=padded[off+i*4]|(padded[off+i*4+1]<<8)|(padded[off+i*4+2]<<16)|(padded[off+i*4+3]<<24);
+    let a=a0,b=b0,c=c0,d=d0;
+    for(let i=0;i<64;i++){
+      let f,g;
+      if(i<16){f=(b&c)|((~b)&d);g=i;}
+      else if(i<32){f=(d&b)|((~d)&c);g=(5*i+1)%16;}
+      else if(i<48){f=b^c^d;g=(3*i+5)%16;}
+      else {f=c^(b|(~d));g=(7*i)%16;}
+      f=(f+a+K[i]+M[g])>>>0;
+      a=d;d=c;c=b;
+      b=(b+rotl(f,S[i]))>>>0;
+    }
+    a0=(a0+a)>>>0; b0=(b0+b)>>>0; c0=(c0+c)>>>0; d0=(d0+d)>>>0;
+  }
+  return toHexBytes(a0)+toHexBytes(b0)+toHexBytes(c0)+toHexBytes(d0);
+}
+
+/* ---- scoring ---- */
+let score=0, solvedCount=0;
+const TOTAL=6;
+function updateScoreboard(){
+  qelGet('scoreVal').textContent=score;
+  qelGet('solvedVal').textContent=solvedCount+' / '+TOTAL;
+  const pct=Math.round(solvedCount/TOTAL*100);
+  qelGet('progFill').style.width=pct+'%';
+  let rank='Recruit';
+  if(solvedCount>=6) rank='Quantum Elite';
+  else if(solvedCount>=4) rank='Cryptanalyst';
+  else if(solvedCount>=2) rank='Codebreaker';
+  qelGet('rankVal').textContent=rank;
+  qelGet('certBtn').style.display = solvedCount>=TOTAL ? 'inline-block' : 'none';
+}
+qelGet('certBtn').addEventListener('click', ()=>{
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Certificate</title>
+  <style>body{font-family:-apple-system,sans-serif;background:#eef0fc;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
+  .cert{background:#fff;border-radius:24px;padding:60px;max-width:600px;text-align:center;box-shadow:0 30px 60px -30px rgba(30,20,80,.3);border-top:8px solid;border-image:linear-gradient(90deg,#2563eb,#7c3aed,#ec4899) 1;}
+  h1{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:#7c3aed;margin:0 0 20px;}
+  h2{font-size:30px;margin:0 0 16px;background:linear-gradient(90deg,#2563eb,#7c3aed,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  p{color:#5b5f7e;font-size:15px;line-height:1.6;}
+  .score{font-family:monospace;font-size:20px;font-weight:700;margin-top:20px;color:#15172b;}</style></head>
+  <body><div class="cert"><h1>Quantum Elite Labs</h1><h2>Crypto CTF — Challenge Mode</h2>
+  <p>This certifies the completion of all six Crypto CTF challenges — Encoding, Classical Ciphers, Symmetric XOR, Dictionary Attacks, and RSA Factorization.</p>
+  <div class="score">Final Score: ${score} pts · Rank: Quantum Elite</div></div></body></html>`;
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='quantum-elite-ctf-certificate.html'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ---- challenge definitions ---- */
+const challenges=[
+  {
+    id:'c1', title:'Warm Up', category:'Encoding', points:50,
+    tags:['Base64','Beginner'],
+    desc:'Every challenge flag looks like <b>QEL{...}</b>. This one is hiding in plain sight — just decoded wrong.',
+    data:[{label:'Intercepted string', value:'UUVMe2I0czNfNjRfMXNfbjB0XzNuY3J5cHQxMG59'}],
+    hint:'This alphabet (A-Z, a-z, 0-9, +, /) with = padding at the end is a dead giveaway.',
+    flagHash:'6e2cf15eeb7c8fd0d93a882f31c9a28c872913c54da3c5b805decee50a0552bc',
+    helper:{
+      label:'Open Base64 Decoder',
+      render:(container)=>{
+        container.innerHTML=`<div><input type="text" class="flag-input" id="c1HelperIn" placeholder="paste base64 here" value="UUVMe2I0czNfNjRfMXNfbjB0XzNuY3J5cHQxMG59" style="margin-bottom:8px;"><button class="btn btn-mini" id="c1HelperBtn">Decode</button><div class="mini-console" id="c1HelperOut"></div></div>`;
+        container.querySelector('#c1HelperBtn').addEventListener('click',()=>{
+          const out=container.querySelector('#c1HelperOut');
+          try{
+            const decoded=atob(container.querySelector('#c1HelperIn').value.trim());
+            out.innerHTML=`<div class="ln ok">${decoded}</div>`;
+          }catch(e){ out.innerHTML=`<div class="ln">Invalid base64</div>`; }
+        });
+      }
+    }
+  },
+  {
+    id:'c2', title:"Caesar's Secret", category:'Classical', points:75,
+    tags:['Caesar Cipher','Shift'],
+    desc:'A Roman general\'s favorite cipher. Every letter is shifted by the same amount — you just don\'t know by how much yet.',
+    data:[{label:'Ciphertext', value:'DRY{rg_gh_oehgr}'}],
+    hint:'Try all 26 shifts — one of them will spell out a flag starting with QEL{.',
+    flagHash:'88575b057c552073d4e92dd11d08ee47e2e9938d764c69a0d4f298b6316f51a7',
+    helper:{
+      label:'Open Brute-Force (all 26 shifts)',
+      render:(container)=>{
+        container.innerHTML=`<button class="btn btn-mini" id="c2HelperBtn">Try All Shifts</button><div class="mini-console" id="c2HelperOut"></div>`;
+        container.querySelector('#c2HelperBtn').addEventListener('click',()=>{
+          const out=container.querySelector('#c2HelperOut');
+          out.innerHTML='';
+          const ct='DRY{rg_gh_oehgr}';
+          for(let shift=0;shift<26;shift++){
+            const pt=ct.replace(/[a-zA-Z]/g,c=>{
+              const base=c<='Z'?65:97;
+              return String.fromCharCode(((c.charCodeAt(0)-base-shift)%26+26)%26+base);
+            });
+            const hit=pt.startsWith('QEL{');
+            const d=document.createElement('div');
+            d.className='ln'+(hit?' hit':'');
+            d.textContent='shift '+shift+': '+pt;
+            out.appendChild(d);
+          }
+        });
+      }
+    }
+  },
+  {
+    id:'c3', title:'XOR Marks the Spot', category:'Symmetric', points:100,
+    tags:['XOR','Single-byte key'],
+    desc:'The flag was XOR-encrypted with a single repeating byte key. Flip through all 256 possible keys and look for readable text.',
+    data:[{label:'Ciphertext (hex)', value:'7b6f6651521a58751b597558195c1958591b48461957'}],
+    hint:'Since the plaintext starts with "QEL{", XOR the first ciphertext byte with the character code of "Q" to recover the key directly.',
+    flagHash:'adabb38a73030e649c29be0cb5a280a2c07bc933abf1641e44743e5ef364f379',
+    helper:{
+      label:'Open XOR Brute-Forcer',
+      render:(container)=>{
+        container.innerHTML=`<button class="btn btn-mini" id="c3HelperBtn">Try All 256 Keys</button><div class="mini-console" id="c3HelperOut"></div>`;
+        container.querySelector('#c3HelperBtn').addEventListener('click',()=>{
+          const out=container.querySelector('#c3HelperOut');
+          out.innerHTML='';
+          const hex='7b6f6651521a58751b597558195c1958591b48461957';
+          const bytes=[]; for(let i=0;i<hex.length;i+=2) bytes.push(parseInt(hex.substr(i,2),16));
+          let shown=0;
+          for(let key=0;key<256;key++){
+            const chars=bytes.map(b=>b^key);
+            const printable=chars.every(c=>c>=32&&c<127);
+            if(!printable) continue;
+            const text=String.fromCharCode(...chars);
+            const hit=text.startsWith('QEL{');
+            if(hit||shown<40){
+              const d=document.createElement('div');
+              d.className='ln'+(hit?' hit':'');
+              d.textContent='key 0x'+key.toString(16).padStart(2,'0')+': '+text;
+              out.appendChild(d);
+              shown++;
+            }
+          }
+        });
+      }
+    }
+  },
+  {
+    id:'c4', title:'Vigenère Vault', category:'Classical', points:125,
+    tags:['Vigenère','Key Search'],
+    desc:'A polyalphabetic cipher — the shift changes letter by letter based on a repeating keyword. The key is a 6-letter word you\'ll find in nearly every crypto glossary.',
+    data:[{label:'Ciphertext', value:'SMA{c1ket3_v0i_z0_w3twz3}'}],
+    hint:'The key is "CIPHER". Shift each letter backward by the corresponding key letter\'s position (A=0..Z=25), cycling the key only over alphabetic characters.',
+    flagHash:'359ef5e62f939ce836fb28560e2fa916592520d80fee6ce2500956fffde71be4',
+    helper:{
+      label:'Open Vigenère Decoder',
+      render:(container)=>{
+        container.innerHTML=`<input type="text" class="flag-input" id="c4HelperKey" placeholder="try a key..." style="margin-bottom:8px;"><button class="btn btn-mini" id="c4HelperBtn">Decrypt</button><div class="mini-console" id="c4HelperOut"></div>`;
+        container.querySelector('#c4HelperBtn').addEventListener('click',()=>{
+          const out=container.querySelector('#c4HelperOut');
+          const key=container.querySelector('#c4HelperKey').value.trim().toUpperCase();
+          if(!key){ out.innerHTML='<div class="ln">Enter a key first.</div>'; return; }
+          const ct='SMA{c1ket3_v0i_z0_w3twz3}';
+          let ki=0;
+          const pt=ct.split('').map(c=>{
+            if(/[a-zA-Z]/.test(c)){
+              const base=c<='Z'?65:97;
+              const k=key.charCodeAt(ki%key.length)-65;
+              ki++;
+              return String.fromCharCode(((c.charCodeAt(0)-base-k)%26+26)%26+base);
+            }
+            return c;
+          }).join('');
+          const hit=pt.startsWith('QEL{');
+          out.innerHTML=`<div class="ln${hit?' hit':''}">${pt}</div>`;
+        });
+      }
+    }
+  },
+  {
+    id:'c5', title:'Hash Hunter', category:'Hashing', points:125,
+    tags:['MD5','Dictionary Attack'],
+    desc:'This MD5 hash is the flag\'s secret word — nothing more. It\'s a common English word, so a dictionary attack will crack it instantly.',
+    data:[{label:'MD5 hash', value:'8621ffdbc5698829397d97767ac13db3'}],
+    hint:'The word is a mythical fire-breathing creature.',
+    flagHash:'0fc8fe7722261c1234ca5b9b8d77c1e6bb9da67bd64ed24524ee32705bc80657',
+    helper:{
+      label:'Open Dictionary Cracker (built-in wordlist)',
+      render:(container)=>{
+        container.innerHTML=`<button class="btn btn-mini" id="c5HelperBtn">Run Dictionary Attack</button><div class="mini-console" id="c5HelperOut"></div>`;
+        container.querySelector('#c5HelperBtn').addEventListener('click', async ()=>{
+          const out=container.querySelector('#c5HelperOut');
+          out.innerHTML='<div class="ln">Hashing wordlist...</div>';
+          const target='8621ffdbc5698829397d97767ac13db3';
+          const words=["dragon","phoenix","griffin","unicorn","kraken","hydra","chimera","basilisk","wyvern","pegasus","sphinx","cerberus","minotaur","banshee","goblin","wizard","knight","castle","shadow","thunder","crystal","falcon","raven","tiger","wolf","eagle","viper","cobra","panther","jaguar","password","admin","letmein","welcome","monkey","sunshine","princess","football","baseball","dragonfly","starlight","moonbeam","firefly","whisper","quantum","cipher","entropy","vector","matrix","photon","nebula","comet","asteroid","galaxy"];
+          await new Promise(r=>setTimeout(r,250));
+          out.innerHTML='';
+          let found=null;
+          for(const w of words){
+            const h=md5(w);
+            if(h===target){ found=w; break; }
+          }
+          if(found){
+            out.innerHTML=`<div class="ln hit">MATCH: "${found}" → ${target}</div><div class="ln">Tried ${words.indexOf(found)+1} / ${words.length} words.</div>`;
+          } else {
+            out.innerHTML=`<div class="ln">No match in the built-in wordlist (${words.length} words tried).</div>`;
+          }
+        });
+      }
+    }
+  },
+  {
+    id:'c6', title:'RSA Baby Steps', category:'Asymmetric', points:200,
+    tags:['RSA','Factorization','No Padding'],
+    desc:'Textbook RSA, byte-by-byte, no padding, and a modulus small enough to factor by hand (or with the helper below). Factor <code>n</code>, derive the private exponent, decrypt each byte.',
+    data:[
+      {label:'Modulus n', value:'30672937'},
+      {label:'Public exponent e', value:'17'},
+      {label:'Ciphertext (per-byte, decimal)', value:'5140656, 24674686, 7124512, 11241602, 18319861, 3959536, 3959536, 28956017, 5140656, 6656709'}
+    ],
+    hint:'n = p × q for two 4-digit primes. Trial-divide n by every integer up to √n ≈ 5538 to find p, then q = n / p.',
+    flagHash:'3c5c751bde774c3ac49934ec99d5c43f91facf3c826c9898930ca9532c4a52f4',
+    helper:{
+      label:'Open Factor & Decrypt Tool',
+      render:(container)=>{
+        container.innerHTML=`<button class="btn btn-mini" id="c6HelperBtn">Factor n & Decrypt</button><div class="mini-console" id="c6HelperOut"></div>`;
+        container.querySelector('#c6HelperBtn').addEventListener('click', async ()=>{
+          const out=container.querySelector('#c6HelperOut');
+          out.innerHTML='<div class="ln">Trial-dividing n...</div>';
+          await new Promise(r=>setTimeout(r,50));
+          const n=30672937n, e=17n;
+          let p=0n;
+          for(let i=2n;i*i<=n;i++){ if(n%i===0n){ p=i; break; } }
+          if(p===0n){ out.innerHTML='<div class="ln">n appears prime — factoring failed.</div>'; return; }
+          const q=n/p;
+          const phi=(p-1n)*(q-1n);
+          function egcd(a,b){ if(b===0n) return [a,1n,0n]; const [g,x1,y1]=egcd(b,a%b); return [g,y1,x1-(a/b)*y1]; }
+          function modinv(a,m){ const [g,x]=egcd(((a%m)+m)%m,m); return ((x%m)+m)%m; }
+          const d=modinv(e,phi);
+          function modpow(base,exp,mod){ base%=mod; let r=1n; while(exp>0n){ if(exp&1n) r=(r*base)%mod; exp>>=1n; base=(base*base)%mod; } return r; }
+          const ctArr=[5140656n,24674686n,7124512n,11241602n,18319861n,3959536n,3959536n,28956017n,5140656n,6656709n];
+          const bytes=ctArr.map(c=>Number(modpow(c,d,n)));
+          const word=bytes.map(b=>String.fromCharCode(b)).join('');
+          out.innerHTML=`<div class="ln ok">p = ${p}, q = ${q}</div><div class="ln ok">d = ${d}</div><div class="ln hit">decrypted word: "${word}"</div><div class="ln">flag: QEL{${word}}</div>`;
+        });
+      }
+    }
+  }
+];
+
+/* ---- render ---- */
+const grid=qelGet('challGrid');
+challenges.forEach(ch=>{
+  const card=document.createElement('div');
+  card.className='chall';
+  card.id='card-'+ch.id;
+  card.innerHTML=`
+    <div class="top-bar"></div>
+    <div class="chall-head">
+      <h3>${ch.title}</h3>
+      <span class="pts">${ch.points} pts</span>
+    </div>
+    <div class="tag-row"><span class="tag">${ch.category}</span>${ch.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    <div class="desc">${ch.desc}</div>
+    ${ch.data.map(d=>`<div class="data-box"><span class="lbl">${d.label}</span>${d.value}</div>`).join('')}
+    <details class="helper">
+      <summary>${ch.helper.label}</summary>
+      <div class="inner" id="helper-${ch.id}"></div>
+    </details>
+    <div class="submit-row">
+      <input type="text" class="flag-input" id="in-${ch.id}" placeholder="QEL{...}">
+      <button class="btn-submit" id="submit-${ch.id}">Submit</button>
+    </div>
+    <div class="feedback" id="fb-${ch.id}"></div>
+    <div class="hint-row">
+      <button class="btn btn-ghost" id="hintbtn-${ch.id}">💡 Hint (-20% pts)</button>
+    </div>
+    <div class="hint-text" id="hint-${ch.id}">${ch.hint}</div>
+    <div class="solved-badge" id="badge-${ch.id}" style="display:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      Solved
+    </div>
+  `;
+  grid.appendChild(card);
+
+  // render helper lazily on first open
+  const helperEl=card.querySelector('#helper-'+ch.id);
+  let helperRendered=false;
+  card.querySelector('details').addEventListener('toggle', function(){
+    if(this.open && !helperRendered){ ch.helper.render(helperEl); helperRendered=true; }
+  });
+
+  let hintUsed=false;
+  card.querySelector('#hintbtn-'+ch.id).addEventListener('click', ()=>{
+    hintUsed=true;
+    card.querySelector('#hint-'+ch.id).style.display='block';
+    card.querySelector('#hintbtn-'+ch.id).disabled=true;
+  });
+
+  let solved=false;
+  async function trySubmit(){
+    if(solved) return;
+    const input=card.querySelector('#in-'+ch.id);
+    const fb=card.querySelector('#fb-'+ch.id);
+    const val=input.value.trim();
+    if(!val){ return; }
+    const h=await sha256hex(val);
+    if(h===ch.flagHash){
+      solved=true;
+      solvedCount++;
+      const pts= hintUsed ? Math.round(ch.points*0.8) : ch.points;
+      score+=pts;
+      fb.className='feedback ok';
+      fb.textContent='Correct! +'+pts+' pts'+(hintUsed?' (hint used)':'');
+      input.disabled=true;
+      card.querySelector('#submit-'+ch.id).disabled=true;
+      card.querySelector('#hintbtn-'+ch.id).disabled=true;
+      card.classList.add('solved');
+      card.querySelector('#badge-'+ch.id).style.display='flex';
+      updateScoreboard();
+    } else {
+      fb.className='feedback bad';
+      fb.textContent='Not quite — keep trying.';
+    }
+  }
+  card.querySelector('#submit-'+ch.id).addEventListener('click', trySubmit);
+  card.querySelector('#in-'+ch.id).addEventListener('keydown', e=>{ if(e.key==='Enter') trySubmit(); });
+});
+
+updateScoreboard();
+})(); // end isolated scope
+</script>
+</body>
+</html>
