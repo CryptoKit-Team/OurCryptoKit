@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Security Scanner — CryptoKit Premium</title>
+<!-- Added Share Tech Mono for Hacker Mode -->
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  /* ---------------- NORMAL THEME ---------------- */
+  [data-theme="normal"] {
+    --bg-0:#eef0fc;
+    --surface:#ffffff;
+    --surface-soft:#f4f5fd;
+    --border:#e1e3f5;
+    --ink:#1c1f37;
+    --ink-soft:#5b5f7e;
+    --ink-faint:#9599b8;
+    --accent-1:#6366f1;
+    --accent-2:#38bdf8;
+    --accent-soft:#eef0fe;
+    --gold-1:#d97706;
+    --gold-2:#f59e0b;
+    --gold-bg:#fef3e2;
+    --gold-border:#fbd999;
+    --good:#1f9d68; --good-bg:#eafaf2;
+    --warn:#b4700a; --warn-bg:#fff6e6;
+    --bad:#d0483f; --bad-bg:#fdeceb;
+    --crit:#b91c1c; --crit-bg:#fde3e2;
+    --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+    --font-display: 'Arial Rounded MT Bold', 'Arial Rounded MT', ui-rounded, 'SF Pro Rounded', 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+
+  /* ---------------- HACKER THEME ---------------- */
+  [data-theme="hacker"] {
+    --bg-0:#000000;
+    --surface:#050505;
+    --surface-soft:#0a0a0a;
+    --border:rgba(0, 255, 65, 0.25);
+    --ink:#00FF41;
+    --ink-soft:#00CC33;
+    --ink-faint:#006611;
+    --accent-1:#00FF41;
+    --accent-2:#39FF14;
+    --accent-soft:rgba(0, 255, 65, 0.08);
+    --gold-1:#00FF41;
+    --gold-2:#39FF14;
+    --gold-bg:rgba(0, 255, 65, 0.05);
+    --gold-border:rgba(0, 255, 65, 0.3);
+    --good:#00FF41; --good-bg:rgba(0, 255, 65, 0.08);
+    --warn:#FFD700; --warn-bg:rgba(255, 215, 0, 0.1);
+    --bad:#FF0040; --bad-bg:rgba(255, 0, 64, 0.12);
+    --crit:#FF0040; --crit-bg:rgba(255, 0, 64, 0.15);
+    --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+    --font-display: 'Share Tech Mono', monospace;
+    --font-body: 'Share Tech Mono', monospace;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg-0);
+    color:var(--ink); 
+    font-family:var(--font-body); 
+    -webkit-font-smoothing:antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Normal background details */
+  [data-theme="normal"] body {
+    background:
+      radial-gradient(1100px 500px at 12% -8%, #f8ecd8 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #e7f1fb 0%, transparent 55%),
+      var(--bg-0);
+  }
+
+  /* Hacker background details */
+  [data-theme="hacker"] body {
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(0,255,65,0.06), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(57,255,20,0.04), transparent 60%);
+  }
+
+  /* Hacker CRT grid */
+  [data-theme="hacker"] body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px; z-index: -1; pointer-events: none;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove {
+    0%   { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+  }
+
+  .wrap{ max-width:1080px; margin:0 auto; padding:36px 24px 80px; position:relative; z-index:2; }
+
+  .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:34px; flex-wrap:wrap; gap:12px;}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px; text-decoration: none;
+    background:var(--surface); border:1px solid var(--border);
+    padding:9px 16px; border-radius:999px; font-size:13.5px; color:var(--ink-soft); font-weight:500;
+    transition: all 0.3s ease;
+  }
+  .back-pill{ color:var(--ink); cursor:pointer; }
+  .back-pill:hover { border-color: var(--accent-1); color: var(--accent-1); transform: translateX(-2px); }
+  
+  [data-theme="hacker"] .pill { text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; background: rgba(0,255,65,0.03); box-shadow: 0 0 10px rgba(0,255,65,0.03); }
+  [data-theme="hacker"] .back-pill:hover { box-shadow: 0 0 16px rgba(0,255,65,0.2); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .lock-pill{ color:var(--accent-1); font-weight:600; }
+  .lock-pill svg{ color:var(--accent-1); }
+  [data-theme="hacker"] .lock-pill { text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .toggle-pill{ gap:10px; cursor:pointer; user-select:none; }
+  .switch{ width:34px; height:19px; border-radius:999px; background:#d5d8ee; position:relative; flex-shrink:0; transition: background 0.3s; }
+  .switch::after{ 
+    content:''; position:absolute; top:2px; left:2px; width:15px; height:15px; 
+    border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25); 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+  }
+  
+  /* Hacker Theme Switch Styling */
+  [data-theme="hacker"] .switch { background: rgba(0,255,65,0.3); }
+  [data-theme="hacker"] .switch::after { left: 17px; background: var(--accent-1); box-shadow: 0 0 8px var(--accent-1); }
+  [data-theme="hacker"] #themeLabel { text-shadow: 0 0 6px rgba(0,255,65,0.4); }
+
+  .kicker{
+    display:inline-flex; align-items:center; gap:7px;
+    background:var(--gold-bg); border:1px solid var(--gold-border);
+    padding:7px 14px; border-radius:999px;
+    font-size:11.5px; letter-spacing:.08em; color:var(--gold-1); font-weight:800;
+    margin-bottom:18px; transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .kicker { box-shadow: 0 0 12px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .hero{ display:flex; gap:20px; align-items:flex-start; margin-bottom:16px; }
+  .hero-icon{
+    width:58px; height:58px; border-radius:16px; flex-shrink:0;
+    background:linear-gradient(135deg, var(--gold-1), var(--gold-2));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px -8px rgba(217,119,6,.5);
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .hero-icon { background: transparent; border: 2px solid var(--accent-1); box-shadow: 0 0 20px rgba(0,255,65,0.25); animation: pulseHacker 2s infinite; }
+  [data-theme="hacker"] .hero-icon svg { stroke: var(--accent-1); }
+  @keyframes pulseHacker { 0%, 100% { box-shadow: 0 0 20px rgba(0,255,65,0.25); } 50% { box-shadow: 0 0 35px rgba(0,255,65,0.5); } }
+
+  .hero h1{
+    font-family:var(--font-display); font-weight:800; font-size:34px; line-height:1.15;
+    margin:0 0 10px 0; letter-spacing:-.01em;
+    background:linear-gradient(90deg, var(--gold-1), #ef8f1e);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .hero h1 { background:none; color: var(--accent-1); -webkit-text-fill-color: var(--accent-1); text-shadow: 0 0 15px rgba(0,255,65,0.4); letter-spacing: 2px; }
+
+  .hero p{ margin:0; color:var(--ink-soft); font-size:15.5px; line-height:1.55; max-width:640px; }
+
+  .tag-row{ display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 30px 78px; }
+  .tag{
+    font-family:var(--font-mono); font-size:13px; color:var(--ink-faint);
+    background:var(--surface); border:1px solid var(--border);
+    padding:8px 18px; border-radius:999px; transition: all 0.3s ease;
+  }
+  .tag.tag-gold{ color:var(--gold-1); border-color:var(--gold-border); background:var(--gold-bg); font-family:var(--font-body); font-weight:700; }
+  [data-theme="hacker"] .tag.tag-gold { box-shadow: 0 0 10px rgba(0,255,65,0.15); text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:32px;
+    box-shadow:0 4px 24px -12px rgba(30,35,80,.10);
+    transition: all 0.4s ease;
+  }
+  [data-theme="hacker"] .panel { box-shadow: 0 0 25px rgba(0,255,65,0.02); }
+  [data-theme="hacker"] .panel:hover { border-color: rgba(0,255,65,0.35); box-shadow: 0 0 30px rgba(0,255,65,0.06); }
+
+  .panel + .panel{ margin-top:20px; }
+  .panel-head{ display:flex; align-items:center; gap:9px; margin-bottom:6px; }
+  .panel-head svg{ color:var(--gold-1); flex-shrink:0; }
+  .panel-head h2{ font-size:18px; margin:0; font-weight:700; }
+  [data-theme="hacker"] .panel-head h2 { text-shadow: 0 0 10px rgba(0,255,65,0.3); letter-spacing: 1px; }
+
+  .panel-sub{ color:var(--ink-soft); font-size:14px; margin:0 0 20px 0; line-height:1.5; }
+
+  /* ---------------- Scanner (unlocked) ---------------- */
+  .premium-strip{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--gold-bg); border:1px solid var(--gold-border); border-radius:var(--radius-md);
+    padding:12px 18px; margin-bottom:20px; font-size:13.5px; color:var(--gold-1); font-weight:700;
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .premium-strip { box-shadow: 0 0 15px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+  .premium-strip .left{ display:flex; align-items:center; gap:8px; }
+
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:8px; text-transform:uppercase; letter-spacing: 0.05em; }
+  [data-theme="hacker"] .field label { color: rgba(0,255,65,0.6); }
+
+  select, textarea{
+    width:100%; padding:11px 13px; border-radius:var(--radius-sm);
+    border:1px solid var(--border); background:var(--surface-soft);
+    font-size:14px; font-family:var(--font-mono); color:var(--ink); outline:none;
+    transition: all 0.3s ease;
+  }
+  select:focus, textarea:focus{ border-color:var(--gold-2); background:var(--surface); box-shadow: 0 0 0 3px var(--gold-bg); }
+  [data-theme="hacker"] select:focus, [data-theme="hacker"] textarea:focus { box-shadow: 0 0 0 3px rgba(0,255,65,0.1), 0 0 15px rgba(0,255,65,0.1); }
+  textarea{ font-size:12.5px; min-height:220px; resize:vertical; line-height:1.6; }
+
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 18px; border-radius:var(--radius-sm);
+    font-size:14px; font-weight:600; font-family:var(--font-body);
+    cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--ink);
+    transition:all .15s ease;
+  }
+  .btn:hover{ background:var(--surface-soft); border-color:var(--ink-soft); }
+  .btn:active{ transform:scale(.98); }
+  [data-theme="hacker"] .btn { text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+  
+  .btn-primary{
+    background:linear-gradient(90deg, var(--gold-1), var(--gold-2));
+    border:none; color:#fff; box-shadow:0 8px 20px -8px rgba(217,119,6,.5);
+  }
+  [data-theme="hacker"] .btn-primary { background: var(--accent-1); color: #000; box-shadow: 0 0 15px rgba(0,255,65,0.3); font-weight: 800; }
+  .btn-primary:hover{ filter:brightness(1.05); transform: translateY(-1px); }
+  [data-theme="hacker"] .btn-primary:hover { box-shadow: 0 0 25px rgba(0,255,65,0.6); }
+
+  .btn-ghost{ background:transparent; border:1px dashed var(--border); color:var(--ink-soft); }
+  [data-theme="hacker"] .btn-ghost:hover { border-color: var(--accent-1); color: var(--accent-1); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .sample-links{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .sample-link{ font-size:12.5px; color:var(--accent-1); background:var(--accent-soft); border:none; padding:5px 11px; border-radius:999px; cursor:pointer; font-weight:600; transition:all 0.2s;}
+  .sample-link:hover{ filter:brightness(0.97); }
+  [data-theme="hacker"] .sample-link { background: rgba(0,255,65,0.1); border: 1px solid rgba(0,255,65,0.3); text-shadow: 0 0 5px rgba(0,255,65,0.4); }
+  [data-theme="hacker"] .sample-link:hover { background: rgba(0,255,65,0.2); }
+
+  .score-wrap{ display:flex; gap:24px; align-items:center; margin-top:24px; flex-wrap:wrap; }
+  .score-ring{ width:120px; height:120px; flex-shrink:0; position:relative; }
+  .score-ring svg{ transform:rotate(-90deg); }
+  .score-ring .score-num{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; font-family:var(--font-display);
+  }
+  .score-ring .score-num .n{ font-size:30px; font-weight:800; line-height:1; }
+  .score-ring .score-num .l{ font-size:10.5px; color:var(--ink-faint); font-family:var(--font-body); font-weight:600; letter-spacing:.04em; margin-top:2px; }
+  
+  .score-summary{ flex:1; min-width:220px; }
+  .score-summary h3{ margin:0 0 6px 0; font-size:19px; font-family:var(--font-display); }
+  [data-theme="hacker"] .score-summary h3 { text-shadow: 0 0 8px currentColor; }
+  .score-summary p{ margin:0; color:var(--ink-soft); font-size:13.5px; line-height:1.55; }
+  
+  .sev-counts{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+  .sev-chip{ display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; padding:5px 11px; border-radius:999px; }
+  .sev-chip.crit{ background:var(--crit-bg); color:var(--crit); }
+  .sev-chip.high{ background:var(--bad-bg); color:var(--bad); }
+  .sev-chip.med{ background:var(--warn-bg); color:var(--warn); }
+  .sev-chip.low{ background:var(--accent-soft); color:var(--accent-1); }
+  .sev-chip.info{ background:var(--surface-soft); color:var(--ink-faint); }
+
+  /* Hacker specific shadow glows for chips */
+  [data-theme="hacker"] .sev-chip.crit { box-shadow: 0 0 10px rgba(255,0,64,0.3); border: 1px solid var(--crit); }
+  [data-theme="hacker"] .sev-chip.high { box-shadow: 0 0 10px rgba(255,0,64,0.2); border: 1px solid var(--bad); }
+  [data-theme="hacker"] .sev-chip.med { box-shadow: 0 0 10px rgba(255,215,0,0.2); border: 1px solid var(--warn); }
+
+  .finding{ border:1px solid var(--border); border-radius:var(--radius-md); padding:16px 18px; margin-top:12px; background:var(--surface-soft); transition: all 0.3s ease; }
+  .finding:hover { border-color: var(--ink-faint); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  [data-theme="hacker"] .finding:hover { border-color: var(--accent-1); box-shadow: 0 0 15px rgba(0,255,65,0.1); }
+
+  .finding-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .finding-title{ display:flex; align-items:center; gap:9px; font-size:14px; font-weight:700; }
+  .sev-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .sev-dot.crit{ background:var(--crit); box-shadow: 0 0 8px var(--crit); }
+  .sev-dot.high{ background:var(--bad); box-shadow: 0 0 8px var(--bad); }
+  .sev-dot.med{ background:var(--warn); box-shadow: 0 0 8px var(--warn); }
+  .sev-dot.low{ background:var(--accent-1); box-shadow: 0 0 8px var(--accent-1); }
+  .sev-dot.info{ background:var(--ink-faint); }
+  
+  .finding-line{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); }
+  .finding-desc{ font-size:13px; color:var(--ink-soft); margin-top:8px; line-height:1.55; }
+  .finding-snippet{ font-family:var(--font-mono); font-size:11.5px; background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 10px; margin-top:8px; color:var(--ink); white-space:pre-wrap; word-break:break-all; }
+  .finding-fix{ font-size:12.5px; color:var(--good); margin-top:8px; display:flex; gap:6px; align-items:flex-start; }
+  [data-theme="hacker"] .finding-fix { text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+  .finding-fix svg{ flex-shrink:0; margin-top:1px; }
+
+  .empty-good{ display:flex; align-items:center; gap:10px; background:var(--good-bg); color:var(--good); border-radius:var(--radius-md); padding:16px; margin-top:18px; font-size:14px; font-weight:600; border: 1px solid transparent; }
+  [data-theme="hacker"] .empty-good { border-color: var(--good); box-shadow: 0 0 15px rgba(0,255,65,0.1); text-shadow: 0 0 5px rgba(0,255,65,0.4); }
+
+  .divider{ height:1px; background:var(--border); margin:26px 0; transition: background 0.3s; }
+  .footnote{ text-align:center; color:var(--ink-faint); font-size:12.5px; margin-top:26px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  [data-theme="hacker"] .footnote { letter-spacing: 1px; text-shadow: 0 0 5px rgba(0,255,65,0.2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="../index.html" class="pill back-pill" id="homeBtn" style="text-decoration:none;" title="Go back to Home">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to CryptoKit
+    </a>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="pill lock-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+        100% Client-Side — Nothing Ever Leaves Your Browser
+      </div>
+      <div class="pill toggle-pill" id="themeToggle" title="Toggle Theme">
+        <span id="themeLabel">Normal</span>
+        <span class="switch"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="kicker">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-7.4L2.5 8l6.5-1z"/></svg>
+    Premium Tool
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3z"/>
+        <path d="M9.5 12l1.8 1.8L15 10"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Crypto Security Scanner</h1>
+      <p>Scan code, configs, or scripts for weak cryptographic practices — deprecated algorithms, hardcoded secrets, insecure randomness, and more — with a detailed severity-scored report.</p>
+    </div>
+  </div>
+
+  <div class="tag-row">
+    <span class="tag">Static Analysis</span>
+    <span class="tag">OWASP-Aligned</span>
+    <span class="tag tag-gold">★ Premium</span>
+  </div>
+
+  <!-- ============ SCANNER (premium — already unlocked) ============ -->
+  <div id="scannerSection">
+    <div class="panel">
+      <div class="premium-strip">
+        <div class="left">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-7.4L2.5 8l6.5-1z"/></svg>
+          Premium unlocked — unlimited scans
+        </div>
+      </div>
+
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3z"/></svg>
+        <h2>Scan for weak cryptographic practices</h2>
+      </div>
+      <p class="panel-sub">Paste code, environment variables, or config. Checked entirely in your browser — nothing is uploaded.</p>
+
+      <div class="field">
+        <label for="scanInput">Code or config to scan</label>
+        <textarea id="scanInput" placeholder="Paste code here..."></textarea>
+      </div>
+      <div class="sample-links">
+        <button class="sample-link" id="loadSample1">Load a vulnerable sample</button>
+        <button class="sample-link" id="loadSample2">Load a clean sample</button>
+      </div>
+
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn btn-primary" id="scanBtn">Run Scan</button>
+        <button class="btn btn-ghost" id="clearScanBtn">Clear</button>
+      </div>
+
+      <div id="resultsArea"></div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+    Everything runs locally in your browser. No code or content is ever transmitted.
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+  // ════════════════════════════════════════════════════════════
+  //  THEME SYNC KEY — must match the main index.html exactly
+  //  Main page uses: localStorage.setItem('cryptokit-theme', mode)
+  // ════════════════════════════════════════════════════════════
+  const THEME_KEY = 'cryptokit-theme';
+
+  // ---------------- Back Button Smart Navigation ----------------
+  document.getElementById('homeBtn').addEventListener('click', function(e) {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    let sameSite = false;
+    try {
+      sameSite = !!document.referrer && new URL(document.referrer).origin === location.origin;
+    } catch (_) {}
+    if (sameSite && history.length > 1) {
+      history.back();
+      setTimeout(function() {
+        if (!document.hidden) location.href = '../index.html';
+      }, 400);
+    } else {
+      location.href = '../index.html';
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════
+  //  THEME MANAGEMENT — Reads & writes same localStorage key
+  //  so main page ↔ tool pages stay perfectly in sync
+  // ════════════════════════════════════════════════════════════
+  const themeToggle = document.getElementById('themeToggle');
+  const themeLabel  = document.getElementById('themeLabel');
+
+  function applyTheme(theme, saveToStorage) {
+    // Normalise legacy values (like 'premium') to 'normal'
+    if (theme !== 'hacker') theme = 'normal';
+
+    document.documentElement.setAttribute('data-theme', theme);
+    themeLabel.textContent = (theme === 'hacker') ? 'HACKER' : 'Normal';
+
+    // Only write to storage when user explicitly toggles here
+    if (saveToStorage) {
+      try { localStorage.setItem(THEME_KEY, theme); } catch(_){}
+    }
+  }
+
+  // ── Read saved theme on load (same key the main page writes) ──
+  let savedTheme = 'normal';
+  try { savedTheme = localStorage.getItem(THEME_KEY) || 'normal'; } catch(_){}
+  if (savedTheme !== 'hacker') savedTheme = 'normal';
+  applyTheme(savedTheme, false);
+
+  // ── Toggle on click ──
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = (current === 'hacker' ? 'normal' : 'hacker');
+    applyTheme(next, true);        // save = true
+  });
+
+  // ── Cross-tab sync: if user switches theme on the main page
+  //    (or another tool tab) while this scanner is also open,
+  //    update instantly ──
+  window.addEventListener('storage', function(e) {
+    if (e.key === THEME_KEY && e.newValue) {
+      applyTheme(e.newValue, false);  // save = false (already saved by other tab)
+    }
+  });
+
+  // ── Also sync when this tab regains focus (covers mobile
+  //    browsers that don't always fire the storage event) ──
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+      let current = 'normal';
+      try { current = localStorage.getItem(THEME_KEY) || 'normal'; } catch(_){}
+      if (current !== 'hacker') current = 'normal';
+      if (current !== document.documentElement.getAttribute('data-theme')) {
+        applyTheme(current, false);
+      }
+    }
+  });
+
+
+  // ---------------- Sample snippets ----------------
+  const VULNERABLE_SAMPLE = `import hashlib
+import random
+
+API_KEY = "sk_live_51Hxy9zAbCdEfGhIjKlMnOpQrStUvWx"
+DB_PASSWORD = "SuperSecret123!"
+
+def hash_password(password):
+    # weak hash, no salt
+    return hashlib.md5(password.encode()).hexdigest()
+
+def generate_token():
+    # not cryptographically secure
+    return str(random.randint(100000, 999999))
+
+def encrypt(data, key):
+    from Crypto.Cipher import DES
+    cipher = DES.new(key, DES.MODE_ECB)
+    return cipher.encrypt(data)
+
+def old_rsa_key():
+    from Crypto.PublicKey import RSA
+    return RSA.generate(1024)
+
+def legacy_hash(data):
+    return hashlib.sha1(data).hexdigest()
+
+API_ENDPOINT = "http://api.example.com/v1/payments"
+`;
+
+  const CLEAN_SAMPLE = `import os
+import hashlib
+import secrets
+
+def generate_token():
+    return secrets.token_urlsafe(32)
+
+def hash_password(password: str, salt: bytes) -> str:
+    return hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 250_000).hex()
+
+def new_key_material():
+    return secrets.token_bytes(32)
+
+API_ENDPOINT = "https://api.example.com/v1/payments"
+`;
+
+  document.getElementById('loadSample1').addEventListener('click', ()=>{
+    document.getElementById('scanInput').value = VULNERABLE_SAMPLE;
+  });
+  document.getElementById('loadSample2').addEventListener('click', ()=>{
+    document.getElementById('scanInput').value = CLEAN_SAMPLE;
+  });
+  document.getElementById('clearScanBtn').addEventListener('click', ()=>{
+    document.getElementById('scanInput').value = '';
+    document.getElementById('resultsArea').innerHTML = '';
+  });
+
+  // ---------------- Scanner rule engine ----------------
+  const RULES = [
+    {
+      id: 'md5', sev:'high',
+      title: 'MD5 hash in use',
+      re: /\bmd5\b/i,
+      desc: 'MD5 is cryptographically broken and vulnerable to collision attacks. It should never be used for passwords, signatures, or integrity checks.',
+      fix: 'Use SHA-256 or better for integrity checks, or a dedicated password hash (Argon2, bcrypt, scrypt, PBKDF2) for passwords.'
+    },
+    {
+      id: 'sha1', sev:'med',
+      title: 'SHA-1 hash in use',
+      re: /\bsha-?1\b/i,
+      desc: 'SHA-1 has known collision attacks (e.g. SHAttered) and is deprecated for security-sensitive use.',
+      fix: 'Migrate to SHA-256, SHA-384, or SHA-512.'
+    },
+    {
+      id: 'des', sev:'crit',
+      title: 'DES / 3DES cipher in use',
+      re: /\b(single-)?des\b|\b3des\b|\btripledes\b/i,
+      desc: 'DES has a 56-bit key that can be brute-forced in hours on modern hardware. 3DES is deprecated by NIST as of 2023.',
+      fix: 'Use AES-256-GCM (authenticated encryption) instead.'
+    },
+    {
+      id: 'rc4', sev:'crit',
+      title: 'RC4 stream cipher in use',
+      re: /\brc4\b/i,
+      desc: 'RC4 has multiple known biases and practical attacks. It is considered broken.',
+      fix: 'Use AES-GCM or ChaCha20-Poly1305 instead.'
+    },
+    {
+      id: 'ecb', sev:'high',
+      title: 'ECB cipher mode in use',
+      re: /\becb\b|MODE_ECB/i,
+      desc: 'ECB mode encrypts identical plaintext blocks to identical ciphertext blocks, leaking structural patterns in the data.',
+      fix: 'Use an authenticated mode like GCM, or at minimum CBC with a random IV.'
+    },
+    {
+      id: 'math-random', sev:'high',
+      title: 'Math.random() used near security-sensitive code',
+      re: /Math\.random\(\)/,
+      desc: 'Math.random() is not cryptographically secure and is predictable. It must not be used for tokens, keys, IVs, or passwords.',
+      fix: 'Use crypto.getRandomValues() (browser) or the secrets module (Python) / crypto.randomBytes() (Node).'
+    },
+    {
+      id: 'py-random', sev:'high',
+      title: "Python 'random' module used for a token/secret",
+      re: /\brandom\.(random|randint|choice)\s*\(/,
+      desc: "Python's random module is a Mersenne Twister PRNG — not cryptographically secure and predictable if seed/state is known.",
+      fix: "Use Python's 'secrets' module (secrets.token_bytes, secrets.token_urlsafe, secrets.choice) for anything security-sensitive."
+    },
+    {
+      id: 'weak-rsa', sev:'high',
+      title: 'RSA key smaller than 2048 bits',
+      re: /RSA\.generate\(\s*(512|768|1024)\s*\)|modulusLength['":\s]*[:=]\s*(512|768|1024)\b/i,
+      desc: 'RSA keys under 2048 bits are considered breakable with sufficient resources and are disallowed by most modern standards.',
+      fix: 'Use at least a 2048-bit RSA key, or switch to ECDSA (P-256) for better performance at an equivalent security level.'
+    },
+    {
+      id: 'hardcoded-secret', sev:'crit',
+      title: 'Hardcoded secret or API key',
+      re: /(api[_-]?key|secret|token|password)\s*[:=]\s*["'][A-Za-z0-9\-_/+]{8,}["']/i,
+      desc: 'A credential appears to be hardcoded directly in source. If this file is committed to version control, the secret is compromised.',
+      fix: 'Load secrets from environment variables or a secrets manager (e.g. AWS Secrets Manager, Vault) — never commit them to source.'
+    },
+    {
+      id: 'http-endpoint', sev:'med',
+      title: 'Plaintext HTTP endpoint',
+      re: /["']http:\/\/(?!localhost|127\.0\.0\.1)[^"']+["']/,
+      desc: 'Data sent over plain HTTP can be intercepted or modified in transit by anyone on the network path.',
+      fix: 'Use HTTPS/TLS for all endpoints handling sensitive data.'
+    },
+    {
+      id: 'eval', sev:'med',
+      title: 'Use of eval()',
+      re: /\beval\s*\(/,
+      desc: 'eval() executes arbitrary strings as code, which is a common vector for injection attacks if any part of the input is user-controlled.',
+      fix: 'Avoid eval(). Use JSON.parse for data, and explicit function references instead of dynamic code execution.'
+    },
+    {
+      id: 'no-salt-hash', sev:'info',
+      title: 'Password hashing without an apparent salt',
+      re: /hash_password|hashPassword/i,
+      desc: 'A password-hashing function was found. Make sure it actually uses a per-user random salt and a slow, purpose-built algorithm — this is a heuristic check, not a guarantee.',
+      fix: 'Prefer Argon2id, bcrypt, or PBKDF2 with 250,000+ iterations and a unique salt per password.'
+    },
+  ];
+
+  const SEV_META = {
+    crit: { label:'Critical', weight:25, order:0 },
+    high: { label:'High', weight:15, order:1 },
+    med:  { label:'Medium', weight:8, order:2 },
+    low:  { label:'Low', weight:4, order:3 },
+    info: { label:'Info', weight:0, order:4 },
+  };
+
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function runScan(code){
+    const lines = code.split('\n');
+    const findings = [];
+    RULES.forEach(rule=>{
+      lines.forEach((line, idx)=>{
+        if(rule.re.test(line)){
+          findings.push({
+            ...rule,
+            lineNo: idx+1,
+            snippet: line.trim().slice(0, 160)
+          });
+        }
+      });
+    });
+    return findings;
+  }
+
+  function scoreFromFindings(findings){
+    let score = 100;
+    findings.forEach(f=> score -= SEV_META[f.sev].weight);
+    return Math.max(0, Math.min(100, score));
+  }
+
+  function scoreColor(score){
+    if(score >= 90) return 'var(--good)';
+    if(score >= 70) return '#3aa373';
+    if(score >= 50) return 'var(--warn)';
+    if(score >= 30) return 'var(--bad)';
+    return 'var(--crit)';
+  }
+  function scoreLabel(score){
+    if(score >= 90) return 'Excellent';
+    if(score >= 70) return 'Good';
+    if(score >= 50) return 'Needs work';
+    if(score >= 30) return 'Weak';
+    return 'Critical risk';
+  }
+
+  function renderScoreRing(score){
+    const r = 50, c = 2*Math.PI*r;
+    const pct = score/100;
+    const color = scoreColor(score);
+    return `
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--surface-soft)" stroke-width="12"/>
+        <circle cx="60" cy="60" r="${r}" fill="none" stroke="${color}" stroke-width="12"
+          stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct)}" stroke-linecap="round"/>
+      </svg>
+      <div class="score-num">
+        <div class="n" style="color:${color};">${score}</div>
+        <div class="l">/ 100</div>
+      </div>`;
+  }
+
+  const sevIcons = {
+    crit: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+    high: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>',
+    med:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>',
+    low:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>',
+    info: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>',
+  };
+  const fixIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>';
+
+  document.getElementById('scanBtn').addEventListener('click', ()=>{
+    const code = document.getElementById('scanInput').value;
+    const resultsArea = document.getElementById('resultsArea');
+    if(!code.trim()){
+      resultsArea.innerHTML = `<div class="empty-good" style="background:var(--warn-bg); color:var(--warn); border-color:var(--warn);">Paste some code or config to scan first.</div>`;
+      return;
+    }
+    const findings = runScan(code).sort((a,b)=> SEV_META[a.sev].order - SEV_META[b.sev].order);
+    const score = scoreFromFindings(findings);
+    const counts = { crit:0, high:0, med:0, low:0, info:0 };
+    findings.forEach(f=> counts[f.sev]++);
+
+    let html = `
+      <div class="divider"></div>
+      <div class="score-wrap">
+        <div class="score-ring">${renderScoreRing(score)}</div>
+        <div class="score-summary">
+          <h3 style="color:${scoreColor(score)}">${scoreLabel(score)}</h3>
+          <p>${findings.length === 0 ? 'No issues detected by the current rule set.' : `${findings.length} issue${findings.length===1?'':'s'} found across ${new Set(findings.map(f=>f.id)).size} categor${new Set(findings.map(f=>f.id)).size===1?'y':'ies'}.`}</p>
+          <div class="sev-counts">
+            ${counts.crit ? `<span class="sev-chip crit">${counts.crit} Critical</span>`:''}
+            ${counts.high ? `<span class="sev-chip high">${counts.high} High</span>`:''}
+            ${counts.med ? `<span class="sev-chip med">${counts.med} Medium</span>`:''}
+            ${counts.low ? `<span class="sev-chip low">${counts.low} Low</span>`:''}
+            ${counts.info ? `<span class="sev-chip info">${counts.info} Info</span>`:''}
+          </div>
+        </div>
+      </div>`;
+
+    if(findings.length === 0){
+      html += `<div class="empty-good">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3L16 10"/></svg>
+        No weak cryptographic patterns detected. Remember: this is a heuristic scan, not a substitute for a full security audit.
+      </div>`;
+    } else {
+      findings.forEach(f=>{
+        html += `
+          <div class="finding">
+            <div class="finding-head">
+              <div class="finding-title"><span class="sev-dot ${f.sev}"></span>${sevIcons[f.sev]}${f.title}</div>
+              <div class="finding-line">Line ${f.lineNo} · ${SEV_META[f.sev].label}</div>
+            </div>
+            <div class="finding-desc">${f.desc}</div>
+            <div class="finding-snippet">${escapeHtml(f.snippet)}</div>
+            <div class="finding-fix">${fixIcon}<span><strong>Fix:</strong> ${f.fix}</span></div>
+          </div>`;
+      });
+    }
+    resultsArea.innerHTML = html;
+  });
+
+})();
+</script>
+</body>
+</html>
