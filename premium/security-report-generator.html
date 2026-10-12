@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Security Report — CryptoKit Premium</title>
+<!-- Google Font for Hacker Mode -->
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  /* ---------------- NORMAL THEME ---------------- */
+  [data-theme="normal"] {
+    --bg-0:#eef0fc;
+    --surface:#ffffff;
+    --surface-soft:#f4f5fd;
+    --border:#e1e3f5;
+    --ink:#1c1f37;
+    --ink-soft:#5b5f7e;
+    --ink-faint:#9599b8;
+    --accent-1:#6366f1;
+    --accent-2:#38bdf8;
+    --accent-soft:#eef0fe;
+    --gold-1:#d97706;
+    --gold-2:#f59e0b;
+    --gold-bg:#fef3e2;
+    --gold-border:#fbd999;
+    --good:#1f9d68; --good-bg:#eafaf2;
+    --warn:#b4700a; --warn-bg:#fff6e6;
+    --bad:#d0483f; --bad-bg:#fdeceb;
+    --crit:#b91c1c; --crit-bg:#fde3e2;
+    --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+    --font-display: 'Arial Rounded MT Bold', 'Arial Rounded MT', ui-rounded, 'SF Pro Rounded', 'Baloo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+
+  /* ---------------- HACKER THEME ---------------- */
+  [data-theme="hacker"] {
+    --bg-0:#000000;
+    --surface:#050505;
+    --surface-soft:#0a0a0a;
+    --border:rgba(0, 255, 65, 0.25);
+    --ink:#00FF41;
+    --ink-soft:#00CC33;
+    --ink-faint:#006611;
+    --accent-1:#00FF41;
+    --accent-2:#39FF14;
+    --accent-soft:rgba(0, 255, 65, 0.08);
+    --gold-1:#00FF41;
+    --gold-2:#39FF14;
+    --gold-bg:rgba(0, 255, 65, 0.05);
+    --gold-border:rgba(0, 255, 65, 0.3);
+    --good:#00FF41; --good-bg:rgba(0, 255, 65, 0.08);
+    --warn:#FFD700; --warn-bg:rgba(255, 215, 0, 0.1);
+    --bad:#FF0040; --bad-bg:rgba(255, 0, 64, 0.12);
+    --crit:#FF0040; --crit-bg:rgba(255, 0, 64, 0.15);
+    --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+    --font-display: 'Share Tech Mono', monospace;
+    --font-body: 'Share Tech Mono', monospace;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg-0);
+    color:var(--ink); 
+    font-family:var(--font-body); 
+    -webkit-font-smoothing:antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Normal background details */
+  [data-theme="normal"] body {
+    background:
+      radial-gradient(1100px 500px at 12% -8%, #f8ecd8 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #e7f1fb 0%, transparent 55%),
+      var(--bg-0);
+  }
+
+  /* Hacker background details */
+  [data-theme="hacker"] body {
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(0,255,65,0.06), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(57,255,20,0.04), transparent 60%);
+  }
+
+  /* Hacker CRT grid */
+  [data-theme="hacker"] body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px; z-index: -1; pointer-events: none;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove {
+    0%   { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+  }
+
+  .wrap{ max-width:1080px; margin:0 auto; padding:36px 24px 80px; position:relative; z-index:2; }
+
+  .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:34px; flex-wrap:wrap; gap:12px;}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px; text-decoration: none;
+    background:var(--surface); border:1px solid var(--border);
+    padding:9px 16px; border-radius:999px; font-size:13.5px; color:var(--ink-soft); font-weight:500;
+    transition: all 0.3s ease;
+  }
+  .back-pill{ color:var(--ink); cursor:pointer; }
+  .back-pill:hover { border-color: var(--accent-1); color: var(--accent-1); transform: translateX(-2px); }
+  
+  [data-theme="hacker"] .pill { text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; background: rgba(0,255,65,0.03); box-shadow: 0 0 10px rgba(0,255,65,0.03); }
+  [data-theme="hacker"] .back-pill:hover { box-shadow: 0 0 16px rgba(0,255,65,0.2); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .lock-pill{ color:var(--accent-1); font-weight:600; }
+  .lock-pill svg{ color:var(--accent-1); }
+  [data-theme="hacker"] .lock-pill { text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .toggle-pill{ gap:10px; cursor:pointer; user-select:none; }
+  .switch{ width:34px; height:19px; border-radius:999px; background:#d5d8ee; position:relative; flex-shrink:0; transition: background 0.3s; }
+  .switch::after{ 
+    content:''; position:absolute; top:2px; left:2px; width:15px; height:15px; 
+    border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25); 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+  }
+  
+  [data-theme="hacker"] .switch { background: rgba(0,255,65,0.3); }
+  [data-theme="hacker"] .switch::after { left: 17px; background: var(--accent-1); box-shadow: 0 0 8px var(--accent-1); }
+  [data-theme="hacker"] #themeLabel { text-shadow: 0 0 6px rgba(0,255,65,0.4); }
+
+  .kicker{
+    display:inline-flex; align-items:center; gap:7px;
+    background:var(--gold-bg); border:1px solid var(--gold-border);
+    padding:7px 14px; border-radius:999px;
+    font-size:11.5px; letter-spacing:.08em; color:var(--gold-1); font-weight:800;
+    margin-bottom:18px; transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .kicker { box-shadow: 0 0 12px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .hero{ display:flex; gap:20px; align-items:flex-start; margin-bottom:16px; }
+  .hero-icon{
+    width:58px; height:58px; border-radius:16px; flex-shrink:0;
+    background:linear-gradient(135deg, var(--gold-1), var(--gold-2));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px -8px rgba(217,119,6,.5);
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .hero-icon { background: transparent; border: 2px solid var(--accent-1); box-shadow: 0 0 20px rgba(0,255,65,0.25); animation: pulseHacker 2s infinite; }
+  [data-theme="hacker"] .hero-icon svg { stroke: var(--accent-1); }
+  @keyframes pulseHacker { 0%, 100% { box-shadow: 0 0 20px rgba(0,255,65,0.25); } 50% { box-shadow: 0 0 35px rgba(0,255,65,0.5); } }
+
+  .hero h1{
+    font-family:var(--font-display); font-weight:800; font-size:34px; line-height:1.15;
+    margin:0 0 10px 0; letter-spacing:-.01em;
+    background:linear-gradient(90deg, var(--gold-1), var(--gold-2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .hero h1 { background:none; color: var(--accent-1); -webkit-text-fill-color: var(--accent-1); text-shadow: 0 0 15px rgba(0,255,65,0.4); letter-spacing: 2px; }
+
+  .hero p{ margin:0; color:var(--ink-soft); font-size:15.5px; line-height:1.55; max-width:660px; }
+
+  .tag-row{ display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 30px 78px; }
+  .tag{
+    font-family:var(--font-mono); font-size:13px; color:var(--ink-faint);
+    background:var(--surface); border:1px solid var(--border);
+    padding:8px 18px; border-radius:999px; transition: all 0.3s ease;
+  }
+  .tag.tag-gold{ color:var(--gold-1); border-color:var(--gold-border); background:var(--gold-bg); font-family:var(--font-body); font-weight:700; }
+  [data-theme="hacker"] .tag.tag-gold { box-shadow: 0 0 10px rgba(0,255,65,0.15); text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .premium-strip{
+    display:flex; align-items:center; gap:8px;
+    background:var(--gold-bg); border:1px solid var(--gold-border); border-radius:var(--radius-md);
+    padding:12px 18px; margin-bottom:20px; font-size:13.5px; color:var(--gold-1); font-weight:700;
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .premium-strip { box-shadow: 0 0 15px rgba(0,255,65,0.08); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .tabs{
+    display:flex; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:6px; gap:4px; margin-bottom:22px; flex-wrap:wrap;
+    box-shadow:0 2px 10px -6px rgba(30,35,80,.08);
+    transition: all 0.3s ease;
+  }
+  [data-theme="hacker"] .tabs { box-shadow: 0 0 20px rgba(0,255,65,0.05); }
+
+  .tab{
+    flex:1; min-width:140px; display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:12px 14px; border-radius:11px; cursor:pointer;
+    font-size:13.5px; font-weight:600; color:var(--ink-faint);
+    border:none; background:transparent; font-family:var(--font-body);
+    transition:background .15s ease, color .15s ease;
+  }
+  .tab svg{ opacity:.75; }
+  .tab.active{ background:linear-gradient(90deg, var(--gold-bg), #fff3e0); color:var(--gold-1); }
+  [data-theme="hacker"] .tab.active{ background: rgba(0,255,65,0.1); color: var(--accent-1); text-shadow: 0 0 8px rgba(0,255,65,0.4); box-shadow: inset 0 0 10px rgba(0,255,65,0.1); }
+  .tab.active svg{ opacity:1; }
+  .tab:not(.active):hover{ color:var(--ink-soft); background:var(--surface-soft); }
+  [data-theme="hacker"] .tab { text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:32px;
+    box-shadow:0 4px 24px -12px rgba(30,35,80,.10);
+    transition: all 0.4s ease;
+  }
+  [data-theme="hacker"] .panel { box-shadow: 0 0 25px rgba(0,255,65,0.02); }
+  [data-theme="hacker"] .panel:hover { border-color: rgba(0,255,65,0.35); box-shadow: 0 0 30px rgba(0,255,65,0.06); }
+
+  .panel + .panel{ margin-top:20px; }
+  .panel-head{ display:flex; align-items:center; gap:9px; margin-bottom:6px; }
+  .panel-head svg{ color:var(--gold-1); flex-shrink:0; }
+  .panel-head h2{ font-size:18px; margin:0; font-weight:700; }
+  [data-theme="hacker"] .panel-head h2 { text-shadow: 0 0 10px rgba(0,255,65,0.3); letter-spacing: 1px; }
+
+  .panel-sub{ color:var(--ink-soft); font-size:14px; margin:0 0 20px 0; line-height:1.5; }
+
+  .field{ margin-bottom:18px; }
+  .field label{ display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:8px; }
+  [data-theme="hacker"] .field label { color: rgba(0,255,65,0.6); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  select, input[type=text], input[type=date], textarea{
+    width:100%; padding:11px 13px; border-radius:var(--radius-sm);
+    border:1px solid var(--border); background:var(--surface-soft);
+    font-size:14px; font-family:var(--font-body); color:var(--ink); outline:none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  select:focus, input:focus, textarea:focus{ border-color:var(--gold-2); background:var(--surface); }
+  [data-theme="hacker"] select, [data-theme="hacker"] input[type=text], [data-theme="hacker"] input[type=date], [data-theme="hacker"] textarea {
+    background: #050505;
+    border-color: rgba(0, 255, 65, 0.25);
+    color: #00FF41;
+    font-family: var(--font-mono);
+  }
+  [data-theme="hacker"] select:focus, [data-theme="hacker"] input:focus, [data-theme="hacker"] textarea:focus {
+    border-color: var(--accent-1);
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+  }
+
+  textarea{ font-family:var(--font-mono); font-size:12.5px; min-height:200px; resize:vertical; line-height:1.6; }
+  textarea.prose{ font-family:var(--font-body); font-size:14px; min-height:90px; }
+  [data-theme="hacker"] textarea.prose { font-family: var(--font-mono); }
+
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media(max-width:640px){ .field-row{ grid-template-columns:1fr; } }
+
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 18px; border-radius:var(--radius-sm);
+    font-size:14px; font-weight:600; font-family:var(--font-body);
+    cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--ink);
+    transition:all .15s ease;
+  }
+  .btn:hover{ background:var(--surface-soft); border-color:var(--ink-soft); }
+  .btn:active{ transform:scale(.98); }
+  [data-theme="hacker"] .btn { text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+
+  .btn-primary{
+    background:linear-gradient(90deg, var(--gold-1), var(--gold-2));
+    border:none; color:#fff; box-shadow:0 8px 20px -8px rgba(217,119,6,.5);
+  }
+  [data-theme="hacker"] .btn-primary { background: var(--accent-1); color: #000; box-shadow: 0 0 15px rgba(0,255,65,0.3); font-weight: 800; }
+  .btn-primary:hover{ filter:brightness(1.05); transform: translateY(-1px); }
+  [data-theme="hacker"] .btn-primary:hover { box-shadow: 0 0 25px rgba(0,255,65,0.6); }
+
+  .btn-ghost{ background:transparent; border:1px dashed var(--border); color:var(--ink-soft); }
+  [data-theme="hacker"] .btn-ghost:hover { border-color: var(--accent-1); color: var(--accent-1); text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+  .sample-links{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .sample-link{ font-size:12.5px; color:var(--accent-1); background:var(--accent-soft); border:none; padding:5px 11px; border-radius:999px; cursor:pointer; font-weight:600; transition:all 0.2s; }
+  .sample-link:hover{ filter:brightness(0.97); }
+  [data-theme="hacker"] .sample-link { background: rgba(0,255,65,0.1); border: 1px solid rgba(0,255,65,0.3); text-shadow: 0 0 5px rgba(0,255,65,0.4); }
+  [data-theme="hacker"] .sample-link:hover { background: rgba(0,255,65,0.2); }
+
+  .status{ display:flex; align-items:flex-start; gap:10px; border-radius:var(--radius-md); padding:14px 16px; margin-top:18px; font-size:14px; line-height:1.5; border: 1px solid transparent; }
+  .status svg{ flex-shrink:0; margin-top:1px; }
+  .status-good{ background:var(--good-bg); color:var(--good); }
+  .status-bad{ background:var(--bad-bg); color:var(--bad); }
+  .status-warn{ background:var(--warn-bg); color:var(--warn); }
+  [data-theme="hacker"] .status-good { border-color: var(--good); box-shadow: 0 0 15px rgba(0,255,65,0.1); text-shadow: 0 0 5px rgba(0,255,65,0.4); }
+  [data-theme="hacker"] .status-bad { border-color: var(--bad); box-shadow: 0 0 15px rgba(255,0,64,0.1); }
+  [data-theme="hacker"] .status-warn { border-color: var(--warn); box-shadow: 0 0 15px rgba(255,215,0,0.1); }
+  .status strong{ display:block; margin-bottom:2px; }
+
+  /* checklist */
+  .ctl-group{ margin-top:22px; }
+  .ctl-group h3{ font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:var(--gold-1); margin:0 0 10px 0; }
+  [data-theme="hacker"] .ctl-group h3 { text-shadow: 0 0 6px rgba(0,255,65,0.3); }
+
+  .ctl-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--surface-soft); margin-bottom:8px; }
+  .ctl-row .txt{ font-size:13.5px; color:var(--ink); line-height:1.45; flex:1; }
+  .ctl-row select{ width:140px; flex-shrink:0; padding:8px 10px; font-size:13px; }
+  [data-theme="hacker"] .ctl-row { background: #0a0a0a; border-color: rgba(0,255,65,0.15); }
+  @media(max-width:640px){ .ctl-row{ flex-direction:column; align-items:stretch; } .ctl-row select{ width:100%; } }
+  
+  .progress-line{ font-size:12.5px; color:var(--ink-faint); margin-top:4px; }
+
+  .divider{ height:1px; background:var(--border); margin:26px 0; }
+  .footnote{ text-align:center; color:var(--ink-faint); font-size:12.5px; margin-top:26px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  [data-theme="hacker"] .footnote { letter-spacing: 1px; text-shadow: 0 0 5px rgba(0,255,65,0.2); }
+
+  .report-toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  .report-scroll{ background:#e9ebf7; border:1px solid var(--border); border-radius:var(--radius-md); padding:24px; overflow-x:auto; }
+  [data-theme="hacker"] .report-scroll { background: #020202; border-color: rgba(0,255,65,0.15); }
+  .empty-report{ text-align:center; padding:60px 20px; color:var(--ink-faint); font-size:14px; }
+</style>
+
+<!-- Report document styles -->
+<style id="reportStyles">
+  .report-doc{
+    --r-ink:#1c1f37; --r-soft:#5b5f7e; --r-faint:#9599b8; --r-border:#e1e3f5; --r-soft-bg:#f7f8fd;
+    --r-gold:#d97706; --r-gold-bg:#fef3e2; --r-gold-border:#fbd999;
+    --r-good:#1f9d68; --r-good-bg:#eafaf2; --r-warn:#b4700a; --r-warn-bg:#fff6e6;
+    --r-bad:#d0483f; --r-bad-bg:#fdeceb; --r-crit:#b91c1c; --r-crit-bg:#fde3e2; --r-info:#6366f1; --r-info-bg:#eef0fe;
+    max-width:820px; margin:0 auto; background:#fff; color:var(--r-ink);
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:14px; line-height:1.6; padding:48px 52px; border:1px solid var(--r-border);
+    box-shadow:0 10px 40px -20px rgba(30,35,80,.25);
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+  }
+
+  /* Dynamically adjust the report dossier to match the theme on-screen */
+  [data-theme="hacker"] .report-doc {
+    --r-ink:#00FF41;
+    --r-soft:#00CC33;
+    --r-faint:#006611;
+    --r-border:rgba(0, 255, 65, 0.25);
+    --r-soft-bg:rgba(0, 255, 65, 0.02);
+    --r-gold:#00FF41;
+    --r-gold-bg:rgba(0, 255, 65, 0.05);
+    --r-gold-border:rgba(0, 255, 65, 0.3);
+    --r-good:#39FF14; --r-good-bg:rgba(0, 255, 65, 0.08);
+    --r-warn:#FFD700; --r-warn-bg:rgba(255, 215, 0, 0.08);
+    --r-bad:#FF0040; --r-bad-bg:rgba(255, 0, 64, 0.1);
+    --r-crit:#FF0040; --r-crit-bg:rgba(255, 0, 64, 0.12);
+    --r-info:#38bdf8; --r-info-bg:rgba(56, 189, 248, 0.08);
+    background: #050505;
+    border-color: rgba(0, 255, 65, 0.25);
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.1);
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .report-doc *{ box-sizing:border-box; }
+  .report-doc .rpt-top{ display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid var(--r-gold); padding-bottom:14px; margin-bottom:26px; }
+  .report-doc .rpt-brand{ font-weight:800; font-size:15px; letter-spacing:.02em; color:var(--r-gold); }
+  .report-doc .rpt-label{ font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:5px 12px; border-radius:999px; background:var(--r-gold-bg); color:var(--r-gold); border:1px solid var(--r-gold-border); }
+  .report-doc h1.rpt-title{ font-size:28px; line-height:1.2; margin:0 0 6px 0; }
+  .report-doc .rpt-subtitle{ color:var(--r-soft); font-size:15px; margin:0 0 26px 0; }
+  .report-doc .rpt-meta{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px 24px; background:var(--r-soft-bg); border:1px solid var(--r-border); border-radius:10px; padding:16px 20px; margin-bottom:30px; }
+  .report-doc .rpt-meta .k{ font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--r-faint); font-weight:700; }
+  .report-doc .rpt-meta .v{ font-size:13.5px; font-weight:600; }
+  .report-doc .rpt-section{ margin-bottom:30px; }
+  .report-doc .rpt-section h2{ font-size:17px; margin:0 0 12px 0; padding-bottom:8px; border-bottom:1px solid var(--r-border); }
+  .report-doc .rpt-section h2 span.num{ color:var(--r-gold); margin-right:8px; }
+  .report-doc p{ margin:0 0 10px 0; }
+  .report-doc .summary-row{ display:flex; gap:26px; align-items:center; flex-wrap:wrap; }
+  .report-doc .ring{ position:relative; width:130px; height:130px; flex-shrink:0; }
+  .report-doc .ring svg{ transform:rotate(-90deg); }
+  .report-doc .ring .center{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .report-doc .ring .center .n{ font-size:32px; font-weight:800; line-height:1; }
+  .report-doc .ring .center .l{ font-size:10.5px; color:var(--r-faint); font-weight:700; letter-spacing:.05em; margin-top:2px; }
+  .report-doc .summary-text{ flex:1; min-width:240px; }
+  .report-doc .risk-badge{ display:inline-block; font-size:12px; font-weight:800; padding:5px 14px; border-radius:999px; margin-bottom:8px; }
+  .report-doc .chips{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .report-doc .chip{ font-size:12px; font-weight:700; padding:4px 11px; border-radius:999px; }
+  .report-doc .chip.crit{ background:var(--r-crit-bg); color:var(--r-crit); }
+  .report-doc .chip.high{ background:var(--r-bad-bg); color:var(--r-bad); }
+  .report-doc .chip.med{ background:var(--r-warn-bg); color:var(--r-warn); }
+  .report-doc .chip.low{ background:var(--r-info-bg); color:var(--r-info); }
+  .report-doc .chip.info{ background:var(--r-soft-bg); color:var(--r-faint); border:1px solid var(--r-border); }
+  .report-doc .chip.yes{ background:var(--r-good-bg); color:var(--r-good); }
+  .report-doc .chip.partial{ background:var(--r-warn-bg); color:var(--r-warn); }
+  .report-doc .chip.no{ background:var(--r-bad-bg); color:var(--r-bad); }
+  .report-doc .chip.na{ background:var(--r-soft-bg); color:var(--r-faint); border:1px solid var(--r-border); }
+  .report-doc .score-breakdown{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }
+  .report-doc .sb-card{ border:1px solid var(--r-border); border-radius:10px; padding:12px 14px; background:var(--r-soft-bg); }
+  .report-doc .sb-card .k{ font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--r-faint); font-weight:700; }
+  .report-doc .sb-card .v{ font-size:20px; font-weight:800; }
+  .report-doc .finding{ border:1px solid var(--r-border); border-left-width:4px; border-radius:8px; padding:12px 16px; margin-bottom:10px; page-break-inside:avoid; }
+  .report-doc .finding.crit{ border-left-color:var(--r-crit); }
+  .report-doc .finding.high{ border-left-color:var(--r-bad); }
+  .report-doc .finding.med{ border-left-color:var(--r-warn); }
+  .report-doc .finding.low{ border-left-color:var(--r-info); }
+  .report-doc .finding.info{ border-left-color:var(--r-faint); }
+  .report-doc .finding .fh{ display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; }
+  .report-doc .finding .ft{ font-weight:700; font-size:14px; }
+  .report-doc .finding .fl{ font-family:'SFMono-Regular', Consolas, monospace; font-size:11.5px; color:var(--r-faint); }
+  .report-doc .finding .fd{ font-size:13px; color:var(--r-soft); margin-top:6px; }
+  .report-doc .finding pre{ margin:8px 0 0 0; font-family:'SFMono-Regular', Consolas, monospace; font-size:11.5px; background:var(--r-soft-bg); border:1px solid var(--r-border); border-radius:6px; padding:8px 10px; white-space:pre-wrap; word-break:break-all; }
+  .report-doc .finding .ffix{ font-size:12.5px; color:var(--r-good); margin-top:8px; }
+  .report-doc table{ width:100%; border-collapse:collapse; font-size:13px; }
+  .report-doc th{ text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--r-faint); padding:8px 10px; border-bottom:2px solid var(--r-border); }
+  .report-doc td{ padding:9px 10px; border-bottom:1px solid var(--r-border); vertical-align:top; }
+  .report-doc tr{ page-break-inside:avoid; }
+  .report-doc ol.recs{ margin:0; padding-left:0; list-style:none; counter-reset:rec; }
+  .report-doc ol.recs li{ counter-increment:rec; display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--r-border); page-break-inside:avoid; }
+  .report-doc ol.recs li::before{ content:counter(rec); flex-shrink:0; width:26px; height:26px; border-radius:50%; background:var(--r-gold-bg); color:var(--r-gold); font-weight:800; font-size:12.5px; display:flex; align-items:center; justify-content:center; }
+  .report-doc .rec-body{ flex:1; }
+  .report-doc .rec-title{ font-weight:700; font-size:13.5px; }
+  .report-doc .prio{ display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.04em; padding:2px 8px; border-radius:999px; margin-left:8px; vertical-align:middle; }
+  .report-doc .prio.p1{ background:var(--r-crit-bg); color:var(--r-crit); }
+  .report-doc .prio.p2{ background:var(--r-warn-bg); color:var(--r-warn); }
+  .report-doc .prio.p3{ background:var(--r-info-bg); color:var(--r-info); }
+  .report-doc .rec-desc{ font-size:12.5px; color:var(--r-soft); }
+  .report-doc .good-note{ background:var(--r-good-bg); color:var(--r-good); border-radius:8px; padding:12px 16px; font-weight:600; }
+  .report-doc .disclaimer{ font-size:11.5px; color:var(--r-faint); border-top:1px solid var(--r-border); padding-top:14px; margin-top:34px; line-height:1.55; }
+  .report-doc .method-list{ margin:0; padding-left:18px; color:var(--r-soft); font-size:13px; }
+  .report-doc .method-list li{ margin-bottom:4px; }
+
+  /* ---------------- INTERCEPT AND FORCE LIGHT DOCUMENT PRINTING ---------------- */
+  @media print{
+    body{ background:#fff !important; }
+    .no-print{ display:none !important; }
+    .tab-panel:not(#panel-report){ display:none !important; }
+    .wrap{ padding:0 !important; max-width:none !important; }
+    .panel{ box-shadow:none !important; border:none !important; padding:0 !important; }
+    .report-scroll{ background:#fff !important; border:none !important; padding:0 !important; overflow:visible !important; }
+    
+    /* Clean PDF values */
+    .report-doc, [data-theme="hacker"] .report-doc {
+      --r-ink:#1c1f37 !important;
+      --r-soft:#5b5f7e !important;
+      --r-faint:#9599b8 !important;
+      --r-border:#e1e3f5 !important;
+      --r-soft-bg:#f7f8fd !important;
+      --r-gold:#d97706 !important;
+      --r-gold-bg:#fef3e2 !important;
+      --r-gold-border:#fbd999 !important;
+      --r-good:#1f9d68 !important; --r-good-bg:#eafaf2 !important;
+      --r-warn:#b4700a !important; --r-warn-bg:#fff6e6 !important;
+      --r-bad:#d0483f !important; --r-bad-bg:#fdeceb !important;
+      --r-crit:#b91c1c !important; --r-crit-bg:#fde3e2 !important;
+      --r-info:#6366f1 !important; --r-info-bg:#eef0fe !important;
+      background:#fff !important;
+      color:#1c1f37 !important;
+      box-shadow:none !important;
+      border:none !important;
+      padding:0 !important;
+      max-width:none !important;
+      font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+    }
+    @page{ margin:16mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="../index.html" class="pill back-pill" id="homeBtn" style="text-decoration:none;" title="Go back to Home">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to CryptoKit
+    </a>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="pill lock-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+        100% Client-Side — Nothing Ever Leaves Your Browser
+      </div>
+      <div class="pill toggle-pill" id="themeToggle" title="Toggle Theme">
+        <span id="themeLabel">Normal</span>
+        <span class="switch"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="kicker no-print">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-7.4L2.5 8l6.5-1z"/></svg>
+    Premium Tool
+  </div>
+
+  <div class="hero no-print">
+    <div class="hero-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/>
+        <path d="M14 3v5h5"/>
+        <path d="M9 13h6M9 17h4"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Professional Security Report</h1>
+      <p>Turn a code scan and a cryptographic controls checklist into a polished, client-ready security report — executive summary, scored findings, prioritized recommendations — ready to print, save as PDF, or export.</p>
+    </div>
+  </div>
+
+  <div class="tag-row no-print">
+    <span class="tag">Executive Summary</span>
+    <span class="tag">NIST / OWASP-Aligned</span>
+    <span class="tag tag-gold">★ Premium</span>
+  </div>
+
+  <div class="premium-strip no-print">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6.5 1-4.7 4.6L18 19l-6-3.2L6 19l1.2-7.4L2.5 8l6.5-1z"/></svg>
+    Premium unlocked — unlimited reports &amp; exports
+  </div>
+
+  <div class="tabs no-print">
+    <button class="tab active" data-tab="details">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      1. Report Details
+    </button>
+    <button class="tab" data-tab="assess">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+      2. Assessment
+    </button>
+    <button class="tab" data-tab="report">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/></svg>
+      3. Report
+    </button>
+  </div>
+
+  <!-- ============ DETAILS ============ -->
+  <div class="tab-panel" id="panel-details">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        <h2>Report details</h2>
+      </div>
+      <p class="panel-sub">This information appears on the cover block of your report.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="rTitle">Report title</label>
+          <input type="text" id="rTitle" placeholder="e.g. Cryptographic Security Assessment">
+        </div>
+        <div class="field">
+          <label for="rOrg">Organization / client</label>
+          <input type="text" id="rOrg" placeholder="e.g. Acme Corp">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="rSystem">System / project assessed</label>
+          <input type="text" id="rSystem" placeholder="e.g. Payments API v2">
+        </div>
+        <div class="field">
+          <label for="rAssessor">Assessor</label>
+          <input type="text" id="rAssessor" placeholder="e.g. Jane Doe, Security Engineer">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="rDate">Assessment date</label>
+          <input type="date" id="rDate">
+        </div>
+        <div class="field">
+          <label for="rClass">Classification</label>
+          <select id="rClass">
+            <option value="CONFIDENTIAL" selected>Confidential</option>
+            <option value="INTERNAL">Internal Use Only</option>
+            <option value="PUBLIC">Public</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rScope">Scope &amp; objectives</label>
+        <textarea id="rScope" class="prose" placeholder="Describe what was reviewed and why (services, repositories, environments, time period)..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="toAssessBtn">Continue to Assessment →</button>
+        <button class="btn btn-ghost" id="demoBtn">Load demo data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ASSESSMENT ============ -->
+  <div class="tab-panel" id="panel-assess" style="display:none;">
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3z"/></svg>
+        <h2>A. Code &amp; configuration scan</h2>
+      </div>
+      <p class="panel-sub">Paste source code, config, or scripts. Scanned locally with 12 static rules for weak crypto and exposed secrets. Optional — leave blank to build a controls-only report.</p>
+      <div class="field">
+        <textarea id="scanInput" placeholder="Paste code here..."></textarea>
+      </div>
+      <div class="sample-links">
+        <button class="sample-link" id="loadVuln">Load vulnerable sample</button>
+        <button class="sample-link" id="loadClean">Load clean sample</button>
+        <button class="sample-link" id="clearCode">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+        <h2>B. Cryptographic controls checklist</h2>
+      </div>
+      <p class="panel-sub">Answer each control based on your system. "Not applicable" items are excluded from scoring.</p>
+      <div class="progress-line" id="ctlProgress"></div>
+      <div id="controlsContainer"></div>
+
+      <div class="btn-row" style="margin-top:22px;">
+        <button class="btn btn-primary" id="generateBtn">Generate Report →</button>
+      </div>
+      <div id="assessStatus"></div>
+    </div>
+  </div>
+
+  <!-- ============ REPORT ============ -->
+  <div class="tab-panel" id="panel-report" style="display:none;">
+    <div class="panel">
+      <div class="report-toolbar no-print">
+        <button class="btn btn-primary" id="printBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print / Save as PDF
+        </button>
+        <button class="btn" id="dlHtmlBtn">Download HTML</button>
+        <button class="btn" id="dlJsonBtn">Download JSON</button>
+        <button class="btn btn-ghost" id="backToAssessBtn">← Edit assessment</button>
+      </div>
+      <div class="report-scroll">
+        <div id="reportMount"><div class="empty-report">No report yet. Complete the assessment and click <strong>Generate Report</strong>.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote no-print">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+    Everything runs locally in your browser. No code, answers, or report content is ever transmitted.
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+  // ════════════════════════════════════════════════════════════
+  //  THEME SYNC KEY — must match the main index.html exactly
+  // ════════════════════════════════════════════════════════════
+  const THEME_KEY = 'cryptokit-theme';
+
+  // ---------------- Back Button Smart Navigation ----------------
+  document.getElementById('homeBtn').addEventListener('click', function(e) {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    let sameSite = false;
+    try {
+      sameSite = !!document.referrer && new URL(document.referrer).origin === location.origin;
+    } catch (_) {}
+    if (sameSite && history.length > 1) {
+      history.back();
+      setTimeout(function() {
+        if (!document.hidden) location.href = '../index.html';
+      }, 400);
+    } else {
+      location.href = '../index.html';
+    }
+  });
+
+  // ════════════════════════════════════════════════════════════
+  //  THEME MANAGEMENT
+  // ════════════════════════════════════════════════════════════
+  const themeToggle = document.getElementById('themeToggle');
+  const themeLabel  = document.getElementById('themeLabel');
+
+  function applyTheme(theme, saveToStorage) {
+    if (theme !== 'hacker') theme = 'normal';
+
+    document.documentElement.setAttribute('data-theme', theme);
+    themeLabel.textContent = (theme === 'hacker') ? 'HACKER' : 'Normal';
+
+    if (saveToStorage) {
+      try { localStorage.setItem(THEME_KEY, theme); } catch(_){}
+    }
+  }
+
+  let savedTheme = 'normal';
+  try { savedTheme = localStorage.getItem(THEME_KEY) || 'normal'; } catch(_){}
+  if (savedTheme !== 'hacker') savedTheme = 'normal';
+  applyTheme(savedTheme, false);
+
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = (current === 'hacker' ? 'normal' : 'hacker');
+    applyTheme(next, true);
+  });
+
+  window.addEventListener('storage', function(e) {
+    if (e.key === THEME_KEY && e.newValue) {
+      applyTheme(e.newValue, false);
+    }
+  });
+
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+      let current = 'normal';
+      try { current = localStorage.getItem(THEME_KEY) || 'normal'; } catch(_){}
+      if (current !== 'hacker') current = 'normal';
+      if (current !== document.documentElement.getAttribute('data-theme')) {
+        applyTheme(current, false);
+      }
+    }
+  });
+
+  // ---------------- Tabs ----------------
+  const tabs = document.querySelectorAll('.tab');
+  const panels = { details:'panel-details', assess:'panel-assess', report:'panel-report' };
+  function showTab(name){
+    tabs.forEach(x=>x.classList.toggle('active', x.dataset.tab === name));
+    Object.entries(panels).forEach(([k,id])=>{
+      document.getElementById(id).style.display = (k === name) ? 'block' : 'none';
+    });
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  tabs.forEach(t=> t.addEventListener('click', ()=> showTab(t.dataset.tab)));
+  document.getElementById('toAssessBtn').addEventListener('click', ()=> showTab('assess'));
+  document.getElementById('backToAssessBtn').addEventListener('click', ()=> showTab('assess'));
+
+  document.getElementById('rDate').value = new Date().toISOString().slice(0,10);
+
+  // ---------------- Helpers ----------------
+  function esc(s){
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function statusHTML(kind, title, msg){
+    return `<div class="status status-${kind}"><div><strong>${title}</strong>${msg}</div></div>`;
+  }
+  function fmtDate(iso){
+    if(!iso) return '';
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
+  }
+
+  // ---------------- Scan rules ----------------
+  const RULES = [
+    { id:'md5', sev:'high', title:'MD5 hash in use', re:/\bmd5\b/i,
+      desc:'MD5 is cryptographically broken and vulnerable to collision attacks. It must not be used for passwords, signatures, or integrity checks.',
+      fix:'Use SHA-256 or stronger for integrity, or a dedicated password hash (Argon2id, bcrypt, scrypt, PBKDF2) for passwords.' },
+    { id:'sha1', sev:'med', title:'SHA-1 hash in use', re:/\bsha-?1\b/i,
+      desc:'SHA-1 has practical collision attacks and is deprecated for security-sensitive use.',
+      fix:'Migrate to SHA-256, SHA-384, or SHA-512.' },
+    { id:'des', sev:'crit', title:'DES / 3DES cipher in use', re:/\b(single-)?des\b|\b3des\b|\btripledes\b/i,
+      desc:'DES has a 56-bit key that can be brute-forced quickly; 3DES is deprecated by NIST.',
+      fix:'Use AES-256-GCM (authenticated encryption).' },
+    { id:'rc4', sev:'crit', title:'RC4 stream cipher in use', re:/\brc4\b/i,
+      desc:'RC4 has multiple known biases and practical attacks and is considered broken.',
+      fix:'Use AES-GCM or ChaCha20-Poly1305.' },
+    { id:'ecb', sev:'high', title:'ECB cipher mode in use', re:/\becb\b|MODE_ECB/i,
+      desc:'ECB encrypts identical plaintext blocks to identical ciphertext blocks, leaking data patterns.',
+      fix:'Use an authenticated mode such as GCM.' },
+    { id:'math-random', sev:'high', title:'Math.random() used in security-sensitive context', re:/Math\.random\(\)/,
+      desc:'Math.random() is predictable and must not be used for tokens, keys, IVs, or passwords.',
+      fix:'Use crypto.getRandomValues() (browser) or crypto.randomBytes() (Node).' },
+    { id:'py-random', sev:'high', title:"Python 'random' module used for a secret", re:/\brandom\.(random|randint|choice)\s*\(/,
+      desc:"Python's random module is a non-cryptographic PRNG and is predictable.",
+      fix:"Use Python's 'secrets' module for anything security-sensitive." },
+    { id:'weak-rsa', sev:'high', title:'RSA key smaller than 2048 bits', re:/RSA\.generate\(\s*(512|768|1024)\s*\)|modulusLength['":\s]*[:=]\s*(512|768|1024)\b/i,
+      desc:'RSA keys under 2048 bits are considered breakable and are disallowed by modern standards.',
+      fix:'Use at least 2048-bit RSA, or migrate to ECDSA P-256.' },
+    { id:'hardcoded-secret', sev:'crit', title:'Hardcoded secret or API key', re:/(api[_-]?key|secret|token|password)\s*[:=]\s*["'][A-Za-z0-9\-_/+]{8,}["']/i,
+      desc:'A credential appears to be hardcoded in source. If committed to version control, it is compromised.',
+      fix:'Load secrets from environment variables or a secrets manager; rotate any exposed credential.' },
+    { id:'http-endpoint', sev:'med', title:'Plaintext HTTP endpoint', re:/["']http:\/\/(?!localhost|127\.0\.0\.1)[^"']+["']/,
+      desc:'Data sent over plain HTTP can be intercepted or modified in transit.',
+      fix:'Use HTTPS/TLS for all endpoints handling sensitive data.' },
+    { id:'eval', sev:'med', title:'Use of eval()', re:/\beval\s*\(/,
+      desc:'eval() executes arbitrary strings as code, a common injection vector.',
+      fix:'Avoid eval(); use JSON.parse and explicit function references.' },
+    { id:'no-salt-hash', sev:'info', title:'Password hashing routine — verify salting', re:/hash_password|hashPassword/i,
+      desc:'A password-hashing routine was detected. Heuristic only: confirm it uses a per-user random salt and a slow algorithm.',
+      fix:'Prefer Argon2id, bcrypt, or PBKDF2 (250k+ iterations) with a unique salt per password.' },
+  ];
+  const SEV = {
+    crit:{ label:'Critical', weight:25, order:0 },
+    high:{ label:'High', weight:15, order:1 },
+    med:{ label:'Medium', weight:8, order:2 },
+    low:{ label:'Low', weight:4, order:3 },
+    info:{ label:'Informational', weight:0, order:4 },
+  };
+
+  const VULN_SAMPLE = `import hashlib
+import random
+
+API_KEY = "sk_live_51Hxy9zAbCdEfGhIjKlMnOpQrStUvWx"
+DB_PASSWORD = "SuperSecret123!"
+
+def hash_password(password):
+    return hashlib.md5(password.encode()).hexdigest()
+
+def generate_token():
+    return str(random.randint(100000, 999999))
+
+def encrypt(data, key):
+    from Crypto.Cipher import DES
+    cipher = DES.new(key, DES.MODE_ECB)
+    return cipher.encrypt(data)
+
+def old_rsa_key():
+    from Crypto.PublicKey import RSA
+    return RSA.generate(1024)
+
+API_ENDPOINT = "http://api.example.com/v1/payments"
+`;
+  const CLEAN_SAMPLE = `import hashlib
+import secrets
+
+def generate_token():
+    return secrets.token_urlsafe(32)
+
+def hash_password(password: str, salt: bytes) -> str:
+    return hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 250_000).hex()
+
+API_ENDPOINT = "https://api.example.com/v1/payments"
+`;
+  document.getElementById('loadVuln').addEventListener('click', ()=> document.getElementById('scanInput').value = VULN_SAMPLE);
+  document.getElementById('loadClean').addEventListener('click', ()=> document.getElementById('scanInput').value = CLEAN_SAMPLE);
+  document.getElementById('clearCode').addEventListener('click', ()=> document.getElementById('scanInput').value = '');
+
+  function runScan(code){
+    const findings = [];
+    if(!code.trim()) return findings;
+    const lines = code.split('\n');
+    RULES.forEach(rule=>{
+      lines.forEach((line, idx)=>{
+        if(rule.re.test(line)){
+          findings.push({ id:rule.id, sev:rule.sev, title:rule.title, desc:rule.desc, fix:rule.fix, line: idx+1, snippet: line.trim().slice(0,160) });
+        }
+      });
+    });
+    return findings.sort((a,b)=> SEV[a.sev].order - SEV[b.sev].order || a.line - b.line);
+  }
+
+  // ---------------- Controls checklist ----------------
+  const CONTROLS = [
+    { cat:'Key Management', w:3, text:'Cryptographic keys are generated with a cryptographically secure random number generator (CSPRNG).',
+      rec:'Generate all keys, IVs, and tokens with a CSPRNG (e.g. crypto.getRandomValues, secrets, /dev/urandom).' },
+    { cat:'Key Management', w:3, text:'Private keys and secrets are stored in a KMS/HSM or secrets manager — never in source control or images.',
+      rec:'Move keys and secrets into a managed KMS/HSM or secrets manager and remove them from repositories, images, and CI logs.' },
+    { cat:'Key Management', w:2, text:'Keys are rotated on a defined schedule and can be revoked quickly after a suspected compromise.',
+      rec:'Define and automate a key-rotation schedule, with a documented revocation and incident procedure.' },
+    { cat:'Data Protection', w:3, text:'Sensitive data at rest is encrypted with AES-256 (or an equivalent modern cipher).',
+      rec:'Encrypt sensitive data at rest with AES-256 (or equivalent) using keys managed separately from the data.' },
+    { cat:'Data Protection', w:3, text:'Authenticated encryption modes (AES-GCM, ChaCha20-Poly1305) are used instead of unauthenticated modes.',
+      rec:'Replace unauthenticated modes (ECB/CBC without MAC) with AES-GCM or ChaCha20-Poly1305.' },
+    { cat:'Data Protection', w:3, text:'Deprecated algorithms (MD5, SHA-1, DES/3DES, RC4) are not used anywhere in the system.',
+      rec:'Inventory and remove all deprecated algorithms (MD5, SHA-1, DES/3DES, RC4) and migrate to current standards.' },
+    { cat:'Authentication', w:3, text:'Passwords are hashed with Argon2id, bcrypt, scrypt, or PBKDF2, with a unique per-user salt.',
+      rec:'Hash passwords with Argon2id (or bcrypt/scrypt/PBKDF2 with 250k+ iterations) and a unique per-user salt.' },
+    { cat:'Authentication', w:2, text:'Multi-factor authentication is enforced for privileged and administrative accounts.',
+      rec:'Enforce MFA (preferably phishing-resistant, e.g. WebAuthn) for all privileged and administrative accounts.' },
+    { cat:'Authentication', w:3, text:'Secrets, API tokens, and credentials are never hardcoded or written to logs.',
+      rec:'Remove hardcoded credentials, rotate anything exposed, and add secret scanning plus log redaction to CI/CD.' },
+    { cat:'Transport Security', w:3, text:'TLS 1.2+ is enforced on all endpoints (TLS 1.3 preferred); legacy SSL/TLS versions are disabled.',
+      rec:'Enforce TLS 1.2+ (prefer 1.3), disable legacy protocols and weak cipher suites on all endpoints.' },
+    { cat:'Transport Security', w:2, text:'HSTS is enabled and certificate validation is never disabled in clients.',
+      rec:'Enable HSTS and ensure no client disables certificate or hostname validation.' },
+    { cat:'Transport Security', w:1, text:'Certificate expiry is monitored and renewal is automated.',
+      rec:'Automate certificate renewal (e.g. ACME) and alert on upcoming expiry.' },
+  ];
+  const ANSWERS = [
+    { v:'', label:'— Select —' },
+    { v:'yes', label:'Yes' },
+    { v:'partial', label:'Partially' },
+    { v:'no', label:'No' },
+    { v:'na', label:'Not applicable' },
+  ];
+
+  function renderControls(){
+    const container = document.getElementById('controlsContainer');
+    let html = '';
+    let currentCat = null;
+    CONTROLS.forEach((c, i)=>{
+      if(c.cat !== currentCat){
+        if(currentCat !== null) html += '</div>';
+        html += `<div class="ctl-group"><h3>${esc(c.cat)}</h3>`;
+        currentCat = c.cat;
+      }
+      html += `<div class="ctl-row"><div class="txt">${esc(c.text)}</div>
+        <select id="ctl-${i}" data-idx="${i}">${ANSWERS.map(a=>`<option value="${a.v}">${a.label}</option>`).join('')}</select></div>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+    container.querySelectorAll('select').forEach(s=> s.addEventListener('change', updateProgress));
+    updateProgress();
+  }
+  function getAnswers(){
+    return CONTROLS.map((c,i)=> document.getElementById('ctl-'+i).value);
+  }
+  function updateProgress(){
+    const answered = getAnswers().filter(a=>a).length;
+    document.getElementById('ctlProgress').textContent = `${answered} of ${CONTROLS.length} controls answered`;
+  }
+  renderControls();
+
+  // ---------------- Demo data ----------------
+  document.getElementById('demoBtn').addEventListener('click', ()=>{
+    document.getElementById('rTitle').value = 'Cryptographic Security Assessment';
+    document.getElementById('rOrg').value = 'Acme Corp';
+    document.getElementById('rSystem').value = 'Payments API v2';
+    document.getElementById('rAssessor').value = 'Jane Doe, Security Engineer';
+    document.getElementById('rScope').value = 'Review of the payments service source code and its cryptographic controls: key management, data protection, authentication, and transport security. Production infrastructure and third-party providers are out of scope.';
+    document.getElementById('scanInput').value = VULN_SAMPLE;
+    const demoAnswers = ['yes','no','partial','yes','partial','no','no','partial','no','yes','yes','partial'];
+    demoAnswers.forEach((v,i)=> document.getElementById('ctl-'+i).value = v);
+    updateProgress();
+  });
+
+  // ---------------- Scoring ----------------
+  function scoreFindings(findings){
+    let s = 100;
+    findings.forEach(f=> s -= SEV[f.sev].weight);
+    return Math.max(0, s);
+  }
+  function scoreControls(answers){
+    let earned = 0, total = 0;
+    CONTROLS.forEach((c,i)=>{
+      const a = answers[i];
+      if(!a || a === 'na') return;
+      total += c.w;
+      if(a === 'yes') earned += c.w;
+      else if(a === 'partial') earned += c.w * 0.5;
+    });
+    return total === 0 ? null : Math.round((earned/total)*100);
+  }
+  function riskFromScore(s){
+    if(s >= 85) return { label:'LOW RISK', color:'#1f9d68', bg:'#eafaf2', word:'Low' };
+    if(s >= 70) return { label:'MODERATE RISK', color:'#3aa373', bg:'#eafaf2', word:'Moderate' };
+    if(s >= 50) return { label:'ELEVATED RISK', color:'#b4700a', bg:'#fff6e6', word:'Elevated' };
+    if(s >= 30) return { label:'HIGH RISK', color:'#d0483f', bg:'#fdeceb', word:'High' };
+    return { label:'CRITICAL RISK', color:'#b91c1c', bg:'#fde3e2', word:'Critical' };
+  }
+  function ringSvg(score, color){
+    const r = 54, c = 2*Math.PI*r;
+    return `<svg width="130" height="130" viewBox="0 0 130 130">
+      <circle cx="65" cy="65" r="${r}" fill="none" stroke="#f0f1fa" stroke-width="12"/>
+      <circle cx="65" cy="65" r="${r}" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round"
+        stroke-dasharray="${c}" stroke-dashoffset="${c*(1-score/100)}"/>
+    </svg>`;
+  }
+
+  // ---------------- Build report ----------------
+  let lastReportData = null;
+
+  function collectData(){
+    const code = document.getElementById('scanInput').value;
+    const answers = getAnswers();
+    const findings = runScan(code);
+    const codeProvided = code.trim().length > 0;
+    const codeScore = codeProvided ? scoreFindings(findings) : null;
+    const ctlScore = scoreControls(answers);
+
+    let overall;
+    if(codeScore !== null && ctlScore !== null) overall = Math.round(codeScore*0.5 + ctlScore*0.5);
+    else if(codeScore !== null) overall = codeScore;
+    else if(ctlScore !== null) overall = ctlScore;
+    else overall = null;
+
+    // recommendations
+    const recs = [];
+    const seen = new Set();
+    findings.forEach(f=>{
+      if(seen.has(f.id)) return;
+      seen.add(f.id);
+      const count = findings.filter(x=>x.id===f.id).length;
+      const prio = (f.sev==='crit') ? 'p1' : (f.sev==='high') ? 'p1' : (f.sev==='med') ? 'p2' : 'p3';
+      recs.push({ prio, title:`Remediate: ${f.title}${count>1?` (${count} occurrences)`:''}`, desc:f.fix, order: SEV[f.sev].order });
+    });
+    CONTROLS.forEach((c,i)=>{
+      const a = answers[i];
+      if(a === 'no' || a === 'partial'){
+        let prio = c.w >= 3 ? (a==='no' ? 'p1' : 'p2') : (a==='no' ? 'p2' : 'p3');
+        recs.push({ prio, title:`${a==='no' ? 'Implement' : 'Complete'} control: ${c.cat}`, desc:c.rec, order: prio==='p1'?1:prio==='p2'?2:3 });
+      }
+    });
+    recs.sort((a,b)=> a.prio.localeCompare(b.prio) || a.order - b.order);
+
+    return {
+      meta:{
+        title: document.getElementById('rTitle').value.trim() || 'Cryptographic Security Assessment',
+        org: document.getElementById('rOrg').value.trim() || '—',
+        system: document.getElementById('rSystem').value.trim() || '—',
+        assessor: document.getElementById('rAssessor').value.trim() || '—',
+        date: document.getElementById('rDate').value,
+        classification: document.getElementById('rClass').value,
+        scope: document.getElementById('rScope').value.trim(),
+      },
+      codeProvided, codeLines: code.trim() ? code.split('\n').length : 0,
+      findings, answers, codeScore, ctlScore, overall, recs,
+    };
+  }
+
+  function buildReportHtml(d){
+    const m = d.meta;
+    const counts = { crit:0, high:0, med:0, low:0, info:0 };
+    d.findings.forEach(f=> counts[f.sev]++);
+    const risk = d.overall !== null ? riskFromScore(d.overall) : null;
+
+    const answered = d.answers.filter(a=>a && a!=='na').length;
+    const yes = d.answers.filter(a=>a==='yes').length;
+    const partial = d.answers.filter(a=>a==='partial').length;
+    const no = d.answers.filter(a=>a==='no').length;
+
+    // executive summary text
+    let execText = '';
+    if(d.overall === null){
+      execText = 'No code was scanned and no controls were answered, so an overall score could not be calculated.';
+    } else {
+      const parts = [];
+      if(d.codeProvided) parts.push(`a static scan of ${d.codeLines} line${d.codeLines===1?'':'s'} of code/configuration${d.findings.length? ` identified ${d.findings.length} finding${d.findings.length===1?'':'s'}`:' identified no issues'}`);
+      if(d.ctlScore !== null) parts.push(`a cryptographic controls review found ${yes} control${yes===1?'':'s'} fully in place, ${partial} partially in place, and ${no} not in place (out of ${answered} applicable)`);
+      execText = `This assessment of <strong>${esc(m.system)}</strong> combined ${parts.join(' and ')}. The overall security posture is rated <strong>${risk.word}</strong> risk with a score of <strong>${d.overall}/100</strong>.`;
+      if(counts.crit) execText += ` <strong>${counts.crit} critical issue${counts.crit===1?'':'s'}</strong> require${counts.crit===1?'s':''} immediate attention.`;
+    }
+
+    // findings section
+    let findingsHtml = '';
+    if(!d.codeProvided){
+      findingsHtml = '<p style="color:var(--r-faint)">No code or configuration was submitted for scanning in this assessment.</p>';
+    } else if(d.findings.length === 0){
+      findingsHtml = '<div class="good-note">No weak cryptographic patterns were detected by the static rule set. Note: this is a heuristic scan and does not replace a manual code review.</div>';
+    } else {
+      findingsHtml = d.findings.map((f,i)=>`
+        <div class="finding ${f.sev}">
+          <div class="fh"><div class="ft">F-${String(i+1).padStart(2,'0')} · ${esc(f.title)}</div>
+            <div><span class="chip ${f.sev}">${SEV[f.sev].label}</span> <span class="fl">Line ${f.line}</span></div></div>
+          <div class="fd">${esc(f.desc)}</div>
+          <pre>${esc(f.snippet)}</pre>
+          <div class="ffix"><strong>Recommendation:</strong> ${esc(f.fix)}</div>
+        </div>`).join('');
+    }
+
+    // controls table
+    const ansLabel = { yes:['Implemented','yes'], partial:['Partial','partial'], no:['Not implemented','no'], na:['N/A','na'], '':['Not answered','na'] };
+    const controlsRows = CONTROLS.map((c,i)=>{
+      const a = d.answers[i]; const [lbl, cls] = ansLabel[a];
+      return `<tr><td>${esc(c.cat)}</td><td>${esc(c.text)}</td><td><span class="chip ${cls}">${lbl}</span></td></tr>`;
+    }).join('');
+
+    // recommendations
+    let recsHtml = '';
+    if(d.recs.length === 0){
+      recsHtml = '<div class="good-note">No remediation actions identified. Continue to monitor, re-assess regularly, and keep dependencies and cryptographic libraries up to date.</div>';
+    } else {
+      const prioLabel = { p1:'P1 · Immediate', p2:'P2 · Short term', p3:'P3 · Planned' };
+      recsHtml = '<ol class="recs">' + d.recs.map(r=>`
+        <li><div class="rec-body"><div class="rec-title">${esc(r.title)}<span class="prio ${r.prio}">${prioLabel[r.prio]}</span></div>
+        <div class="rec-desc">${esc(r.desc)}</div></div></li>`).join('') + '</ol>';
+    }
+
+    const scoreCards = `
+      <div class="score-breakdown">
+        <div class="sb-card"><div class="k">Overall score</div><div class="v">${d.overall !== null ? d.overall : 'N/A'}</div></div>
+        <div class="sb-card"><div class="k">Code scan score</div><div class="v">${d.codeScore !== null ? d.codeScore : 'N/A'}</div></div>
+        <div class="sb-card"><div class="k">Controls score</div><div class="v">${d.ctlScore !== null ? d.ctlScore : 'N/A'}</div></div>
+      </div>`;
+
+    return `
+    <div class="report-doc">
+      <div class="rpt-top">
+        <div class="rpt-brand">CryptoKit · Security Report</div>
+        <div class="rpt-label">${esc(m.classification)}</div>
+      </div>
+      <h1 class="rpt-title">${esc(m.title)}</h1>
+      <p class="rpt-subtitle">${esc(m.system)}${m.org !== '—' ? ' · ' + esc(m.org) : ''}</p>
+      <div class="rpt-meta">
+        <div><div class="k">Organization</div><div class="v">${esc(m.org)}</div></div>
+        <div><div class="k">System assessed</div><div class="v">${esc(m.system)}</div></div>
+        <div><div class="k">Assessor</div><div class="v">${esc(m.assessor)}</div></div>
+        <div><div class="k">Assessment date</div><div class="v">${esc(fmtDate(m.date)) || '—'}</div></div>
+      </div>
+
+      <div class="rpt-section">
+        <h2><span class="num">1</span>Executive Summary</h2>
+        ${d.overall !== null ? `
+        <div class="summary-row">
+          <div class="ring">${ringSvg(d.overall, risk.color)}<div class="center"><div class="n" style="color:${risk.color}">${d.overall}</div><div class="l">/ 100</div></div></div>
+          <div class="summary-text">
+            <span class="risk-badge" style="background:${risk.bg}; color:${risk.color}">${risk.label}</span>
+            <p>${execText}</p>
+            <div class="chips">
+              ${counts.crit?`<span class="chip crit">${counts.crit} Critical</span>`:''}
+              ${counts.high?`<span class="chip high">${counts.high} High</span>`:''}
+              ${counts.med?`<span class="chip med">${counts.med} Medium</span>`:''}
+              ${counts.low?`<span class="chip low">${counts.low} Low</span>`:''}
+              ${counts.info?`<span class="chip info">${counts.info} Info</span>`:''}
+              ${d.findings.length===0 && d.codeProvided?'<span class="chip yes">No code findings</span>':''}
+            </div>
+          </div>
+        </div>
+        ${scoreCards}` : `<p>${execText}</p>`}
+      </div>
+
+      <div class="rpt-section">
+        <h2><span class="num">2</span>Scope &amp; Methodology</h2>
+        <p>${m.scope ? esc(m.scope).replace(/\n/g,'<br>') : 'No scope statement was provided.'}</p>
+        <ul class="method-list">
+          <li><strong>Static analysis:</strong> ${d.codeProvided ? `${d.codeLines} lines reviewed against ${RULES.length} rules covering deprecated algorithms, weak randomness, weak key sizes, hardcoded secrets, and insecure transport.` : 'Not performed (no code submitted).'}</li>
+          <li><strong>Controls review:</strong> ${answered ? `${answered} of ${CONTROLS.length} cryptographic controls assessed across key management, data protection, authentication, and transport security.` : 'Not performed (no controls answered).'}</li>
+          <li><strong>Scoring:</strong> Code score starts at 100 and deducts 25 / 15 / 8 / 4 points per Critical / High / Medium / Low finding. Controls score is the weighted share of applicable controls implemented (partial = 50%). Overall = average of the available scores.</li>
+        </ul>
+      </div>
+
+      <div class="rpt-section">
+        <h2><span class="num">3</span>Findings</h2>
+        ${findingsHtml}
+      </div>
+
+      <div class="rpt-section">
+        <h2><span class="num">4</span>Cryptographic Controls Assessment</h2>
+        ${answered || d.answers.some(a=>a==='na') ? `<table><thead><tr><th style="width:22%">Category</th><th>Control</th><th style="width:16%">Status</th></tr></thead><tbody>${controlsRows}</tbody></table>` : '<p style="color:var(--r-faint)">The controls checklist was not completed.</p>'}
+      </div>
+
+      <div class="rpt-section">
+        <h2><span class="num">5</span>Prioritized Recommendations</h2>
+        ${recsHtml}
+      </div>
+
+      <div class="disclaimer">
+        <strong>Disclaimer.</strong> This report was generated from automated heuristic checks and self-reported control answers. It is intended to support — not replace — a professional security review, penetration test, or formal audit. Results depend on the accuracy and completeness of the information provided. Alignment references (e.g. NIST SP 800-57, NIST SP 800-131A, OWASP guidance) are informational and do not constitute a compliance certification.
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('generateBtn').addEventListener('click', ()=>{
+    const status = document.getElementById('assessStatus');
+    const data = collectData();
+    if(!data.codeProvided && data.answers.every(a=>!a)){
+      status.innerHTML = statusHTML('warn','Nothing to report yet', 'Paste some code to scan and/or answer at least one control before generating a report.');
+      return;
+    }
+    status.innerHTML = '';
+    lastReportData = data;
+    document.getElementById('reportMount').innerHTML = buildReportHtml(data);
+    showTab('report');
+  });
+
+  // ---------------- Exports ----------------
+  document.getElementById('printBtn').addEventListener('click', ()=>{
+    if(!lastReportData){ return; }
+    window.print();
+  });
+
+  function download(filename, content, type){
+    const blob = new Blob([content], {type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  }
+  function slug(s){ return (s||'report').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'report'; }
+
+  document.getElementById('dlHtmlBtn').addEventListener('click', ()=>{
+    if(!lastReportData) return;
+    const css = document.getElementById('reportStyles').textContent;
+    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${esc(lastReportData.meta.title)}</title><style>${css}\nbody{margin:0;padding:28px;background:#eef0fc;}</style></head><body>${document.getElementById('reportMount').innerHTML}</body></html>`;
+    download(`${slug(lastReportData.meta.system)}-security-report.html`, html, 'text/html');
+  });
+
+  document.getElementById('dlJsonBtn').addEventListener('click', ()=>{
+    if(!lastReportData) return;
+    const d = lastReportData;
+    const out = {
+      meta: d.meta,
+      scores: { overall:d.overall, codeScan:d.codeScore, controls:d.ctlScore },
+      findings: d.findings.map(f=>({ id:f.id, severity:SEV[f.sev].label, title:f.title, line:f.line, snippet:f.snippet, recommendation:f.fix })),
+      controls: CONTROLS.map((c,i)=>({ category:c.cat, control:c.text, answer:d.answers[i] || 'unanswered' })),
+      recommendations: d.recs.map(r=>({ priority:r.prio.toUpperCase(), title:r.title, detail:r.desc })),
+      generatedAt: new Date().toISOString(),
+    };
+    download(`${slug(d.meta.system)}-security-report.json`, JSON.stringify(out, null, 2), 'application/json');
+  });
+
+})();
+</script>
+</body>
+</html>
