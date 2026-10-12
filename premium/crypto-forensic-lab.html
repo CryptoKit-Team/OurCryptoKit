@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Forensics Lab — Quantum Elite Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --bg-0:#eef0fc;
+    --surface:#ffffff;
+    --surface-soft:#f6f7fc;
+    --border:#e7e8f3;
+    --ink:#15172b;
+    --ink-soft:#5b5f7e;
+    --ink-faint:#9599b8;
+    --grad-1:#2563eb;
+    --grad-2:#7c3aed;
+    --grad-3:#ec4899;
+    --purple-bg:#f1ecfd;
+    --purple:#7c3aed;
+    --ok:#16a34a;
+    --bad:#dc2626;
+    --warn:#d97706;
+    --radius-lg:20px;
+    --radius-md:12px;
+    --font-display:'Space Grotesk','Arial Rounded MT Bold',ui-rounded,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --font-body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    --font-mono:'JetBrains Mono','SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  }
+  html[data-theme="hacker"]{
+    --bg-0:#07070f;
+    --surface:#0e0e1c;
+    --surface-soft:#131326;
+    --border:#242442;
+    --ink:#f1f1fb;
+    --ink-soft:#b4b6d6;
+    --ink-faint:#6b6e95;
+    --purple-bg:#1d1a3a;
+    --ok:#34d399;
+    --bad:#f87171;
+    --warn:#fbbf24;
+  }
+  html[data-theme="hacker"] body{background:
+    radial-gradient(900px 420px at 15% -10%, rgba(37,99,235,.18) 0%, transparent 60%),
+    radial-gradient(900px 420px at 100% 0%, rgba(236,72,153,.14) 0%, transparent 55%),
+    var(--bg-0);}
+  html[data-theme="hacker"] .console,
+  html[data-theme="hacker"] .data-box,
+  html[data-theme="hacker"] .mini-console{background:#000;border:1px solid var(--border);}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:
+    radial-gradient(900px 420px at 15% -10%, #dde3fb 0%, transparent 60%),
+    radial-gradient(900px 420px at 100% 0%, #fbe3f0 0%, transparent 55%),
+    var(--bg-0);
+    color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;min-height:100vh;transition:background .25s ease, color .25s ease;}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 24px 100px;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:14px;}
+  .back-link{display:flex;align-items:center;gap:8px;color:var(--ink-soft);text-decoration:none;font-size:14px;font-weight:600;}
+  .back-link:hover{color:var(--purple);}
+  .nav-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .pill-badge{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--ink-soft);font-size:12.5px;font-weight:700;}
+  .elite-tag{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3));color:#fff;font-size:13px;font-weight:700;}
+  .theme-switch{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--border);font-size:12.5px;font-weight:700;color:var(--ink-soft);cursor:pointer;user-select:none;}
+  .switch-track{width:38px;height:22px;border-radius:999px;background:var(--border);position:relative;transition:background .2s;flex-shrink:0;}
+  .switch-thumb{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .2s;}
+  html[data-theme="hacker"] .switch-track{background:linear-gradient(90deg,var(--grad-1),var(--grad-2));}
+  html[data-theme="hacker"] .switch-thumb{left:18px;}
+
+  .hero{text-align:center;margin-bottom:28px;}
+  .hero h1{font-family:var(--font-display);font-weight:800;font-size:38px;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;}
+  .hero h1 .accent{background:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p{margin:0;color:var(--ink-soft);font-size:15.5px;max-width:660px;margin:0 auto;}
+
+  .tabs{display:flex;gap:10px;flex-wrap:wrap;margin:30px 0 24px;}
+  .tabbtn{flex:1;min-width:220px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;transition:border-color .15s, box-shadow .15s;}
+  .tabbtn:hover{border-color:var(--purple);}
+  .tabbtn.active{border-color:var(--purple);box-shadow:0 10px 24px -14px rgba(124,58,237,.5);background:var(--purple-bg);}
+  .tabbtn .ic{width:36px;height:36px;border-radius:10px;background:var(--purple-bg);display:flex;align-items:center;justify-content:center;color:var(--purple);flex-shrink:0;}
+  .tabbtn.active .ic{background:#fff;}
+  .tabbtn .tt{font-weight:700;font-size:13.5px;color:var(--ink);}
+  .tabbtn .ts{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;box-shadow:0 14px 34px -22px rgba(30,20,80,.2);margin-bottom:22px;}
+  .card h2{font-family:var(--font-display);font-size:17px;margin:0 0 14px;}
+  .card h2 .sub{display:block;font-family:var(--font-body);font-weight:500;color:var(--ink-soft);font-size:12.5px;margin-top:4px;}
+
+  .explain{background:var(--surface-soft);border:1px dashed var(--border);border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;line-height:1.6;}
+
+  label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin:14px 0 6px;}
+  label:first-of-type{margin-top:0;}
+  input[type=text],input[type=number],select,textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-family:var(--font-mono);font-size:13px;background:var(--surface-soft);color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:90px;}
+  .row{display:flex;gap:10px;}
+  .row > *{flex:1;}
+
+  .btn{border:none;border-radius:10px;padding:11px 18px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:var(--font-body);}
+  .btn-primary{background:linear-gradient(90deg,var(--grad-2),#8b3df0);color:#fff;box-shadow:0 10px 22px -10px rgba(124,58,237,.6);}
+  .btn-primary:hover{filter:brightness(1.06);}
+  .btn-ghost{background:var(--surface-soft);border:1px solid var(--border);color:var(--ink);}
+  .btn-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;}
+
+  .console{background:#0f1124;border-radius:var(--radius-md);padding:16px;max-height:360px;overflow-y:auto;font-family:var(--font-mono);font-size:12px;line-height:1.7;color:#9ae6b4;}
+  .console .ln{white-space:pre-wrap;word-break:break-all;}
+  .console .ln.ok{color:#6ee7b7;}
+  .console .ln.bad{color:#fca5a5;}
+  .console .ln.info{color:#93c5fd;}
+  .console .ln.warn{color:#fcd34d;}
+  .console .ln.hdr{color:#e9d5ff;font-weight:700;}
+
+  .pkt-table{width:100%;border-collapse:collapse;font-size:12px;font-family:var(--font-mono);}
+  .pkt-table th,.pkt-table td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;}
+  .pkt-table th{color:var(--ink-soft);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;font-family:var(--font-body);}
+  .pkt-table tr.flagged{background:#fef2f2;}
+  .pkt-table-wrap{max-height:280px;overflow:auto;border:1px solid var(--border);border-radius:10px;}
+
+  .finding{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:13px;}
+  .finding.crit{border-color:#fbd2d2;background:#fef2f2;}
+  .finding.high{border-color:#fde3c9;background:#fff8f0;}
+  .finding.med{border-color:#fde68a;background:#fffbeb;}
+  .finding .ftitle{font-weight:700;display:flex;align-items:center;gap:8px;}
+  .sev-pill{font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;text-transform:uppercase;}
+  .sev-pill.crit{background:#fee2e2;color:#991b1b;}
+  .sev-pill.high{background:#ffedd5;color:#9a3412;}
+  .sev-pill.med{background:#fef3c7;color:#92400e;}
+  .finding .fdetail{color:var(--ink-soft);margin-top:4px;font-family:var(--font-mono);font-size:12px;word-break:break-all;}
+
+  .stat-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .stat{flex:1;min-width:100px;background:var(--surface-soft);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center;}
+  .stat .v{font-family:var(--font-mono);font-weight:700;font-size:16px;}
+  .stat .l{font-size:10.5px;color:var(--ink-soft);margin-top:2px;}
+
+  .token-list{font-family:var(--font-mono);font-size:12px;background:var(--surface-soft);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+  .token-list div{padding:3px 0;}
+
+  canvas{max-width:100%;border-radius:10px;border:1px solid var(--border);display:block;}
+  .img-row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start;}
+  .img-col{flex:1;min-width:260px;}
+  .small-note{font-size:11.5px;color:var(--ink-faint);margin-top:8px;}
+
+  .result-box{margin-top:14px;padding:14px 16px;border-radius:12px;border:1px solid var(--border);background:var(--surface-soft);font-family:var(--font-mono);font-size:13px;word-break:break-word;display:none;}
+  .result-box.ok{border-color:#bbf3d1;background:#f0fdf6;color:#166534;}
+  .result-box.bad{border-color:#fbd2d2;background:#fef2f2;color:#991b1b;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a href="../index.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M15 18l-6-6 6-6"/></svg>
+      Quantum Elite Labs
+    </a>
+    <div class="nav-actions">
+      <div class="pill-badge"><i class="fa-solid fa-lock"></i> 100% Client-Side</div>
+      <div class="elite-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-7 5 7 4-3-2 11H5L3 8z"/></svg>
+        Quantum Elite — Lab Unlocked
+      </div>
+      <div class="theme-switch" id="themeSwitch">
+        <span id="themeLabel">Normal</span>
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1>Crypto Forensics <span class="accent">Lab</span></h1>
+    <p>Four real investigative tools: scan packet captures for leaked credentials, hunt secrets in raw disk strings, prove a "random" token generator is predictable, and pull hidden data out of an image bit by bit.</p>
+  </div>
+
+  <div class="tabs" id="tabRow">
+    <button class="tabbtn active" data-panel="pcap">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg></span>
+      <span><span class="tt">Packet Capture Analyzer</span><span class="ts">Scan a capture for leaked creds</span></span>
+    </button>
+    <button class="tabbtn" data-panel="secrets">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+      <span><span class="tt">Key &amp; Secret Scanner</span><span class="ts">Find leaked keys in raw strings</span></span>
+    </button>
+    <button class="tabbtn" data-panel="token">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+      <span><span class="tt">Predictable Token Analyzer</span><span class="ts">Reverse-engineer a weak RNG</span></span>
+    </button>
+    <button class="tabbtn" data-panel="stego">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M3 15l4-4 4 4 5-5 5 5"/></svg></span>
+      <span><span class="tt">Steganography Lab</span><span class="ts">Extract data hidden in pixels</span></span>
+    </button>
+  </div>
+
+  <!-- ========================= PACKET CAPTURE ANALYZER ========================= -->
+  <div class="panel active" id="panel-pcap">
+    <div class="explain">
+      A synthetic 16-packet capture below mixes ordinary traffic with real forensic red flags: cleartext credentials, weak cipher negotiation, and a DNS exfiltration pattern. Run the scan to see what a forensic triage pass would flag first.
+    </div>
+    <div class="card">
+      <h2>Capture: evidence.pcap<span class="sub">16 packets — synthetic, for demonstration</span></h2>
+      <div class="pkt-table-wrap">
+        <table class="pkt-table" id="pktTable">
+          <thead><tr><th>#</th><th>Time</th><th>Src</th><th>Dst</th><th>Proto</th><th>Info</th></tr></thead>
+          <tbody id="pktBody"></tbody>
+        </table>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="pcapScanBtn">Run Forensic Scan</button>
+      </div>
+      <div class="stat-row" id="pcapStats" style="display:none;">
+        <div class="stat"><div class="v" id="pcapCrit">0</div><div class="l">Critical</div></div>
+        <div class="stat"><div class="v" id="pcapHigh">0</div><div class="l">High</div></div>
+        <div class="stat"><div class="v" id="pcapMed">0</div><div class="l">Medium</div></div>
+        <div class="stat"><div class="v" id="pcapClean">0</div><div class="l">Clean packets</div></div>
+      </div>
+      <div id="pcapFindings"></div>
+    </div>
+  </div>
+
+  <!-- ========================= KEY & SECRET SCANNER ========================= -->
+  <div class="panel" id="panel-secrets">
+    <div class="explain">
+      This is the same kind of scan a forensic analyst runs against recovered disk strings or memory dumps — regex rules looking for key material and credentials that were never supposed to leave a vault.
+    </div>
+    <div class="card">
+      <h2>Recovered Strings<span class="sub">Paste raw text/strings-dump output, or use the sample</span></h2>
+      <textarea id="secretsInput" style="min-height:180px;">
+# strings output — recovered from /var/tmp/.cache_old (deleted, carved from disk)
+export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+db_password = "Summer2024!"
+slack_webhook_token=""
+github_pat=ghp_16C7e42F292c6912E7710c838347Ae178B4a
+-----BEGIN RSA PRIVATE KEY-----
+MIIBOgIBAAJBAL8m2oX1z6pK3XQ9f1p1x1C9u3p8e2nJvQy4r7k2p9mN3xQW1zRy
+VtZ3h3m1y3kD4yK2n9b1p9x0qP3m1v2n9x8e1b2c3d4e5f6g7h8i9j0k1l2m3n4
+-----END RSA PRIVATE KEY-----
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwMDAwMDAwMH0.4f8c9b2a1d6e7f3c5b8a9d0e1f2a3b4c5d6e7f8a
+admin_console_url = "http://internal-admin.local/login?token=plaintext-not-ok"
+curl -u 'service_acct:Tr0ub4dor&3' https://api.internal.example.com/v1/rotate
+      </textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="secretsScanBtn">Scan for Secrets</button>
+        <button class="btn btn-ghost" id="secretsClearBtn">Clear</button>
+      </div>
+      <div class="stat-row" id="secretsStats" style="display:none;">
+        <div class="stat"><div class="v" id="secretsFound">0</div><div class="l">Secrets found</div></div>
+        <div class="stat"><div class="v" id="secretsTypes">0</div><div class="l">Distinct types</div></div>
+      </div>
+      <div id="secretsFindings"></div>
+    </div>
+  </div>
+
+  <!-- ========================= PREDICTABLE TOKEN ANALYZER ========================= -->
+  <div class="panel" id="panel-token">
+    <div class="explain">
+      Six session tokens, captured one minute apart from a login service. Each is an MD5 hash — individually they look like perfect random noise. The weakness isn't in the hash, it's in what was fed into it. Recover the generation formula and you can predict every future token.
+    </div>
+    <div class="card">
+      <h2>Captured Tokens<span class="sub">Format unknown — investigate the pattern</span></h2>
+      <div class="token-list" id="tokenList"></div>
+      <label>Search range — base Unix timestamp (center)</label>
+      <div class="row">
+        <input type="number" id="tokenGuessCenter" value="1706000000">
+        <input type="number" id="tokenGuessRange" value="600">
+      </div>
+      <div class="small-note">Hint: tokens = MD5("sess_" + unix_timestamp). The investigator's guess above is within ±600s of the truth — the brute-force below finds the exact value.</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="tokenBruteBtn">Brute-Force Timestamps</button>
+        <button class="btn btn-ghost" id="tokenPredictBtn" disabled>Predict Next Token</button>
+      </div>
+      <div class="console" id="tokenConsole"><div class="ln info">$ awaiting analysis...</div></div>
+      <div id="tokenResult" class="result-box"></div>
+    </div>
+  </div>
+
+  <!-- ========================= STEGANOGRAPHY LAB ========================= -->
+  <div class="panel" id="panel-stego">
+    <div class="explain">
+      Least-significant-bit steganography hides data inside an image by nudging each pixel's red value up or down by at most 1 — invisible to the eye, trivial to extract if you know the scheme. This lab generates a real evidence image, hides a case note inside it, and lets you extract it back — plus encode and extract your own.
+    </div>
+
+    <div class="card">
+      <h2>Evidence Photo<span class="sub">LSB-encoded case note hidden in the red channel</span></h2>
+      <div class="img-row">
+        <div class="img-col">
+          <canvas id="evidenceCanvas" width="320" height="200"></canvas>
+          <div class="small-note">What a quick look shows: a plain generated texture. Nothing visibly hidden.</div>
+        </div>
+        <div class="img-col">
+          <div class="btn-row" style="margin-top:0;">
+            <button class="btn btn-primary" id="extractEvidenceBtn">Extract Hidden Data</button>
+          </div>
+          <div id="evidenceResult" class="result-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Encode &amp; Verify Round-Trip<span class="sub">Hide your own message, then prove it extracts cleanly</span></h2>
+      <label>Secret message to hide</label>
+      <input type="text" id="stegoMsgInput" value="QEL FORENSICS — EVIDENCE INTEGRITY CONFIRMED">
+      <div class="btn-row">
+        <button class="btn btn-primary" id="stegoEncodeBtn">Generate Carrier &amp; Embed</button>
+        <button class="btn btn-ghost" id="stegoDownloadBtn" disabled>Download PNG</button>
+      </div>
+      <div class="img-row" style="margin-top:14px;">
+        <div class="img-col">
+          <canvas id="customCanvas" width="320" height="200"></canvas>
+        </div>
+        <div class="img-col">
+          <div class="btn-row" style="margin-top:0;">
+            <button class="btn btn-ghost" id="stegoExtractBtn" disabled>Extract From This Image</button>
+          </div>
+          <div id="customResult" class="result-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Upload &amp; Investigate<span class="sub">Try extracting hidden data from any PNG you provide</span></h2>
+      <input type="file" id="uploadInput" accept="image/png">
+      <div class="btn-row">
+        <button class="btn btn-primary" id="uploadExtractBtn" disabled>Extract From Uploaded Image</button>
+      </div>
+      <div id="uploadResult" class="result-box"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){ // isolated scope — keeps every name below off the host page's global object
+const qelGet=id=>document.getElementById(id);
+const enc=new TextEncoder(), dec=new TextDecoder();
+function logLine(c,msg,cls){const d=document.createElement('div');d.className='ln '+(cls||'');d.textContent=msg;c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function clearConsole(c){c.innerHTML='';}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+/* theme toggle (Normal / Hacker), persisted across Quantum Elite pages */
+(function(){
+  const saved=localStorage.getItem('qel-theme')||'normal';
+  document.documentElement.setAttribute('data-theme', saved);
+  function syncLabel(){
+    const mode=document.documentElement.getAttribute('data-theme');
+    const label=document.getElementById('themeLabel');
+    if(label) label.textContent = mode==='hacker' ? 'Hacker' : 'Normal';
+  }
+  syncLabel();
+  const sw=document.getElementById('themeSwitch');
+  if(sw){
+    sw.addEventListener('click',()=>{
+      const current=document.documentElement.getAttribute('data-theme')||'normal';
+      const next=current==='hacker'?'normal':'hacker';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('qel-theme', next);
+      syncLabel();
+    });
+  }
+})();
+
+document.querySelectorAll('.tabbtn').forEach(tb=>tb.addEventListener('click',()=>{
+  document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  tb.classList.add('active');
+  qelGet('panel-'+tb.dataset.panel).classList.add('active');
+}));
+
+/* ============================= pure JS MD5 (shared) ============================= */
+function md5(string){
+  function rotl(x,c){return (x<<c)|(x>>>(32-c));}
+  function toHexBytes(n){let s='';for(let i=0;i<4;i++)s+=((n>>>(8*i))&255).toString(16).padStart(2,'0');return s;}
+  const K=new Uint32Array(64);for(let i=0;i<64;i++)K[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296);
+  const S=[7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+  const msgBytes=new TextEncoder().encode(string);
+  const bitLen=msgBytes.length*8;
+  let padLen=(msgBytes.length%64<56)?(56-msgBytes.length%64):(120-msgBytes.length%64);
+  const padded=new Uint8Array(msgBytes.length+padLen+8);
+  padded.set(msgBytes,0); padded[msgBytes.length]=0x80;
+  for(let i=0;i<8;i++) padded[padded.length-8+i]=Number((BigInt(bitLen)>>BigInt(8*i))&0xFFn);
+  let [a0,b0,c0,d0]=[0x67452301,0xefcdab89,0x98badcfe,0x10325476];
+  for(let off=0;off<padded.length;off+=64){
+    const M=new Uint32Array(16);
+    for(let i=0;i<16;i++) M[i]=padded[off+i*4]|(padded[off+i*4+1]<<8)|(padded[off+i*4+2]<<16)|(padded[off+i*4+3]<<24);
+    let a=a0,b=b0,c=c0,d=d0;
+    for(let i=0;i<64;i++){
+      let f,g;
+      if(i<16){f=(b&c)|((~b)&d);g=i;}
+      else if(i<32){f=(d&b)|((~d)&c);g=(5*i+1)%16;}
+      else if(i<48){f=b^c^d;g=(3*i+5)%16;}
+      else {f=c^(b|(~d));g=(7*i)%16;}
+      f=(f+a+K[i]+M[g])>>>0;
+      a=d;d=c;c=b;
+      b=(b+rotl(f,S[i]))>>>0;
+    }
+    a0=(a0+a)>>>0; b0=(b0+b)>>>0; c0=(c0+c)>>>0; d0=(d0+d)>>>0;
+  }
+  return toHexBytes(a0)+toHexBytes(b0)+toHexBytes(c0)+toHexBytes(d0);
+}
+
+/* ============================= PACKET CAPTURE ANALYZER ============================= */
+const packets=[
+  {t:'00:00.102', src:'10.0.0.14', dst:'10.0.0.1',   proto:'ARP',   info:'Who has 10.0.0.1? Tell 10.0.0.14'},
+  {t:'00:00.340', src:'10.0.0.14', dst:'93.184.1.10', proto:'TLSv1.3', info:'Client Hello, cipher TLS_AES_128_GCM_SHA256'},
+  {t:'00:01.015', src:'10.0.0.22', dst:'10.0.0.3',   proto:'FTP',   info:'USER service_acct'},
+  {t:'00:01.021', src:'10.0.0.22', dst:'10.0.0.3',   proto:'FTP',   info:'PASS Tr0ub4dor&3'},
+  {t:'00:01.900', src:'10.0.0.22', dst:'10.0.0.3',   proto:'FTP',   info:'230 Login successful'},
+  {t:'00:02.455', src:'10.0.0.41', dst:'172.16.5.2', proto:'HTTP',  info:'GET /report.pdf Authorization: Basic YWRtaW46U3VtbWVyMjAyNCE='},
+  {t:'00:02.980', src:'10.0.0.9',  dst:'8.8.8.8',    proto:'DNS',   info:'Standard query A example.com'},
+  {t:'00:03.512', src:'10.0.0.57', dst:'10.0.0.5',   proto:'Telnet',info:'login: root'},
+  {t:'00:03.690', src:'10.0.0.57', dst:'10.0.0.5',   proto:'Telnet',info:'Password: toor1234'},
+  {t:'00:04.221', src:'10.0.0.5',  dst:'66.22.1.9',  proto:'TLSv1.0',info:'Client Hello, cipher TLS_RSA_WITH_RC4_128_MD5'},
+  {t:'00:04.812', src:'10.0.0.63', dst:'198.51.100.7',proto:'DNS',  info:'Standard query A c3VwZXJzZWNyZXRkYXRhZXhmaWw.evil-tunnel.net'},
+  {t:'00:05.004', src:'10.0.0.14', dst:'93.184.1.10', proto:'TLSv1.3', info:'Application Data'},
+  {t:'00:05.558', src:'10.0.0.8',  dst:'10.0.0.70', proto:'SMB',   info:'Tree Connect Request \\\\FILESERVER\\shared'},
+  {t:'00:06.112', src:'10.0.0.41', dst:'172.16.5.2', proto:'HTTP',  info:'200 OK Set-Cookie: session=889af221c3'},
+  {t:'00:06.890', src:'10.0.0.5',  dst:'66.22.1.9',  proto:'TLSv1.0',info:'Server Hello, cipher TLS_RSA_WITH_RC4_128_MD5 accepted'},
+  {t:'00:07.300', src:'10.0.0.19', dst:'10.0.0.1',   proto:'ICMP',  info:'Echo request'}
+];
+const pktBody=qelGet('pktBody');
+packets.forEach((p,i)=>{
+  const tr=document.createElement('tr');
+  tr.id='pktrow-'+i;
+  tr.innerHTML=`<td>${i}</td><td>${p.t}</td><td>${p.src}</td><td>${p.dst}</td><td>${p.proto}</td><td>${p.info}</td>`;
+  pktBody.appendChild(tr);
+});
+
+function base64Decode(s){ try{ return atob(s); }catch(e){ return null; } }
+
+qelGet('pcapScanBtn').addEventListener('click', async ()=>{
+  const findingsEl=qelGet('pcapFindings');
+  findingsEl.innerHTML='';
+  document.querySelectorAll('.pkt-table tr').forEach(tr=>tr.classList.remove('flagged'));
+  let crit=0, high=0, med=0;
+  const flaggedSet=new Set();
+
+  function addFinding(idx, sev, title, detail){
+    flaggedSet.add(idx);
+    document.getElementById('pktrow-'+idx).classList.add('flagged');
+    if(sev==='crit') crit++; else if(sev==='high') high++; else med++;
+    const div=document.createElement('div');
+    div.className='finding '+sev;
+    div.innerHTML=`<div class="ftitle"><span class="sev-pill ${sev}">${sev}</span>${title} <span style="color:var(--ink-faint);font-weight:400;">— packet #${idx}</span></div><div class="fdetail">${detail}</div>`;
+    findingsEl.appendChild(div);
+  }
+
+  packets.forEach((p,i)=>{
+    if(p.proto==='FTP' && /^PASS /.test(p.info)){
+      addFinding(i,'crit','Cleartext FTP credentials', 'Password transmitted unencrypted: "'+p.info.replace('PASS ','')+'"');
+    }
+    if(p.proto==='Telnet' && /^Password:/.test(p.info)){
+      addFinding(i,'crit','Cleartext Telnet credentials', 'Password transmitted unencrypted over Telnet: "'+p.info.replace('Password: ','')+'"');
+    }
+    if(p.proto==='HTTP' && /Authorization: Basic/.test(p.info)){
+      const b64=p.info.split('Basic ')[1];
+      const decoded=base64Decode(b64);
+      addFinding(i,'crit','HTTP Basic Auth in cleartext', 'Authorization header decodes to credentials: "'+decoded+'"');
+    }
+    if(/TLS_RSA_WITH_RC4|TLS_RSA_WITH_DES|_NULL_|TLSv1\.0/.test(p.info) || p.proto==='TLSv1.0'){
+      addFinding(i,'high','Weak/obsolete TLS negotiated', p.proto+': "'+p.info+'" — RC4 and TLS 1.0 are broken and should be disabled.');
+    }
+    if(p.proto==='DNS' && /^[A-Za-z0-9+/]{16,}\./.test(p.info.split('query A ')[1]||'')){
+      addFinding(i,'high','Possible DNS exfiltration', 'Long base64-like subdomain suggests data tunneled out via DNS queries: "'+p.info+'"');
+    }
+    if(p.proto==='HTTP' && /Set-Cookie: session=/.test(p.info) && !/Secure|HttpOnly/.test(p.info)){
+      addFinding(i,'med','Session cookie missing Secure/HttpOnly flags', p.info);
+    }
+  });
+
+  qelGet('pcapCrit').textContent=crit;
+  qelGet('pcapHigh').textContent=high;
+  qelGet('pcapMed').textContent=med;
+  qelGet('pcapClean').textContent=packets.length-flaggedSet.size;
+  qelGet('pcapStats').style.display='flex';
+  if(crit+high+med===0){
+    findingsEl.innerHTML='<div class="finding" style="border-color:#bbf3d1;background:#f0fdf6;">No forensic red flags detected in this capture.</div>';
+  }
+});
+
+/* ============================= KEY & SECRET SCANNER ============================= */
+const SECRET_RULES=[
+  {type:'AWS Access Key ID', re:/AKIA[0-9A-Z]{16}/g, sev:'crit'},
+  {type:'AWS Secret Access Key (heuristic)', re:/(?:aws_secret|AWS_SECRET)[A-Za-z_]*\s*=?\s*[:=]\s*['\"]?([A-Za-z0-9/+=]{30,})/g, sev:'crit'},
+  {type:'RSA Private Key Block', re:/-----BEGIN RSA PRIVATE KEY-----[\s\S]*?-----END RSA PRIVATE KEY-----/g, sev:'crit'},
+  {type:'Slack Token', re:/xox[baprs]-[A-Za-z0-9-]{10,}/g, sev:'crit'},
+  {type:'GitHub Personal Access Token', re:/ghp_[A-Za-z0-9]{20,}/g, sev:'crit'},
+  {type:'Hardcoded Password Assignment', re:/(password|db_password|passwd)\s*=\s*["'][^"']{4,}["']/gi, sev:'high'},
+  {type:'JWT (JSON Web Token)', re:/eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g, sev:'med'},
+  {type:'Credentials in URL/command', re:/-u\s+['"][^:'"]+:[^'"]+['"]/g, sev:'high'},
+  {type:'Plaintext internal token in URL', re:/[?&]token=[A-Za-z0-9_-]+/g, sev:'med'},
+];
+
+function scanSecrets(text){
+  const found=[];
+  SECRET_RULES.forEach(rule=>{
+    const matches=[...text.matchAll(rule.re)];
+    matches.forEach(m=>{
+      let snippet=m[0];
+      if(snippet.length>120) snippet=snippet.slice(0,117)+'...';
+      found.push({type:rule.type, sev:rule.sev, snippet});
+    });
+  });
+  return found;
+}
+
+qelGet('secretsScanBtn').addEventListener('click', ()=>{
+  const text=qelGet('secretsInput').value;
+  const found=scanSecrets(text);
+  const el=qelGet('secretsFindings');
+  el.innerHTML='';
+  const types=new Set(found.map(f=>f.type));
+  qelGet('secretsFound').textContent=found.length;
+  qelGet('secretsTypes').textContent=types.size;
+  qelGet('secretsStats').style.display='flex';
+  if(found.length===0){
+    el.innerHTML='<div class="finding" style="border-color:#bbf3d1;background:#f0fdf6;">No known secret patterns detected.</div>';
+    return;
+  }
+  found.forEach(f=>{
+    const div=document.createElement('div');
+    div.className='finding '+f.sev;
+    div.innerHTML=`<div class="ftitle"><span class="sev-pill ${f.sev}">${f.sev}</span>${f.type}</div><div class="fdetail">${f.snippet.replace(/</g,'&lt;')}</div>`;
+    el.appendChild(div);
+  });
+});
+qelGet('secretsClearBtn').addEventListener('click', ()=>{
+  qelGet('secretsInput').value='';
+  qelGet('secretsFindings').innerHTML='';
+  qelGet('secretsStats').style.display='none';
+});
+
+/* ============================= PREDICTABLE TOKEN ANALYZER ============================= */
+const capturedTokens=[
+  '89c796a6ca536481dc5ecd3038856fe8',
+  '5c1ff75029cb2bfb14ded18c15e0d5d6',
+  '4ed20ef260714bd1367d94984afb6232',
+  '2864b5ea4ca30dfab754ddc838c8a5d5',
+  '4e64d8dfb3a7fb77100d346ec1511bf9',
+  '5604db6079b99ebe2913bfdb1052210d'
+];
+const actualNextToken='1acd9b6584404e9c411bd723dcf13d60'; // sealed answer for verification
+qelGet('tokenList').innerHTML = capturedTokens.map((t,i)=>`<div>token[${i}] = ${t}</div>`).join('');
+
+let recoveredTimestamps=null, recoveredInterval=null;
+qelGet('tokenBruteBtn').addEventListener('click', async ()=>{
+  const c=qelGet('tokenConsole');
+  clearConsole(c);
+  qelGet('tokenResult').style.display='none';
+  const center=parseInt(qelGet('tokenGuessCenter').value)||1706000000;
+  const range=parseInt(qelGet('tokenGuessRange').value)||600;
+  logLine(c,'$ brute-forcing timestamps in ['+(center-range)+', '+(center+range)+'] for each token...','hdr');
+  await sleep(100);
+
+  const found=new Array(capturedTokens.length).fill(null);
+  for(let ts=center-range; ts<=center+range; ts++){
+    const h=md5('sess_'+ts);
+    const idx=capturedTokens.indexOf(h);
+    if(idx!==-1 && found[idx]===null){
+      found[idx]=ts;
+      logLine(c,'[+] token['+idx+'] = MD5("sess_"+'+ts+')','ok');
+    }
+  }
+  if(found.some(x=>x===null)){
+    logLine(c,'[!] could not match all tokens in this range — widen the search range.','bad');
+    qelGet('tokenPredictBtn').disabled=true;
+    return;
+  }
+  recoveredTimestamps=found;
+  const intervals=[];
+  for(let i=1;i<found.length;i++) intervals.push(found[i]-found[i-1]);
+  const allSame=intervals.every(d=>d===intervals[0]);
+  recoveredInterval=intervals[0];
+  logLine(c,'[+] recovered interval between tokens: '+recoveredInterval+'s'+(allSame?' (constant)':' (WARNING: inconsistent)'),'ok');
+  logLine(c,'[✓] formula recovered: token[i] = MD5("sess_" + ('+found[0]+' + i*'+recoveredInterval+'))','hdr');
+  qelGet('tokenPredictBtn').disabled=false;
+});
+
+qelGet('tokenPredictBtn').addEventListener('click', ()=>{
+  if(!recoveredTimestamps) return;
+  const c=qelGet('tokenConsole');
+  const lastTs=recoveredTimestamps[recoveredTimestamps.length-1];
+  const nextTs=lastTs+recoveredInterval;
+  const predicted=md5('sess_'+nextTs);
+  logLine(c,'[*] predicting token[6] at timestamp '+nextTs+' ...','info');
+  logLine(c,'[+] predicted token = '+predicted,'ok');
+  const match = predicted===actualNextToken;
+  logLine(c, match ? '[✓] matches the real next token captured from the service' : '[!] does not match — check your search range', match?'ok':'bad');
+  qelGet('tokenResult').className='result-box '+(match?'ok':'bad');
+  qelGet('tokenResult').style.display='block';
+  qelGet('tokenResult').textContent = match
+    ? 'Prediction confirmed: the next session token is fully predictable from the timestamp alone.\nPredicted: '+predicted+'\nActual:    '+actualNextToken
+    : 'Prediction did not match the sealed next token. Try a tighter search range.';
+});
+
+/* ============================= STEGANOGRAPHY LAB ============================= */
+function embedMessage(imageData, message){
+  const bytes=enc.encode(message);
+  const len=bytes.length;
+  const bitsNeeded=32+len*8;
+  const data=imageData.data;
+  if(bitsNeeded>data.length/4) throw new Error('Image too small to hold this message ('+bitsNeeded+' bits needed).');
+  let bitIndex=0;
+  function setBit(pixelIndex,bit){ const idx=pixelIndex*4; data[idx]=(data[idx]&0xFE)|bit; }
+  for(let i=0;i<32;i++){ setBit(bitIndex,(len>>>(31-i))&1); bitIndex++; }
+  for(let i=0;i<len;i++){
+    for(let b=0;b<8;b++){ setBit(bitIndex,(bytes[i]>>>(7-b))&1); bitIndex++; }
+  }
+  return imageData;
+}
+function extractMessage(imageData){
+  const data=imageData.data;
+  function getBit(pixelIndex){ return data[pixelIndex*4]&1; }
+  let len=0;
+  for(let i=0;i<32;i++) len=(len*2)+getBit(i);
+  if(len<=0 || len>200000 || 32+len*8>data.length/4) throw new Error('No valid hidden data found.');
+  const bytes=new Uint8Array(len);
+  let bitIndex=32;
+  for(let i=0;i<len;i++){
+    let byte=0;
+    for(let b=0;b<8;b++){ byte=(byte*2)+getBit(bitIndex); bitIndex++; }
+    bytes[i]=byte;
+  }
+  return dec.decode(bytes);
+}
+
+function drawTexture(ctx,w,h,seed){
+  const g=ctx.createLinearGradient(0,0,w,h);
+  g.addColorStop(0,'#dbeafe'); g.addColorStop(.5,'#ede9fe'); g.addColorStop(1,'#fce7f3');
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+  let s=seed;
+  function rnd(){ s=(s*1103515245+12345)&0x7fffffff; return s/0x7fffffff; }
+  for(let i=0;i<220;i++){
+    ctx.fillStyle='rgba('+Math.floor(rnd()*80+120)+','+Math.floor(rnd()*80+100)+','+Math.floor(rnd()*80+180)+',0.25)';
+    const x=rnd()*w, y=rnd()*h, r=rnd()*18+4;
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  }
+}
+
+// evidence image: generated + secret embedded at load
+const evidenceCanvas=qelGet('evidenceCanvas');
+const evidenceCtx=evidenceCanvas.getContext('2d');
+drawTexture(evidenceCtx,320,200,42);
+(function(){
+  const imgData=evidenceCtx.getImageData(0,0,320,200);
+  embedMessage(imgData,'CASE 7734: INTRUSION DETECTED 03:14 UTC. KEY EXFILTRATED VIA DNS TUNNEL. SUSPECT HOST 10.0.0.63. ESCALATE TO IR TEAM.');
+  evidenceCtx.putImageData(imgData,0,0);
+})();
+qelGet('extractEvidenceBtn').addEventListener('click', ()=>{
+  const out=qelGet('evidenceResult');
+  try{
+    const imgData=evidenceCtx.getImageDta(0,0,320,200);
+    const msg=extractMessage(imgData);
+    out.className='result-box ok'; out.style.display='block';
+    out.textContent='Hidden data recovered:\n"'+msg+'"';
+  }catch(e){
+    out.className='result-box bad'; out.style.display='block';
+    out.textContent='Extraction failed: '+e.message;
+  }
+});
+
+// custom encode/verify
+const customCanvas=qelGet('customCanvas');
+const customCtx=customCanvas.getContext('2d');
+let customHasImage=false;
+qelGet('stegoEncodeBtn').addEventListener('click', ()=>{
+  const msg=qelGet('stegoMsgInput').value || 'hello';
+  drawTexture(customCtx,320,200,Math.floor(Math.random()*100000));
+  try{
+    const imgData=customCtx.getImageData(0,0,320,200);
+    embedMessage(imgData,msg);
+    customCtx.putImageData(imgData,0,0);
+    customHasImage=true;
+    qelGet('stegoDownloadBtn').disabled=false;
+    qelGet('stegoExtractBtn').disabled=false;
+    qelGet('customResult').style.display='none';
+  }catch(e){
+    qelGet('customResult').className='result-box bad'; qelGet('customResult').style.display='block';
+    qelGet('customResult').textContent='Embed failed: '+e.message;
+  }
+});
+qelGet('stegoExtractBtn').addEventListener('click', ()=>{
+  const out=qelGet('customResult');
+  try{
+    const imgData=customCtx.getImageData(0,0,320,200);
+    const msg=extractMessage(imgData);
+    out.className='result-box ok'; out.style.display='block';
+    out.textContent='Round-trip confirmed — extracted:\n"'+msg+'"';
+  }catch(e){
+    out.className='result-box bad'; out.style.display='block';
+    out.textContent='Extraction failed: '+e.message;
+  }
+});
+qelGet('stegoDownloadBtn').addEventListener('click', ()=>{
+  if(!customHasImage) return;
+  customCanvas.toBlob(blob=>{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='stego-carrier.png'; a.click();
+    URL.revokeObjectURL(url);
+  },'image/png');
+});
+
+// upload & investigate
+let uploadedImg=null;
+qelGet('uploadInput').addEventListener('change', (e)=>{
+  const file=e.target.files[0];
+  if(!file) return;
+  const img=new Image();
+  img.onload=()=>{ uploadedImg=img; qelGet('uploadExtractBtn').disabled=false; qelGet('uploadResult').style.display='none'; };
+  img.src=URL.createObjectURL(file);
+});
+qelGet('uploadExtractBtn').addEventListener('click', ()=>{
+  const out=qelGet('uploadResult');
+  if(!uploadedImg){ return; }
+  const c=document.createElement('canvas');
+  c.width=uploadedImg.naturalWidth; c.height=uploadedImg.naturalHeight;
+  const ctx=c.getContext('2d');
+  ctx.drawImage(uploadedImg,0,0);
+  try{
+    const imgData=ctx.getImageData(0,0,c.width,c.height);
+    const msg=extractMessage(imgData);
+    out.className='result-box ok'; out.style.display='block';
+    out.textContent='Hidden data recovered:\n"'+msg+'"';
+  }catch(e){
+    out.className='result-box bad'; out.style.display='block';
+    out.textContent='No hidden data found (or image was recompressed/not PNG-lossless): '+e.message;
+  }
+});
+})(); // end isolated scope
+</script>
+</body>
+</html>
